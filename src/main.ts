@@ -1,8 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { applyAppSetting } from './settings/apply-app-setting';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  applyAppSetting(app);
+  await app.listen(3000, () => {
+    console.log('App starting listen post ');
+  });
 }
+
 bootstrap();
