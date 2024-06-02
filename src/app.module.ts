@@ -4,8 +4,13 @@ import { UsersRepository } from './features/users/infrastructure/users.repositor
 import { UsersService } from './features/users/application/users.service';
 import { User, UserSchema } from './features/users/domain/user.entity';
 import { UserController } from './features/users/api/user.controller';
+import { UsersQueryRepository } from './features/users/infrastructure/usersQuery.repository';
 
-const usersProviders: Provider[] = [UsersRepository, UsersService];
+const usersProviders: Provider[] = [
+  UsersRepository,
+  UsersService,
+  UsersQueryRepository,
+];
 
 @Module({
   imports: [
