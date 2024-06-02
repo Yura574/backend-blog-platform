@@ -15,6 +15,7 @@ export const handleErrorObjectResult = (
   if (result.status === ResultStatus.NotFound)
     return res.status(HttpStatus.NOT_FOUND).send(result.errorsMessages);
   return res
+
     .status(HttpStatus.INTERNAL_SERVER_ERROR)
     .send(result.errorsMessages);
 };

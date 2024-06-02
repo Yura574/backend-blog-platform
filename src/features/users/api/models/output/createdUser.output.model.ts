@@ -1,6 +1,6 @@
 import { IsEmail, IsString } from 'class-validator';
 
-export class CreatedUser {
+export class UserViewModel {
   @IsString()
   id: string;
 
@@ -11,5 +11,5 @@ export class CreatedUser {
   email: string;
 
   @IsString()
-  cratedAt: string;
+  createdAt: string;
 }

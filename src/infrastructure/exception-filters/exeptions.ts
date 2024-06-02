@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-export class ForbiddenException extends HttpException {
-  constructor() {
-    super('Forbidden', HttpStatus.FORBIDDEN);
-  }
-}
+// export class ForbiddenException extends HttpException {
+//   constructor() {
+//     super('Forbidden', HttpStatus.FORBIDDEN);
+//   }
+// }
 
 @Catch(HttpException)
 export class HttpExceptionsFilter implements ExceptionFilter {
@@ -20,8 +20,11 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
+    console.log(status);
     if (status === HttpStatus.BAD_REQUEST) {
-      const errorsResponse = {
+      const errorsResponse: {
+        errorsMessages: { field: string; message: string }[];
+      } = {
         errorsMessages: [],
       };
       const responseBody: any = exception.getResponse();

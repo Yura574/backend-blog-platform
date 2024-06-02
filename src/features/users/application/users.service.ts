@@ -5,16 +5,19 @@ import {
   ObjectResult,
   ResultStatus,
 } from '../../../infrastructure/utils/objectResult';
-import { CreatedUser } from '../api/models/output/createdUser.output.model';
+import { UserViewModel } from '../api/models/output/createdUser.output.model';
 
 @Injectable()
 export class UsersService {
   constructor(private userRepository: UsersRepository) {}
 
-  async createUser(dto: CreateUserDto): Promise<ObjectResult<CreatedUser>> {
+  async createUser(dto: CreateUserDto): Promise<ObjectResult<UserViewModel>> {
+    console.log(typeof dto.login);
+    console.log(dto.password);
+    const user = await this.userRepository.createUser(dto);
     return {
       status: ResultStatus.Success,
-      data: { cratedAt: '', email: '', login: '', id: '' },
+      data: user,
     };
   }
 }
