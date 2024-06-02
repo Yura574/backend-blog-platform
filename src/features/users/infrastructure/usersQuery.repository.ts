@@ -23,12 +23,12 @@ export class UsersQueryRepository {
       $or: [
         {
           login: {
-            $regex: searchLoginTerm ? new RegExp(searchLoginTerm, 'i') : '',
+            $regex: searchLoginTerm ? new RegExp(searchLoginTerm, 'i') : ' ',
           },
         },
         {
           email: {
-            $regex: searchEmailTerm ? new RegExp(searchEmailTerm, 'i') : '',
+            $regex: searchEmailTerm ? new RegExp(searchEmailTerm, 'i') : ' ',
           },
         },
       ],
@@ -44,12 +44,12 @@ export class UsersQueryRepository {
         $or: [
           {
             login: {
-              $regex: searchLoginTerm ? new RegExp(searchLoginTerm, 'i') : '',
+              $regex: searchLoginTerm ? new RegExp(searchLoginTerm, 'i') : ' ',
             },
           },
           {
             email: {
-              $regex: searchEmailTerm ? new RegExp(searchEmailTerm, 'i') : '',
+              $regex: searchEmailTerm ? new RegExp(searchEmailTerm, 'i') : ' ',
             },
           },
         ],
