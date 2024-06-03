@@ -19,20 +19,24 @@ export class UsersQueryRepository {
       searchEmailTerm = '',
       searchLoginTerm = '',
     } = param;
-    const totalCount = await this.userModel.countDocuments({
-      $or: [
-        {
-          login: {
-            $regex: searchLoginTerm ? new RegExp(searchLoginTerm, 'i') : ' ',
-          },
-        },
-        {
-          email: {
-            $regex: searchEmailTerm ? new RegExp(searchEmailTerm, 'i') : ' ',
-          },
-        },
-      ],
-    });
+
+    const searchConditions: any = [];
+    if (searchLoginTerm) {
+      searchConditions.push({
+        login: { $regex: new RegExp(searchLoginTerm, 'i') },
+      });
+    }
+
+    if (searchEmailTerm) {
+      searchConditions.push({
+        email: { $regex: new RegExp(searchEmailTerm, 'i') },
+      });
+    }
+
+    const searchQuery =
+      searchConditions.length > 0 ? { $or: searchConditions } : {};
+
+    const totalCount = await this.userModel.countDocuments(searchQuery);
 
     const pagesCount = Math.ceil(totalCount / +pageSize);
     const skip = (+pageNumber - 1) * +pageSize;
@@ -40,20 +44,7 @@ export class UsersQueryRepository {
     const sort: any = {};
     sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
     const users = await this.userModel
-      .find({
-        $or: [
-          {
-            login: {
-              $regex: searchLoginTerm ? new RegExp(searchLoginTerm, 'i') : ' ',
-            },
-          },
-          {
-            email: {
-              $regex: searchEmailTerm ? new RegExp(searchEmailTerm, 'i') : ' ',
-            },
-          },
-        ],
-      })
+      .find(searchQuery)
       .sort(sort)
       .skip(skip)
       .limit(+pageSize);
