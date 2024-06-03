@@ -22,6 +22,7 @@ export class UsersRepository {
   }
 
   async deleteUser(id: string) {
-    await this.userModel.deleteOne({ id });
+    console.log(id);
+    return this.userModel.deleteOne({ _id: id });
   }
 }

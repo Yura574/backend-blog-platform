@@ -6,7 +6,6 @@ import {
   ResultStatus,
 } from '../../../infrastructure/utils/objectResult';
 import { UserViewModel } from '../api/models/output/createdUser.output.model';
-import { QueryUsersType } from '../api/models/types/queryTypes';
 
 @Injectable()
 export class UsersService {
@@ -20,5 +19,9 @@ export class UsersService {
       status: ResultStatus.Success,
       data: user,
     };
+  }
+
+  async deleteUser(id: string) {
+    return await this.userRepository.deleteUser(id);
   }
 }

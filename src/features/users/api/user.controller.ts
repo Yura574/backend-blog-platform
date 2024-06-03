@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { UsersService } from '../application/users.service';
 import { CreateUserDto } from './models/input/createUser.input.model';
 import { UserViewModel } from './models/output/createdUser.output.model';
@@ -24,5 +32,10 @@ export class UserController {
   @Get()
   async getUsers(@Req() req: Request): Promise<ReturnViewModel<UserType[]>> {
     return await this.usersQueryRepository.getUsers(req.query);
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param() params: any) {
+    return await this.usersService.deleteUser(params.id);
   }
 }

@@ -5,7 +5,7 @@ import { applyAppSetting } from './settings/apply-app-setting';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   applyAppSetting(app);
-  await app.listen(3000, () => {
+  await app.listen(5000, () => {
     console.log('App starting listen post ');
   });
 }
