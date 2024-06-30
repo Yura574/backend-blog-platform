@@ -8,7 +8,8 @@ import { ReturnViewModel } from '../../commonTypes/returnViewModel';
 
 @Injectable()
 export class UsersQueryRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {
+  }
 
   async getUsers(param: QueryUsersType): Promise<ReturnViewModel<UserType[]>> {
     const {
@@ -17,19 +18,19 @@ export class UsersQueryRepository {
       pageNumber = 1,
       pageSize = 10,
       searchEmailTerm = '',
-      searchLoginTerm = '',
+      searchLoginTerm = ''
     } = param;
 
     const searchConditions: any = [];
     if (searchLoginTerm) {
       searchConditions.push({
-        login: { $regex: new RegExp(searchLoginTerm, 'i') },
+        login: { $regex: new RegExp(searchLoginTerm, 'i') }
       });
     }
 
     if (searchEmailTerm) {
       searchConditions.push({
-        email: { $regex: new RegExp(searchEmailTerm, 'i') },
+        email: { $regex: new RegExp(searchEmailTerm, 'i') }
       });
     }
 
@@ -48,13 +49,12 @@ export class UsersQueryRepository {
       .sort(sort)
       .skip(skip)
       .limit(+pageSize);
-    console.log(users);
     const mappedUser: UserType[] = users.map((user) => {
       return {
         id: user.id.toString(),
         login: user.login,
         email: user.email,
-        createdAt: new Date(user.createdAt).toISOString(),
+        createdAt: new Date(user.createdAt).toISOString()
       };
     });
     return {
@@ -62,7 +62,11 @@ export class UsersQueryRepository {
       pageSize,
       totalCount,
       page: pageNumber,
-      items: mappedUser,
+      items: mappedUser
     };
+  }
+
+  async getUserById(userId: string) {
+    return this.userModel.findById(userId);
   }
 }

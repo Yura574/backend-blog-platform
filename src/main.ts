@@ -4,6 +4,7 @@ import { applyAppSetting } from './settings/apply-app-setting';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   applyAppSetting(app);
   await app.listen(3000, () => {
     console.log('App starting listen post ');
