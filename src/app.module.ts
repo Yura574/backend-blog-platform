@@ -5,6 +5,8 @@ import { UsersService } from './features/users/application/users.service';
 import { User, UserSchema } from './features/users/domain/user.entity';
 import { UserController } from './features/users/api/user.controller';
 import { UsersQueryRepository } from './features/users/infrastructure/usersQuery.repository';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionsFilter } from './infrastructure/exception-filters/exeptions';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -21,6 +23,9 @@ const usersProviders: Provider[] = [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UserController],
-  providers: [...usersProviders],
+  providers: [...usersProviders, {
+    provide: APP_FILTER,
+    useClass: HttpExceptionsFilter,
+  },],
 })
 export class AppModule {}

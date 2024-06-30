@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../domain/user.entity';
 import { Model } from 'mongoose';
@@ -67,6 +67,12 @@ export class UsersQueryRepository {
   }
 
   async getUserById(userId: string) {
-    return this.userModel.findById(userId);
+
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user
+
   }
 }

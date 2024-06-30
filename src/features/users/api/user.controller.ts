@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpCode,
   Param,
   Post,
   Req
@@ -26,14 +26,12 @@ export class UserController {
 
   @Post()
   async createUser(@Body() dto: CreateUserDto): Promise<UserViewModel> {
-    console.log(dto);
     const result = await this.usersService.createUser(dto);
     return result.data;
   }
 
   @Get()
   async getUsers(@Req() req: Request): Promise<ReturnViewModel<UserType[]>> {
-    console.log(8);
     return await this.usersQueryRepository.getUsers(req.query);
   }
 
@@ -44,7 +42,11 @@ export class UserController {
 
 
   @Delete(':id')
+  @HttpCode(204)
   async deleteUser(@Param() params: any) {
+
     return await this.usersService.deleteUser(params.id);
+
+
   }
 }

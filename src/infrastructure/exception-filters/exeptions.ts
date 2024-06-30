@@ -3,7 +3,7 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  HttpStatus,
+  HttpStatus, NotFoundException
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -13,14 +13,13 @@ import { Request, Response } from 'express';
 //   }
 // }
 
-@Catch(HttpException)
+@Catch(NotFoundException)
 export class HttpExceptionsFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost): any {
+  catch(exception: NotFoundException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
-    console.log(status);
     if (status === HttpStatus.BAD_REQUEST) {
       const errorsResponse: {
         errorsMessages: { field: string; message: string }[];
@@ -39,11 +38,13 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       }
       response.status(status).json(errorsResponse);
     } else {
-      response.status(status).json({
-        statusCode: status,
-        timestampt: new Date().toISOString(),
-        path: request.url,
-      });
+      response.sendStatus(status)
+      //если необходимо настроить тело ответа
+      //   .json({
+      //   statusCode: status,
+      //   timestampt: new Date().toISOString(),
+      //   path: request.url,
+      // });
     }
   }
 }
