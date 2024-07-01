@@ -11,6 +11,7 @@ import { Blog, BlogSchema } from './features/blogs/domain/blog.entity';
 import { BlogsController } from './features/blogs/api/blogs.controller';
 import { BlogsRepository } from './features/blogs/infrastructure/blogs.repository';
 import { BlogsService } from './features/blogs/application/blogs.service';
+import { BlogsQueryRepository } from './features/blogs/infrastructure/blogsQuery.repository';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -20,6 +21,7 @@ const usersProviders: Provider[] = [
 const blogsProviders: Provider[] = [
   BlogsRepository,
   BlogsService,
+  BlogsQueryRepository,
 ];
 
 @Module({

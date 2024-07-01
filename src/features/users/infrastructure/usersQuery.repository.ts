@@ -72,7 +72,10 @@ export class UsersQueryRepository {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user
+    return {
+      ...user,
+      id: user.id.toString()
+    };
 
   }
 }

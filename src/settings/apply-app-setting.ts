@@ -9,6 +9,6 @@ export const applyAppSetting = (app: INestApplication) => {
   // app.use(Logge)
   // setSwagger(app)
   // app.useGlobalGuards(new AuthGuard())
-  app.useGlobalPipes(new ValidationPipe({ stopAtFirstError: true, errorHttpStatusCode: 400 }));
-  app.useGlobalFilters(new HttpExceptionsFilter());
+  // app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new   HttpExceptionsFilter());
 };
