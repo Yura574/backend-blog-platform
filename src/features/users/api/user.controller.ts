@@ -12,9 +12,9 @@ import { CreateUserDto } from './models/input/createUser.input.model';
 import { UserViewModel } from './models/output/createdUser.output.model';
 import { Request } from 'express';
 import { UsersQueryRepository } from '../infrastructure/usersQuery.repository';
-import { ReturnViewModel } from '../../commonTypes/returnViewModel';
+import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
 import { UserType } from './models/types/userType';
-import { UserParamTypes } from './models/types/userParamTypes';
+import { ParamType } from '../../1_commonTypes/paramType';
 
 @Controller('users')
 export class UserController {
@@ -36,8 +36,8 @@ export class UserController {
   }
 
   @Get(':id')
-  async getUserById(@Param() param: UserParamTypes) {
-    return await this.usersQueryRepository.getUserById(param.userId);
+  async getUserById(@Param() param: ParamType) {
+    return await this.usersQueryRepository.getUserById(param.id);
   }
 
 

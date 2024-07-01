@@ -1,6 +1,6 @@
 import { IsString, Length, Matches } from 'class-validator';
 
-export class CreateBlogInputModel {
+export class CreateBlogInputModel{
   @IsString()
   @Length(1, 15)
   name: string;

@@ -23,11 +23,6 @@ export class UsersService {
 
 
   async deleteUser(id: string) {
-    const result = await this.userRepository.deleteUser(id);
-    console.log('1', result);
-    if(!result.deletedCount){
-      throw new NotFoundException('User not found')
-    }
-    return result
+    return await this.userRepository.deleteUser(id);
   }
 }

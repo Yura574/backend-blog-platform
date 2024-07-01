@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../domain/user.entity';
@@ -8,13 +8,14 @@ import { hashPassword } from '../../../infrastructure/utils/hashPassword';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {
+  }
 
   async createUser(dto: CreateUserDto): Promise<UserViewModel> {
     const hash = await hashPassword(dto.password);
     const createdUser = await this.userModel.create({
       ...dto,
-      password: hash,
+      password: hash
     });
     const user = await createdUser.save();
     const { id, createdAt, email, login } = user;
@@ -22,7 +23,10 @@ export class UsersRepository {
   }
 
   async deleteUser(id: string) {
-    console.log(id);
-    return this.userModel.deleteOne({ _id: id });
+    const result = await this.userModel.deleteOne({ _id: id });
+    if (!result.deletedCount) {
+      throw new NotFoundException('User not found');
+    }
+    return result;
   }
 }

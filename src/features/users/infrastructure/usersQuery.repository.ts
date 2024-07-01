@@ -4,7 +4,7 @@ import { User } from '../domain/user.entity';
 import { Model } from 'mongoose';
 import { QueryUsersType } from '../api/models/types/queryTypes';
 import { UserType } from '../api/models/types/userType';
-import { ReturnViewModel } from '../../commonTypes/returnViewModel';
+import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
 
 @Injectable()
 export class UsersQueryRepository {

@@ -7,11 +7,19 @@ import { UserController } from './features/users/api/user.controller';
 import { UsersQueryRepository } from './features/users/infrastructure/usersQuery.repository';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionsFilter } from './infrastructure/exception-filters/exeptions';
+import { Blog, BlogSchema } from './features/blogs/domain/blog.entity';
+import { BlogsController } from './features/blogs/api/blogs.controller';
+import { BlogsRepository } from './features/blogs/infrastructure/blogs.repository';
+import { BlogsService } from './features/blogs/application/blogs.service';
 
 const usersProviders: Provider[] = [
   UsersRepository,
   UsersService,
   UsersQueryRepository,
+];
+const blogsProviders: Provider[] = [
+  BlogsRepository,
+  BlogsService,
 ];
 
 @Module({
@@ -21,9 +29,10 @@ const usersProviders: Provider[] = [
       { dbName: 'blog-platform' },
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
   ],
-  controllers: [UserController],
-  providers: [...usersProviders, {
+  controllers: [UserController, BlogsController],
+  providers: [...usersProviders, ...blogsProviders, {
     provide: APP_FILTER,
     useClass: HttpExceptionsFilter,
   },],
