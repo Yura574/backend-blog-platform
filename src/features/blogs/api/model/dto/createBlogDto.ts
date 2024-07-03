@@ -8,5 +8,4 @@ export type CreateBlogDto = {
   websiteUrl: string
   createdAt: string
   isMemberShip: boolean
-
 }

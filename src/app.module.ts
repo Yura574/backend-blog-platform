@@ -12,6 +12,10 @@ import { BlogsController } from './features/blogs/api/blogs.controller';
 import { BlogsRepository } from './features/blogs/infrastructure/blogs.repository';
 import { BlogsService } from './features/blogs/application/blogs.service';
 import { BlogsQueryRepository } from './features/blogs/infrastructure/blogsQuery.repository';
+import { Post, PostSchema } from './features/posts/domain/post.entity';
+import { PostController } from './features/posts/api/post.controller';
+import { PostRepository } from './features/posts/infrastructure/postRepository';
+import { PostService } from './features/posts/application/postService';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -23,6 +27,10 @@ const blogsProviders: Provider[] = [
   BlogsService,
   BlogsQueryRepository,
 ];
+const postsProviders: Provider[] = [
+  PostRepository,
+  PostService,
+];
 
 @Module({
   imports: [
@@ -32,9 +40,10 @@ const blogsProviders: Provider[] = [
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
+    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
   ],
-  controllers: [UserController, BlogsController],
-  providers: [...usersProviders, ...blogsProviders, {
+  controllers: [UserController, BlogsController, PostController],
+  providers: [...usersProviders, ...blogsProviders, ...postsProviders, {
     provide: APP_FILTER,
     useClass: HttpExceptionsFilter,
   },],
