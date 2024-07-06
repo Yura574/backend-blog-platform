@@ -32,6 +32,7 @@ export class UserController {
 
   @Get()
   async getUsers(@Req() req: Request): Promise<ReturnViewModel<UserType[]>> {
+    console.log(123);
     return await this.usersQueryRepository.getUsers(req.query);
   }
 
