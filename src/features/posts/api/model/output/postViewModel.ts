@@ -1,7 +1,5 @@
 
-
-
-export type PostViewModel= {
+export type PostViewModel = {
   id: string
   title: string
   shortDescription: string
@@ -12,11 +10,16 @@ export type PostViewModel= {
   extendedLikesInfo: ExtendedLikesInfo
 }
 
-type ExtendedLikesInfo= {
+export type ExtendedLikesInfo = {
   likesCount: number
-  dislikes: number
+  dislikesCount: number
   myStatus: LikeStatus
-  newestLikes: string
+  newestLikes: NewestLikesType[]
 }
 
-type LikeStatus = 'None'| 'Like' | 'Dislike'
+export type NewestLikesType = {
+  addedAt: string,
+  userId: string,
+  login: string
+}
+export type LikeStatus = 'None' | 'Like' | 'Dislike'

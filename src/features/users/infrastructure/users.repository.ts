@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../domain/user.entity';
@@ -12,21 +12,31 @@ export class UsersRepository {
   }
 
   async createUser(dto: CreateUserDto): Promise<UserViewModel> {
-    const hash = await hashPassword(dto.password);
-    const createdUser = await this.userModel.create({
-      ...dto,
-      password: hash
-    });
-    const user = await createdUser.save();
-    const { id, createdAt, email, login } = user;
-    return { id, login, email, createdAt };
+   try{
+     const hash = await hashPassword(dto.password);
+     const createdUser = await this.userModel.create({
+       ...dto,
+       createdAt: new Date().toISOString(),
+       password: hash
+     });
+     const user = await createdUser.save();
+     const { id, createdAt, email, login } = user;
+     return { id, login, email, createdAt };
+   } catch (err){
+     throw new HttpException('Login or password already exist', HttpStatus.BAD_REQUEST)
+   }
   }
 
   async deleteUser(id: string) {
-    const result = await this.userModel.deleteOne({ _id: id });
-    if (!result.deletedCount) {
-      throw new NotFoundException('User not found');
+    try{
+      const result = await this.userModel.deleteOne({ _id: id });
+      if (!result.deletedCount) {
+        throw new NotFoundException('User not found');
+      }
+      return result;
+    } catch (err){
+      throw new NotFoundException()
     }
-    return result;
-  }
+    }
+
 }

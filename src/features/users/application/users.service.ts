@@ -12,8 +12,7 @@ export class UsersService {
   constructor(private userRepository: UsersRepository) {}
 
   async createUser(dto: CreateUserDto): Promise<ObjectResult<UserViewModel>> {
-    console.log(typeof dto.login);
-    console.log(dto.password);
+
     const user = await this.userRepository.createUser(dto);
     return {
       status: ResultStatus.Success,

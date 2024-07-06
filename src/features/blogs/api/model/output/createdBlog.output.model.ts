@@ -17,5 +17,5 @@ export class BlogViewModel {
   createdAt: string;
 
   @IsString()
-  isMemberShip: boolean;
+  isMembership: boolean;
 }

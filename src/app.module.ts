@@ -16,6 +16,9 @@ import { Post, PostSchema } from './features/posts/domain/post.entity';
 import { PostController } from './features/posts/api/post.controller';
 import { PostRepository } from './features/posts/infrastructure/postRepository';
 import { PostService } from './features/posts/application/postService';
+import { PostQueryRepository } from './features/posts/infrastructure/postQueryRepository';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -30,6 +33,7 @@ const blogsProviders: Provider[] = [
 const postsProviders: Provider[] = [
   PostRepository,
   PostService,
+  PostQueryRepository
 ];
 
 @Module({
@@ -42,10 +46,10 @@ const postsProviders: Provider[] = [
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
   ],
-  controllers: [UserController, BlogsController, PostController],
+  controllers: [UserController, BlogsController, PostController, AppController],
   providers: [...usersProviders, ...blogsProviders, ...postsProviders, {
     provide: APP_FILTER,
     useClass: HttpExceptionsFilter,
-  },],
+  }, AppService],
 })
 export class AppModule {}

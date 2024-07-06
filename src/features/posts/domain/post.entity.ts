@@ -4,17 +4,18 @@ import { IsArray } from 'class-validator';
 
 
 export type PostDocument = HydratedDocument<Post>
+@Schema()
 
 @Schema()
 class LikeUserInfo {
   @Prop()
   userId: string
   @Prop()
-  likeStatus: string
+  likeStatus: 'Like' | 'Dislike' | 'None'
   @Prop()
   login: string
   @Prop()
-  createdAt: string
+  addedAt: string
 }
 
 @Schema()

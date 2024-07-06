@@ -58,10 +58,10 @@ export class UsersQueryRepository {
       };
     });
     return {
-      pagesCount,
-      pageSize,
-      totalCount,
-      page: pageNumber,
+      pagesCount: +pagesCount,
+      pageSize: +pageSize,
+      totalCount: +totalCount,
+      page: +pageNumber,
       items: mappedUser
     };
   }

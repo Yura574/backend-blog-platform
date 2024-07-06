@@ -20,7 +20,7 @@ export class Blog {
   createdAt: string;
 
   @Prop()
-  isMemberShip: boolean;
+  isMembership: boolean;
 }
 
 

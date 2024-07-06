@@ -4,7 +4,7 @@ import { Blog } from '../domain/blog.entity';
 import { Model } from 'mongoose';
 import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
 import { BlogViewModel } from '../api/model/output/createdBlog.output.model';
-import { QueryBlogsTypes } from '../api/types/queryBlogsTypes';
+import { QueryBlogsTypes } from '../api/model/types/queryBlogsTypes';
 
 
 @Injectable()
@@ -20,12 +20,11 @@ export class BlogsQueryRepository {
       sortBy = 'createdAt',
       searchNameTerm = null
     } = queryParams;
-
     const searchQuery =
-      searchNameTerm ? { name: { $regex: new RegExp(searchNameTerm) } } : {};
+      searchNameTerm ? { name: { $regex: new RegExp(searchNameTerm, 'i') } } : {};
 
     const blogsCount = await this.blogModel.countDocuments(searchQuery);
-    const pagesCount = blogsCount / pageSize;
+    const pagesCount = Math.ceil(blogsCount / pageSize);
 
     const skip = (+pageNumber - 1) * +pageSize;
     const sort: any = {};
@@ -38,15 +37,16 @@ export class BlogsQueryRepository {
         name:  blog.name,
         description: blog.description,
         websiteUrl: blog.websiteUrl,
-        isMemberShip: blog.isMemberShip,
-        createdAt: new Date(blog.createdAt).toISOString()
+        createdAt: new Date(blog.createdAt).toISOString(),
+        isMembership: blog.isMembership
       };
     });
 
+
     return {
-      page: pageNumber,
-      pagesCount,
-      pageSize,
+      page: +pageNumber,
+      pagesCount: +pagesCount,
+      pageSize:+pageSize,
       totalCount: blogsCount,
       items: mappedBlogs
     };
@@ -62,7 +62,7 @@ export class BlogsQueryRepository {
       name:  blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
-      isMemberShip: blog.isMemberShip,
+      isMembership: blog.isMembership,
       createdAt: new Date(blog.createdAt).toISOString()
     };
   }

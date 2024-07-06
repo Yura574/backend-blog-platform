@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument } from '../domain/blog.entity';
 import { Model } from 'mongoose';
 import { BlogViewModel } from '../api/model/output/createdBlog.output.model';
-import { CreateBlogDto } from '../api/model/dto/createBlogDto';
-import { UpdateBlogDto } from '../api/model/dto/updateBlogDto';
+import { UpdateBlogInputModel } from '../api/model/input/updateBlog.input.model';
+import { NewBlogType } from '../api/model/types/newBlogType';
 
 
 @Injectable()
@@ -12,18 +12,19 @@ export class BlogsRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {
   }
 
-  async createBlog(dto: CreateBlogDto): Promise<BlogViewModel | null> {
+  async createBlog(dto: NewBlogType): Promise<BlogViewModel | null> {
     try {
       const createdBlog = await this.blogModel.create(dto);
+      console.log(createdBlog);
       const blog = await createdBlog.save();
-      const { id, name, description, websiteUrl, createdAt, isMemberShip } = blog;
-      return { id, name, description, websiteUrl, createdAt, isMemberShip };
+      const { id, name, description, websiteUrl, createdAt, isMembership } = blog;
+      return { id, name, description, websiteUrl, createdAt, isMembership };
     } catch (err) {
       throw new HttpException('something was wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async updateBlog(id: string, dto: UpdateBlogDto) {
+  async updateBlog(id: string, dto: UpdateBlogInputModel) {
     const { description, websiteUrl, name } = dto;
     const blog = await this.blogModel.findById(id);
     if (!blog) throw new NotFoundException('Blog not found');
@@ -44,4 +45,6 @@ export class BlogsRepository {
     }
     return result;
   }
+
+
 }

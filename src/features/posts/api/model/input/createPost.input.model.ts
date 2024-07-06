@@ -1,4 +1,4 @@
-import { IsString, Length } from 'class-validator';
+import { IsOptional, IsString, Length } from 'class-validator';
 
 
 export class CreatePostInputModel {
@@ -14,7 +14,8 @@ export class CreatePostInputModel {
   @Length(1,1000)
   content: string
 
+  @IsOptional()
   @IsString()
-  blogId: string
+  blogId?: string
 
 }
