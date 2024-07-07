@@ -7,6 +7,7 @@ import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import request from 'supertest';
 
 export class TestSetup {
+
   public app: INestApplication;
   public mongod: MongoMemoryServer;
   public mongoConnection: Connection;

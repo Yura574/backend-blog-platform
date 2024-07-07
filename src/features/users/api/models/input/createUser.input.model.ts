@@ -1,6 +1,6 @@
-import { IsEmail, IsString, Length, Matches, Max } from 'class-validator';
+import { IsEmail, IsString, Length, Matches, Max, Min } from 'class-validator';
 
-export class CreateUserDto {
+export class UserInputModel {
   @IsString()
   @Length(3, 10)
   @Matches(/^[a-zA-Z0-9_-]*$/, {
@@ -14,8 +14,8 @@ export class CreateUserDto {
 
   @IsString()
   @IsEmail()
-  @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {
-    message: `incorrect email. example: example@example.com`,
-  })
+  // @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {
+  //   message: `incorrect email. example: example@example.com`,
+  // })
   email: string;
 }

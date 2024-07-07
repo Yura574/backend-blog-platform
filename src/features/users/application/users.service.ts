@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../infrastructure/users.repository';
-import { CreateUserDto } from '../api/models/input/createUser.input.model';
+import { UserInputModel } from '../api/models/input/createUser.input.model';
 import {
   ObjectResult,
   ResultStatus,
@@ -11,7 +11,7 @@ import { UserViewModel } from '../api/models/output/createdUser.output.model';
 export class UsersService {
   constructor(private userRepository: UsersRepository) {}
 
-  async createUser(dto: CreateUserDto): Promise<ObjectResult<UserViewModel>> {
+  async createUser(dto: UserInputModel): Promise<ObjectResult<UserViewModel>> {
 
     const user = await this.userRepository.createUser(dto);
     return {

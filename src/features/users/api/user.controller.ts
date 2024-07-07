@@ -8,7 +8,7 @@ import {
   Req
 } from '@nestjs/common';
 import { UsersService } from '../application/users.service';
-import { CreateUserDto } from './models/input/createUser.input.model';
+import { UserInputModel } from './models/input/createUser.input.model';
 import { UserViewModel } from './models/output/createdUser.output.model';
 import { Request } from 'express';
 import { UsersQueryRepository } from '../infrastructure/usersQuery.repository';
@@ -25,14 +25,13 @@ export class UserController {
   }
 
   @Post()
-  async createUser(@Body() dto: CreateUserDto): Promise<UserViewModel> {
+  async createUser(@Body() dto: UserInputModel): Promise<UserViewModel> {
     const result = await this.usersService.createUser(dto);
     return result.data;
   }
 
   @Get()
   async getUsers(@Req() req: Request): Promise<ReturnViewModel<UserType[]>> {
-    console.log(123);
     return await this.usersQueryRepository.getUsers(req.query);
   }
 

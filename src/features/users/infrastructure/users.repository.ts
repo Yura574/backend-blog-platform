@@ -2,16 +2,16 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../domain/user.entity';
-import { CreateUserDto } from '../api/models/input/createUser.input.model';
 import { UserViewModel } from '../api/models/output/createdUser.output.model';
 import { hashPassword } from '../../../infrastructure/utils/hashPassword';
+import { UserInputModel } from '../api/models/input/createUser.input.model';
 
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {
   }
 
-  async createUser(dto: CreateUserDto): Promise<UserViewModel> {
+  async createUser(dto: UserInputModel): Promise<UserViewModel> {
    try{
      const hash = await hashPassword(dto.password);
      const createdUser = await this.userModel.create({
@@ -32,6 +32,7 @@ export class UsersRepository {
       const result = await this.userModel.deleteOne({ _id: id });
       if (!result.deletedCount) {
         throw new NotFoundException('User not found');
+
       }
       return result;
     } catch (err){
