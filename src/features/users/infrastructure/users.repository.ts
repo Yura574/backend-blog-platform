@@ -23,8 +23,18 @@ export class UsersRepository {
      const { id, createdAt, email, login } = user;
      return { id, login, email, createdAt };
    } catch (err){
-     throw new HttpException('Login or password already exist', HttpStatus.BAD_REQUEST)
+     throw new HttpException('Login or email already exist', HttpStatus.BAD_REQUEST)
    }
+  }
+
+  async findUser(login: string, email: string){
+    return this.userModel.findOne({
+      $or:[
+        {login},
+        {email}
+      ]
+
+    })
   }
 
   async deleteUser(id: string) {

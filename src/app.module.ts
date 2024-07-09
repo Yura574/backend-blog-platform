@@ -19,16 +19,19 @@ import { PostService } from './features/posts/application/postService';
 import { PostQueryRepository } from './features/posts/infrastructure/postQueryRepository';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EmailService } from './features/auth/application/email.service';
 
 const usersProviders: Provider[] = [
   UsersRepository,
   UsersService,
-  UsersQueryRepository,
+  UsersQueryRepository
 ];
 const blogsProviders: Provider[] = [
   BlogsRepository,
   BlogsService,
-  BlogsQueryRepository,
+  BlogsQueryRepository
 ];
 const postsProviders: Provider[] = [
   PostRepository,
@@ -38,18 +41,37 @@ const postsProviders: Provider[] = [
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
     MongooseModule.forRoot(
       'mongodb+srv://yura5742248:unbiliever13@cluster0.mowhzah.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-      { dbName: 'blog-platform' },
+      { dbName: 'blog-platform' }
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: {
+          service: 'gmail',
+          host: 'smtp.gmail.com',
+          secure: true,
+          port: 465,
+          auth: {
+            user: 'yura5742248@gmail.com',
+            pass: 'evgs shsm qmme vibh'
+          },
+        }
+      }),
+      inject: [ConfigService]
+    })
   ],
   controllers: [UserController, BlogsController, PostController, AppController],
-  providers: [...usersProviders, ...blogsProviders, ...postsProviders, {
+  providers: [...usersProviders, ...blogsProviders, ...postsProviders, EmailService, {
     provide: APP_FILTER,
-    useClass: HttpExceptionsFilter,
-  }, AppService],
+    useClass: HttpExceptionsFilter
+  }, AppService]
 })
-export class AppModule {}
+export class AppModule {
+}
