@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../domain/user.entity';
+import { User, UserDocument } from '../domain/user.entity';
 import { Model } from 'mongoose';
 import { QueryUsersType } from '../api/models/types/queryTypes';
 import { UserType } from '../api/models/types/userType';
@@ -8,7 +8,7 @@ import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
 
 @Injectable()
 export class UsersQueryRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {
   }
 
   async getUsers(param: QueryUsersType): Promise<ReturnViewModel<UserType[]>> {
@@ -72,10 +72,7 @@ export class UsersQueryRepository {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return {
-      ...user,
-      id: user.id.toString()
-    };
+    return user
 
   }
 }

@@ -13,7 +13,7 @@ import { UserViewModel } from './models/output/createdUser.output.model';
 import { Request } from 'express';
 import { UsersQueryRepository } from '../infrastructure/usersQuery.repository';
 import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
-import { UserType } from './models/types/userType';
+import { RegistrationUserType, UserType } from './models/types/userType';
 import { ParamType } from '../../1_commonTypes/paramType';
 
 @Controller('users')

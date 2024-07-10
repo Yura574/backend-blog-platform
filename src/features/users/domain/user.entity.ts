@@ -16,7 +16,7 @@ class EmailConfirmation {
 }
 
 
-@Schema({ timestamps: true })
+@Schema()
 export class User {
 
 

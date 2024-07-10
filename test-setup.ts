@@ -6,6 +6,22 @@ import { AppModule } from './src/app.module';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import request from 'supertest';
 
+export let testApp: INestApplication;
+export let testSetup: TestSetup;
+
+
+export const initializeTestSetup = async () => {
+  testSetup = new TestSetup();
+  testApp = await testSetup.init();
+};
+export const closeTest = async () => {
+  await testSetup.close();
+};
+
+export const clearDatabase = async () => {
+  await testSetup.clearDatabase();
+};
+
 export class TestSetup {
 
   public app: INestApplication;
@@ -14,20 +30,20 @@ export class TestSetup {
 
   async init() {
     this.mongod = await MongoMemoryServer.create();
-    const uri =   this.mongod.getUri();
+    const uri = this.mongod.getUri();
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         AppModule,
-        MongooseModule.forRoot(uri, { dbName: 'test-db' }),
-      ],
+        MongooseModule.forRoot(uri, { dbName: 'test-db' })
+      ]
     }).compile();
 
     this.app = moduleFixture.createNestApplication();
     await this.app.init();
 
     this.mongoConnection = moduleFixture.get<Connection>(getConnectionToken());
-    return this.app
+    return this.app;
   }
 
   async close() {
@@ -38,7 +54,14 @@ export class TestSetup {
   }
 
   async clearDatabase() {
-    await request(this.app.getHttpServer())
-      .delete('/testing/all-data')
+    await this.deleteAllData();
+  }
+
+  async deleteAllData() {
+    const collections = Object.keys(this.mongoConnection.collections);
+    for (const collectionName of collections) {
+      const collection = this.mongoConnection.collections[collectionName];
+      await collection.deleteMany({});
+    }
   }
 }
