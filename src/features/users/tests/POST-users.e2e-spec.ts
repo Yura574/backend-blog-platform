@@ -2,6 +2,10 @@ import { INestApplication } from '@nestjs/common';
 import { clearDatabase, closeTest, initializeTestSetup, testApp, TestSetup } from '../../../../test-setup';
 import { UsersTestManagers } from './testManagers/usersTestManagers';
 import { UserInputModel } from '../api/models/input/createUser.input.model';
+import { UsersRepository } from '../infrastructure/users.repository';
+import { UserDocument } from '../domain/user.entity';
+import { Model } from 'mongoose';
+import { UsersService } from '../application/users.service';
 
 
 describe('POST users', () => {
@@ -16,7 +20,8 @@ describe('POST users', () => {
 
   beforeEach(async () => await clearDatabase());
 
-
+  // const usersRepository = new UsersRepository(Model<UserDocument>)
+// const userService = new UsersService()
   it('user should be create', async () => {
     const dto: UserInputModel = {
       email: `email-test@gmail.com`,

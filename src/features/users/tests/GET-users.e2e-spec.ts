@@ -15,7 +15,7 @@ describe('AppController (e2e)', () => {
 
   afterAll(async () => await closeTest());
 
-  beforeEach(async () => await clearDatabase());
+  // beforeEach(async () => await clearDatabase());
 
   it('get all users', async () => {
     for (let i = 0; i < 5; i++) {

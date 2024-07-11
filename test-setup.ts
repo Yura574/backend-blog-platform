@@ -1,6 +1,6 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { INestApplication } from '@nestjs/common';
-import { Connection } from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './src/app.module';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
@@ -31,6 +31,8 @@ export class TestSetup {
   async init() {
     this.mongod = await MongoMemoryServer.create();
     const uri = this.mongod.getUri();
+    console.log(uri);
+    await mongoose.connect(uri)
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -54,14 +56,7 @@ export class TestSetup {
   }
 
   async clearDatabase() {
-    await this.deleteAllData();
-  }
-
-  async deleteAllData() {
-    const collections = Object.keys(this.mongoConnection.collections);
-    for (const collectionName of collections) {
-      const collection = this.mongoConnection.collections[collectionName];
-      await collection.deleteMany({});
-    }
+    await request(this.app.getHttpServer())
+      .delete('/testing/all-data');
   }
 }

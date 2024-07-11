@@ -22,6 +22,8 @@ import { AppService } from './app.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailService } from './features/auth/application/email.service';
+import * as process from 'node:process';
+import { appSettings } from './settings/appSettings';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -45,8 +47,15 @@ const postsProviders: Provider[] = [
       isGlobal: true
     }),
     MongooseModule.forRoot(
-      'mongodb+srv://yura5742248:unbiliever13@cluster0.mowhzah.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-      { dbName: 'blog-platform' }
+      appSettings.env.isTesting()
+          ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
+          : appSettings.api.MONGO_CONNECTION_URI,
+    //   process.env.MONGO_CONNECTION_URI || 'mongodb://0.0.0.0:27017/backhomework',
+    //   appSettings.env.isTesting()
+    //     ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
+    //     : appSettings.api.MONGO_CONNECTION_URI,
+    // ),
+      // { dbName: 'blog-platform' }
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
