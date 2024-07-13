@@ -1,5 +1,11 @@
+import * as process from 'node:process';
+
+process.env.ENV= 'TESTING'
+
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { INestApplication } from '@nestjs/common';
+
+
 import mongoose, { Connection } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './src/app.module';
@@ -31,13 +37,12 @@ export class TestSetup {
   async init() {
     this.mongod = await MongoMemoryServer.create();
     const uri = this.mongod.getUri();
-    console.log(uri);
     await mongoose.connect(uri)
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        AppModule,
-        MongooseModule.forRoot(uri, { dbName: 'test-db' })
+        MongooseModule.forRoot(uri, { dbName: 'test-db' }),
+        AppModule
       ]
     }).compile();
 

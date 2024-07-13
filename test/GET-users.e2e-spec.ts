@@ -1,8 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 import { UsersTestManagers } from './testManagers/usersTestManagers';
-import { UserInputModel } from '../api/models/input/createUser.input.model';
-import { testApp, initializeTestSetup, testSetup, closeTest, clearDatabase } from '../../../../test-setup';
+import { UserInputModel } from '../src/features/users/api/models/input/createUser.input.model';
+import { testApp, initializeTestSetup, testSetup, closeTest, clearDatabase } from '../test-setup';
 
 describe('AppController (e2e)', () => {
 
@@ -15,7 +15,7 @@ describe('AppController (e2e)', () => {
 
   afterAll(async () => await closeTest());
 
-  // beforeEach(async () => await clearDatabase());
+  beforeEach(async () => await clearDatabase());
 
   it('get all users', async () => {
     for (let i = 0; i < 5; i++) {

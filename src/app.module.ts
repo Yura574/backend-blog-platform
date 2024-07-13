@@ -24,6 +24,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailService } from './features/auth/application/email.service';
 import * as process from 'node:process';
 import { appSettings } from './settings/appSettings';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -46,14 +47,24 @@ const postsProviders: Provider[] = [
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    MongooseModule.forRoot(
-      appSettings.env.isTesting()
-          ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
-          : appSettings.api.MONGO_CONNECTION_URI,
+    MongooseModule.forRootAsync({
+      useFactory: async (configService: ConfigService)=> {
+        let uri = appSettings.api.MONGO_CONNECTION_URI
+        if(appSettings.env.isTesting()){
+          let mongo = await MongoMemoryServer.create();
+           uri = mongo.getUri();
+        }
+        return {uri}
+      }
+    }
+    // appSettings.env.isTesting()
+    //   ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
+    //   : appSettings.api.MONGO_CONNECTION_URI,
+
     //   process.env.MONGO_CONNECTION_URI || 'mongodb://0.0.0.0:27017/backhomework',
     //   appSettings.env.isTesting()
     //     ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
-    //     : appSettings.api.MONGO_CONNECTION_URI,
+    //      appSettings.api.MONGO_CONNECTION_URI,
     // ),
       // { dbName: 'blog-platform' }
     ),

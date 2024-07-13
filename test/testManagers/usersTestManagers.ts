@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { UserInputModel } from '../../api/models/input/createUser.input.model';
+import { UserInputModel } from '../../src/features/users/api/models/input/createUser.input.model';
 
 export class UsersTestManagers {
   constructor(protected app: INestApplication) {
