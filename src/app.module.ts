@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersRepository } from './features/users/infrastructure/users.repository';
 import { UsersService } from './features/users/application/users.service';
@@ -25,6 +25,11 @@ import { EmailService } from './features/auth/application/email.service';
 import * as process from 'node:process';
 import { appSettings } from './settings/appSettings';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { IpRestrictionMiddleware } from './infrastructure/middlewares/ipRestriction.middleware';
+import { AuthController } from './features/auth/api/models/auth.controller';
+import { AuthService } from './features/auth/application/auth.service';
+import { IpRestrictionService } from './features/ipRestriction/ipRestriction.service';
+import { IpRestrictionRepository } from './features/ipRestriction/ipRestriction.repository';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -48,24 +53,24 @@ const postsProviders: Provider[] = [
       isGlobal: true
     }),
     MongooseModule.forRootAsync({
-      useFactory: async (configService: ConfigService)=> {
-        let uri = appSettings.api.MONGO_CONNECTION_URI
-        if(appSettings.env.isTesting()){
-          let mongo = await MongoMemoryServer.create();
-           uri = mongo.getUri();
+        useFactory: async (configService: ConfigService) => {
+          let uri = appSettings.api.MONGO_CONNECTION_URI;
+          if (appSettings.env.isTesting()) {
+            let mongo = await MongoMemoryServer.create();
+            uri = mongo.getUri();
+          }
+          return { uri };
         }
-        return {uri}
       }
-    }
-    // appSettings.env.isTesting()
-    //   ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
-    //   : appSettings.api.MONGO_CONNECTION_URI,
+      // appSettings.env.isTesting()
+      //   ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
+      //   : appSettings.api.MONGO_CONNECTION_URI,
 
-    //   process.env.MONGO_CONNECTION_URI || 'mongodb://0.0.0.0:27017/backhomework',
-    //   appSettings.env.isTesting()
-    //     ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
-    //      appSettings.api.MONGO_CONNECTION_URI,
-    // ),
+      //   process.env.MONGO_CONNECTION_URI || 'mongodb://0.0.0.0:27017/backhomework',
+      //   appSettings.env.isTesting()
+      //     ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
+      //      appSettings.api.MONGO_CONNECTION_URI,
+      // ),
       // { dbName: 'blog-platform' }
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
@@ -81,17 +86,27 @@ const postsProviders: Provider[] = [
           auth: {
             user: 'yura5742248@gmail.com',
             pass: 'evgs shsm qmme vibh'
-          },
+          }
         }
       }),
       inject: [ConfigService]
     })
   ],
-  controllers: [UserController, BlogsController, PostController, AppController],
-  providers: [...usersProviders, ...blogsProviders, ...postsProviders, EmailService, {
-    provide: APP_FILTER,
-    useClass: HttpExceptionsFilter
-  }, AppService]
+  controllers: [UserController, BlogsController, PostController, AppController, AuthController],
+  providers: [...usersProviders,
+    ...blogsProviders,
+    ...postsProviders,
+    EmailService,
+    AuthService,
+     {
+      provide: APP_FILTER,
+      useClass: HttpExceptionsFilter
+    }, AppService]
 })
 export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(IpRestrictionMiddleware)
+      .forRoutes('auth');
+  }
 }

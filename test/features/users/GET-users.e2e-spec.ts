@@ -1,8 +1,8 @@
 import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
-import { UsersTestManagers } from './testManagers/usersTestManagers';
-import { UserInputModel } from '../src/features/users/api/models/input/createUser.input.model';
-import { testApp, initializeTestSetup, testSetup, closeTest, clearDatabase } from '../test-setup';
+import { UsersTestManagers } from '../../testManagers/usersTestManagers';
+import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
+import { testApp, initializeTestSetup, testSetup, closeTest, clearDatabase } from '../../../test-setup';
 
 describe('AppController (e2e)', () => {
 

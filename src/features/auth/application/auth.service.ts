@@ -24,6 +24,6 @@ export class AuthService {
     if (isUnique) throw new BadRequestException(isUnique);
 
     const user: RegistrationUserType = await newUser(login,email, password)
-    await this.userRepository.createUser(user)
+   return  await this.userRepository.createUser(user)
   }
 }

@@ -1,8 +1,8 @@
 import * as process from 'node:process';
 
-import { clearDatabase, closeTest, initializeTestSetup, testApp, TestSetup } from '../test-setup';
-import { UsersTestManagers } from './testManagers/usersTestManagers';
-import { UserInputModel } from '../src/features/users/api/models/input/createUser.input.model';
+import { clearDatabase, closeTest, initializeTestSetup, testApp, TestSetup } from '../../../test-setup';
+import { UsersTestManagers } from '../../testManagers/usersTestManagers';
+import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
 
 
 
