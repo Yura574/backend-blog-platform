@@ -62,16 +62,6 @@ const postsProviders: Provider[] = [
           return { uri };
         }
       }
-      // appSettings.env.isTesting()
-      //   ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
-      //   : appSettings.api.MONGO_CONNECTION_URI,
-
-      //   process.env.MONGO_CONNECTION_URI || 'mongodb://0.0.0.0:27017/backhomework',
-      //   appSettings.env.isTesting()
-      //     ? appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS
-      //      appSettings.api.MONGO_CONNECTION_URI,
-      // ),
-      // { dbName: 'blog-platform' }
     ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),

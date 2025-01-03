@@ -13,8 +13,8 @@ export class AuthController {
 
   @Post('registration')
   // @HttpCode(HttpStatus.CREATED)
-  async registration(@Body() body: UserInputModel) {
 
-   return  'await this.authService.registration(body)'
+  async registration(@Body() body: UserInputModel) {
+   return  await this.authService.registration(body)
   }
 }

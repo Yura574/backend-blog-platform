@@ -21,13 +21,14 @@ describe('test for POST auth', ()=> {
 
   it('registration user', async ()=> {
     const dto: UserInputModel = {
-      email: 'yura@gmail.com',
-      login: 'yura',
+      email: 'yura574@gmail.com',
+      login: 'yura22',
       password: '123456'
     }
     const result = await request(testApp.getHttpServer())
       .post('/auth/registration')
       .send(dto)
+      console.log(result.body);
   })
 
 })

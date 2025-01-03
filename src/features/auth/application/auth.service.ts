@@ -21,8 +21,8 @@ export class AuthService {
   async registration(data: UserInputModel){
     const {login, email, password} = data
     const isUnique: ErrorMessageType[] = await this.userRepository.uniqueUser(login, email);
-    if (isUnique) throw new BadRequestException(isUnique);
-
+    console.log('usniqw', isUnique);
+    if (isUnique.length > 0) throw new BadRequestException(isUnique);
     const user: RegistrationUserType = await newUser(login,email, password)
    return  await this.userRepository.createUser(user)
   }
