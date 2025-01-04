@@ -76,7 +76,7 @@ const postsProviders: Provider[] = [
           auth: {
             user: 'yura5742248@gmail.com',
             pass: 'evgs shsm qmme vibh'
-          }
+          },
         }
       }),
       inject: [ConfigService]

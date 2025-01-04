@@ -21,7 +21,7 @@ describe('test for POST auth', ()=> {
 
   it('registration user', async ()=> {
     const dto: UserInputModel = {
-      email: 'yura574@gmail.com',
+      email: 'yura5742248@gmail.com',
       login: 'yura22',
       password: '123456'
     }

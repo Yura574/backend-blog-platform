@@ -5,7 +5,7 @@ import { UserInputModel } from '../../users/api/models/input/createUser.input.mo
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { RegistrationUserType, UserType } from '../../users/api/models/types/userType';
-import uuid from 'uuid'
+import uuid, { v4 } from 'uuid';
 import { add } from 'date-fns';
 import bcrypt from 'bcrypt';
 import { newUser } from '../../../infrastructure/utils/newUser';
@@ -21,9 +21,13 @@ export class AuthService {
   async registration(data: UserInputModel){
     const {login, email, password} = data
     const isUnique: ErrorMessageType[] = await this.userRepository.uniqueUser(login, email);
-    console.log('usniqw', isUnique);
     if (isUnique.length > 0) throw new BadRequestException(isUnique);
+    const codeForConfirm = v4()
+   const sendEmail =  await this.emailService.sendMailConfirmation(email, codeForConfirm)
+    if(!sendEmail){
+     throw new BadRequestException('email not send');
+    }
     const user: RegistrationUserType = await newUser(login,email, password)
-   return  await this.userRepository.createUser(user)
+    return  await this.userRepository.createUser(user)
   }
 }

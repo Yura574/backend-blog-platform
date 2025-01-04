@@ -17,7 +17,7 @@ export class UsersRepository {
      const createdUser = await this.userModel.create(dto);
      const user = await createdUser.save();
      const { id, createdAt, email, login } = user;
-     return { id, login, email, createdAt };
+     return { id, login, email };
    } catch (err){
      throw new HttpException('Login or email already exist', HttpStatus.BAD_REQUEST)
    }
