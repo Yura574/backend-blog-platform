@@ -1,6 +1,7 @@
 import { BadRequestException, HttpException, INestApplication, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '../infrastructure/guards/auth.guard';
 import { ErrorMessageType, HttpExceptionsFilter } from '../infrastructure/exception-filters/exeptions';
+import { Request, Response } from 'express';
 
 const API_PREFIX = '/api';
 
@@ -9,6 +10,13 @@ export const applyAppSetting = (app: INestApplication) => {
   // app.use(Logge)
   // setSwagger(app)
   // app.useGlobalGuards(new AuthGuard())
+  // app.use((req:Request, res:Response, next) => {
+  //   res.status(404).json({
+  //     statusCode: 404,
+  //     message: 'Route not found',
+  //     path: req.originalUrl,
+  //   });
+  // });
   app.useGlobalPipes(new ValidationPipe({
     stopAtFirstError: true, exceptionFactory: (errors) => {
       const errorsMessages: ErrorMessageType[] = [];

@@ -30,6 +30,7 @@ import { AuthController } from './features/auth/api/models/auth.controller';
 import { AuthService } from './features/auth/application/auth.service';
 import { IpRestrictionService } from './features/ipRestriction/ipRestriction.service';
 import { IpRestrictionRepository } from './features/ipRestriction/ipRestriction.repository';
+import { FallbackController } from './fallback.controller';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -82,7 +83,7 @@ const postsProviders: Provider[] = [
       inject: [ConfigService]
     })
   ],
-  controllers: [UserController, BlogsController, PostController, AppController, AuthController],
+  controllers: [UserController, BlogsController, PostController, AppController, AuthController, FallbackController],
   providers: [...usersProviders,
     ...blogsProviders,
     ...postsProviders,
@@ -97,6 +98,6 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(IpRestrictionMiddleware)
-      .forRoutes('auth');
+      .forRoutes('auth')
   }
 }
