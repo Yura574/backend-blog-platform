@@ -18,7 +18,8 @@ export class UsersService {
     const {login, email, password} = dto
     const isUnique = await this.userRepository.uniqueUser(dto.login, dto.email);
     if (isUnique.length > 0) throw new BadRequestException(isUnique);
-    const user: RegistrationUserType = await newUser(login, email,password, true)
+    const user: RegistrationUserType = await newUser(login, email,password, )
+    console.log('user serv', user);
     const createdUser = await this.userRepository.createUser(user);
     return {
       status: ResultStatus.Success,

@@ -14,11 +14,16 @@ export class UsersRepository {
   async createUser(dto: RegistrationUserType): Promise<UserViewModel> {
 
    try{
+     // console.log('dto', dto);
+     console.log(dto);
      const createdUser = await this.userModel.create(dto);
+     console.log('created', createdUser);
      const user = await createdUser.save();
-     const { id, createdAt, email, login } = user;
+     console.log('user1', user);
+     const { id,  email, login } = user;
      return { id, login, email };
    } catch (err){
+     console.log(err);
      throw new HttpException('Login or email already exist', HttpStatus.BAD_REQUEST)
    }
   }
@@ -37,6 +42,17 @@ export class UsersRepository {
 
     return errors
   }
+
+  async findUser  (email: string){
+    const errors:ErrorMessageType[] = []
+    const userEmail = await this.userModel.findOne({email: {$regex: email}})
+    if (!userEmail) {
+      errors.push({field: 'email', message: 'email not found'})
+      return errors
+    }
+    console.log(userEmail);
+    return true
+}
 
   async deleteUser(id: string) {
     try{

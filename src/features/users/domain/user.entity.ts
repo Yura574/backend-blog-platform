@@ -3,23 +3,23 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
+
 @Schema()
-class EmailConfirmation {
+export class EmailConfirmation {
   @Prop({ required: true })
-  confirmationCode: string
+  confirmationCode: string;
 
   @Prop({ required: true })
-  expirationDate: string
+  expirationDate: string;
 
   @Prop({ required: true })
-  isConfirm: boolean
+  isConfirm: boolean;
 }
 
+export const EmailConfirmationSchema = SchemaFactory.createForClass(EmailConfirmation);
 
 @Schema()
 export class User {
-
-
   @Prop({ required: true, unique: true })
   login: string;
 
@@ -29,13 +29,11 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-
   @Prop()
   createdAt: string;
 
-  @Prop({type: EmailConfirmation})
-  emailConfirmation: EmailConfirmation
+  @Prop({ type: EmailConfirmationSchema }) // Используем сгенерированную схему
+  emailConfirmation: EmailConfirmation;
 }
-
 
 export const UserSchema = SchemaFactory.createForClass(User);

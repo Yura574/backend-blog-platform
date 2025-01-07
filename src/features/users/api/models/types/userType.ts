@@ -11,9 +11,9 @@ export type RegistrationUserType = {
   email: string;
   password: string
   createdAt: string;
-  confirmationCode: {
+  emailConfirmation: {
+    confirmationCode: string,
     expirationDate: string,
-    expirationCode: string,
     isConfirm: boolean
   }
 }

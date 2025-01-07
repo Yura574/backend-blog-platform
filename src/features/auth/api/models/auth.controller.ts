@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { UserInputModel } from '../../../users/api/models/input/createUser.input.model';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { AuthService } from '../../application/auth.service';
@@ -18,8 +18,11 @@ export class AuthController {
   }
 
   @Get('confirm-email')
-  async confirmEmail(@Param('code') code: string) {
-    console.log(code);
+  async confirmEmail(@Query('code') code: string) {
+    const [email, confirmCode] = code.split('_');
+    console.log(email, confirmCode);
+
+    await this.authService.confirmEmail(email, confirmCode)
     return "reer"
   }
 }

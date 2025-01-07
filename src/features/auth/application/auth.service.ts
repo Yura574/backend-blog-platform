@@ -9,12 +9,14 @@ import uuid, { v4 } from 'uuid';
 import { add } from 'date-fns';
 import bcrypt from 'bcrypt';
 import { newUser } from '../../../infrastructure/utils/newUser';
+import { ConfirmEmailType } from '../../blogs/api/model/types/confirmEmailType';
+import { UsersService } from '../../users/application/users.service';
 
 
 @Injectable()
 export class AuthService {
   constructor(private userRepository: UsersRepository,
-              // private userService
+              private userService: UsersService,
               private emailService: EmailService) {
   }
 
@@ -27,7 +29,15 @@ export class AuthService {
     if(!sendEmail){
      throw new BadRequestException('email not send');
     }
-    const user: RegistrationUserType = await newUser(login,email, password)
+    const user: RegistrationUserType = await newUser(login,email, password, codeForConfirm)
+    // console.log('user', user);
     return  await this.userRepository.createUser(user)
+  }
+
+  async confirmEmail (email: string, confirmCode: string){
+
+    const findUser = await this.userRepository.findUser(email)
+    console.log(findUser);
+    return true
   }
 }
