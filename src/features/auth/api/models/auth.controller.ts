@@ -1,8 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { UserInputModel } from '../../../users/api/models/input/createUser.input.model';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { AuthService } from '../../application/auth.service';
 import { ConfirmationCodeInputModel } from './input/confirmationCode.input.model';
+import { LoginInputModel } from './input/login.input.model';
+import { Request, Response } from 'express';
 
 
 @Controller('auth')
@@ -24,7 +26,17 @@ export class AuthController {
   }
 
   @Post('login')
-  async login (@Body() body:any){
+  async login(@Body() body: LoginInputModel,
+              @Res({ passthrough: true }) res: Response) {
+    const { loginOrEmail, password } = body;
+    const cookie = await this.authService.login(loginOrEmail, password);
 
+    const accessToken = {
+      "accessToken": cookie.accessCookie
+    }
+
+    res.cookie('refresh token', cookie.refreshCookie);
+
+    return accessToken;
   }
 }

@@ -1,3 +1,5 @@
+import { HydratedDocument, ObjectId } from 'mongoose';
+
 export type UserType = {
   id: string;
   login: string;
@@ -19,7 +21,7 @@ export type EmailConfirmationType = {
   expirationDate: Date,
   isConfirm: boolean
 }
-export type FindUserType = {
+export type FindUser  = {
   login: string;
   email: string;
   password: string
@@ -30,3 +32,4 @@ export type FindUserType = {
     isConfirm: boolean
   }
 }
+export type FindUserType = HydratedDocument<FindUser>

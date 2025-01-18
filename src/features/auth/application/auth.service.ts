@@ -1,5 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { AuthRepository } from '../infractructure/auth.repository';
+import { BadRequestException, ForbiddenException,  Injectable } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { UserInputModel } from '../../users/api/models/input/createUser.input.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
@@ -8,15 +7,13 @@ import {
   EmailConfirmationType,
   FindUserType,
   RegistrationUserType,
-  UserType
 } from '../../users/api/models/types/userType';
-import uuid, { v4 } from 'uuid';
+import  { v4 } from 'uuid';
 import { add } from 'date-fns';
 import bcrypt from 'bcrypt';
 import { newUser } from '../../../infrastructure/utils/newUser';
-import { ConfirmEmailType } from '../../blogs/api/model/types/confirmEmailType';
 import { UsersService } from '../../users/application/users.service';
-
+import jwt from 'jsonwebtoken'
 
 @Injectable()
 export class AuthService {
@@ -80,5 +77,40 @@ export class AuthService {
 
 
 
+  }
+
+  async login(loginOrEmail: string, password: string){
+    const user:FindUserType | null = await this.userRepository.findUser(loginOrEmail);
+    if (!user) {
+      throw new BadRequestException('If the password or login or email is wrong');
+    }
+    if (!user.emailConfirmation.isConfirm) {
+      throw new ForbiddenException('Confirmed our email')
+    }
+
+
+    const isCompare =  await  bcrypt.compare(password, user.password)
+
+    if(!isCompare){
+      throw new BadRequestException('password or login or email is wrong');
+    }
+
+    const accessPayload = {
+      userId: user._id.toString(),
+      login: user.login,
+    }
+    const refreshPayload = {
+      userId: user._id.toString(),
+      login: user.login,
+      deviceId: v4()
+    }
+    const cookies = {
+      accessCookie:jwt.sign(accessPayload, process.env.ACCESS_SECRET as string, {expiresIn: '10m'}),
+      refreshCookie: jwt.sign(accessPayload, process.env.REFRESH_SECRET as string, {expiresIn: '20m'}),
+
+    }
+
+
+return cookies
   }
 }

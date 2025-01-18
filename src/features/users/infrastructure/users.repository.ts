@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema } from 'mongoose';
-import { EmailConfirmation, User, UserDocument } from '../domain/user.entity';
+import { Model } from 'mongoose';
+import {  User, UserDocument } from '../domain/user.entity';
 import { UserViewModel } from '../api/models/output/createdUser.output.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
 import { EmailConfirmationType, FindUserType, RegistrationUserType } from '../api/models/types/userType';
@@ -39,22 +39,24 @@ export class UsersRepository {
     return errors;
   }
 
-  async findUser(email: string) {
+  async findUser(emailOrLogin: string) {
     const errors: ErrorMessageType[] = [];
-    const userEmail = await this.userModel.findOne({ email: { $regex: email } });
+    const userEmail = await this.userModel.findOne({
+      email: { $regex: emailOrLogin },
+      login: { $regex: emailOrLogin }
+    });
     if (!userEmail) {
-      errors.push({ field: 'email', message: 'email not found' });
+      errors.push({ field: 'loginOrEmail', message: 'login or email is wrong' });
     }
     if (errors.length > 0) {
       throw new BadRequestException(errors);
     }
-
     return userEmail;
   }
 
   async updateEmailConfirmationUser(email: string, emailConfirmation: EmailConfirmationType) {
     const user: FindUserType | null = await this.findUser(email);
-    return this.userModel.updateOne({ email: user?.email}, {
+    return this.userModel.updateOne({ email: user?.email }, {
       emailConfirmation: emailConfirmation
     });
   }
