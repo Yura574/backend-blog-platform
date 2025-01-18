@@ -11,9 +11,22 @@ export type RegistrationUserType = {
   email: string;
   password: string
   createdAt: string;
+  emailConfirmation: EmailConfirmationType
+}
+
+export type EmailConfirmationType = {
+  confirmationCode: string,
+  expirationDate: Date,
+  isConfirm: boolean
+}
+export type FindUserType = {
+  login: string;
+  email: string;
+  password: string
+  createdAt: string;
   emailConfirmation: {
     confirmationCode: string,
-    expirationDate: string,
+    expirationDate: Date,
     isConfirm: boolean
   }
 }

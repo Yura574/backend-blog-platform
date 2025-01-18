@@ -1,8 +1,8 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { UserInputModel } from '../../../users/api/models/input/createUser.input.model';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { AuthService } from '../../application/auth.service';
-import { ErrorMessageType } from '../../../../infrastructure/exception-filters/exeptions';
+import { ConfirmationCodeInputModel } from './input/confirmationCode.input.model';
 
 
 @Controller('auth')
@@ -14,15 +14,17 @@ export class AuthController {
   @Post('registration')
   @HttpCode(HttpStatus.CREATED)
   async registration(@Body() body: UserInputModel) {
-   return  await this.authService.registration(body)
+    return await this.authService.registration(body);
   }
 
-  @Get('confirm-email')
-  async confirmEmail(@Query('code') code: string) {
-    const [email, confirmCode] = code.split('_');
-    console.log(email, confirmCode);
+  @Post('registration-confirmation')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async confirmEmail(@Body() body: ConfirmationCodeInputModel) {
+    return await this.authService.confirmEmail(body.email, body.code);
+  }
 
-    await this.authService.confirmEmail(email, confirmCode)
-    return "reer"
+  @Post('login')
+  async login (@Body() body:any){
+
   }
 }

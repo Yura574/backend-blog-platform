@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 
 @Controller()
 export class FallbackController {
-  @All('*') // Перехватывает все маршруты, которые не обработаны
+  @All('*')
   handleFallback(@Req() req: Request, @Res() res: Response) {
     res.status(404).json({
       statusCode: 404,

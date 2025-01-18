@@ -10,7 +10,7 @@ export class EmailConfirmation {
   confirmationCode: string;
 
   @Prop({ required: true })
-  expirationDate: string;
+  expirationDate: Date;
 
   @Prop({ required: true })
   isConfirm: boolean;

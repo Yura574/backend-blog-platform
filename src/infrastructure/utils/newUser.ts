@@ -15,7 +15,7 @@ export const newUser = async (login: string, email: string, password: string, co
       confirmationCode: codeForConfirm,
       expirationDate: add(new Date(), {
         hours: 1, minutes: 10
-      }).toISOString(),
+      }),
       isConfirm
     }
   }
