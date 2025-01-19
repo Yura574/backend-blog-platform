@@ -26,4 +26,21 @@ export class EmailService {
     }
 
   }
+
+  async sendEmailForRecoveryPassword(email: string, recoveryCode: string){
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        from: 'yura5742248@gmail.com',
+        subject: 'Recovery password',
+        html: `<h1>Recovery code</h1>
+             <p>
+                 <div> ${recoveryCode}</div>
+             </p>`
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 }

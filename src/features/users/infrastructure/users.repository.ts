@@ -1,10 +1,10 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import {  User, UserDocument } from '../domain/user.entity';
+import { User, UserDocument } from '../domain/user.entity';
 import { UserViewModel } from '../api/models/output/createdUser.output.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
-import { EmailConfirmationType, FindUserType, RegistrationUserType } from '../api/models/types/userType';
+import { EmailConfirmationType, FindUserType, RegistrationUserType, UserType } from '../api/models/types/userType';
 
 @Injectable()
 export class UsersRepository {
@@ -41,9 +41,12 @@ export class UsersRepository {
 
   async findUser(emailOrLogin: string) {
     const errors: ErrorMessageType[] = [];
+
     const userEmail = await this.userModel.findOne({
-      email: { $regex: emailOrLogin },
-      login: { $regex: emailOrLogin }
+      $or: [
+        { login: { $regex: emailOrLogin } },
+        { email: { $regex: emailOrLogin } }
+      ]
     });
     if (!userEmail) {
       errors.push({ field: 'loginOrEmail', message: 'login or email is wrong' });
@@ -59,6 +62,10 @@ export class UsersRepository {
     return this.userModel.updateOne({ email: user?.email }, {
       emailConfirmation: emailConfirmation
     });
+  }
+
+  async updatePasswordUser(password: string, email: string) {
+    return this.userModel.updateOne({ email }, { password });
   }
 
   async deleteUser(id: string) {

@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, Provider } from '@nestjs/common';
+import { MiddlewareConsumer, Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersRepository } from './features/users/infrastructure/users.repository';
 import { UsersService } from './features/users/application/users.service';
@@ -22,15 +22,15 @@ import { AppService } from './app.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailService } from './features/auth/application/email.service';
-import * as process from 'node:process';
 import { appSettings } from './settings/appSettings';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { IpRestrictionMiddleware } from './infrastructure/middlewares/ipRestriction.middleware';
 import { AuthController } from './features/auth/api/models/auth.controller';
 import { AuthService } from './features/auth/application/auth.service';
-import { IpRestrictionService } from './features/ipRestriction/ipRestriction.service';
-import { IpRestrictionRepository } from './features/ipRestriction/ipRestriction.repository';
 import { FallbackController } from './fallback.controller';
+import { RecoveryPassword, RecoveryPasswordSchema } from './entity/recoveryPassword.entity';
+import { RecoveryPasswordService } from './features/auth/application/recoveryPassword.service';
+import { RecoveryPasswordRepository } from './features/auth/infractructure/recoveryPassword.repository';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -47,6 +47,10 @@ const postsProviders: Provider[] = [
   PostService,
   PostQueryRepository
 ];
+const recoveryPasswordProviders: Provider[] = [
+  RecoveryPasswordService,
+  RecoveryPasswordRepository,
+];
 
 @Module({
   imports: [
@@ -56,6 +60,7 @@ const postsProviders: Provider[] = [
     MongooseModule.forRootAsync({
         useFactory: async (configService: ConfigService) => {
           let uri = appSettings.api.MONGO_CONNECTION_URI;
+          console.log('uri', uri);
           if (appSettings.env.isTesting()) {
             let mongo = await MongoMemoryServer.create();
             uri = mongo.getUri();
@@ -67,6 +72,7 @@ const postsProviders: Provider[] = [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+    MongooseModule.forFeature([{ name: RecoveryPassword.name, schema: RecoveryPasswordSchema }]),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -88,6 +94,7 @@ const postsProviders: Provider[] = [
     ...blogsProviders,
     ...postsProviders,
     EmailService,
+    ...recoveryPasswordProviders,
     AuthService,
      {
       provide: APP_FILTER,

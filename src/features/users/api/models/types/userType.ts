@@ -7,6 +7,12 @@ export type UserType = {
   createdAt: string;
 };
 
+export type UpdateUserType = {
+  id: string;
+  login: string;
+  email: string;
+}
+
 
 export type RegistrationUserType = {
   login: string;

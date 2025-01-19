@@ -2,8 +2,8 @@ import { IsString, Length, Matches } from 'class-validator';
 
 
 export class LoginInputModel {
-  @IsString()
-  @Matches(/^[^\[\]\(\)]*$/, {message: 'prohibited simbol [, ], (, )'})
+  // @IsString()
+  // @Matches(/^[^\[\]\(\)]*$/, {message: 'prohibited simbol [, ], (, )'})
   loginOrEmail: string
   @IsString()
   @Length(6, 20, {

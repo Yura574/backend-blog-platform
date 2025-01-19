@@ -2,7 +2,6 @@ import { clearDatabase, closeTest, initializeTestSetup, testApp, TestSetup } fro
 import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
 import request from 'supertest';
-import { HttpStatus } from '@nestjs/common';
 
 
 describe('test for POST auth', ()=> {

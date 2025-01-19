@@ -39,7 +39,13 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       }
       console.log(errorsResponse);
       response.status(status).json(errorsResponse);
-    } else {
+    }
+    else if(status === HttpStatus.FORBIDDEN){
+
+      const responseBody: any = exception.getResponse();
+
+      response.status(status).json(responseBody);
+    }else {
       response.sendStatus(status)
         .json({
           statusCode: status,

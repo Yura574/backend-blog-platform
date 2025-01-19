@@ -5,6 +5,10 @@ import { AuthService } from '../../application/auth.service';
 import { ConfirmationCodeInputModel } from './input/confirmationCode.input.model';
 import { LoginInputModel } from './input/login.input.model';
 import { Request, Response } from 'express';
+import { RecoveryPasswordInputModel } from './input/recoveryPassword.input.model';
+import { NewPasswordInputModel } from './input/newPassword.input.model';
+import jwt from 'jsonwebtoken'
+
 
 
 @Controller('auth')
@@ -25,18 +29,40 @@ export class AuthController {
     return await this.authService.confirmEmail(body.email, body.code);
   }
 
+
   @Post('login')
   async login(@Body() body: LoginInputModel,
               @Res({ passthrough: true }) res: Response) {
     const { loginOrEmail, password } = body;
+    console.log(loginOrEmail);
     const cookie = await this.authService.login(loginOrEmail, password);
 
     const accessToken = {
-      "accessToken": cookie.accessCookie
-    }
+      'accessToken': cookie.accessCookie
+    };
+
 
     res.cookie('refresh token', cookie.refreshCookie);
 
     return accessToken;
+  }
+
+  @Post('recovery-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async recoveryPassword(@Body() body: RecoveryPasswordInputModel) {
+    return await this.authService.recoveryPassword(body.email);
+  }
+
+  @Post('new-password')
+  async newPassword(@Body() body: NewPasswordInputModel,
+                    @Req() req: Request) {
+    const token  = req.cookies['refresh token']
+    const decodeToken = jwt.decode(token)
+    return await this.authService.newPassword(body, decodeToken.email);
+  }
+
+  @Post('registration-email-resending')
+  async resendingEmail(@Body() body: any){
+
   }
 }

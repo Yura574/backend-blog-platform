@@ -60,6 +60,7 @@ class APISettings {
       envVariables.MONGO_CONNECTION_URI_FOR_TESTS ?? 'mongodb://localhost/test';
   }
 
+
   private getNumberOrDefault(value: string, defaultValue: number): number {
     const parsedValue = Number(value);
 
@@ -79,4 +80,5 @@ const env = new EnvironmentSettings(
 );
 
 const api = new APISettings(process.env);
+console.log('env', env);
 export const appSettings = new AppSettings(env, api);
