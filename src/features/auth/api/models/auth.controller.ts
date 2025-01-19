@@ -7,8 +7,8 @@ import { LoginInputModel } from './input/login.input.model';
 import { Request, Response } from 'express';
 import { RecoveryPasswordInputModel } from './input/recoveryPassword.input.model';
 import { NewPasswordInputModel } from './input/newPassword.input.model';
-import jwt from 'jsonwebtoken'
-
+import jwt from 'jsonwebtoken';
+import { ResendingEmailInputModel } from './input/resendingEmail.input.model';
 
 
 @Controller('auth')
@@ -56,13 +56,13 @@ export class AuthController {
   @Post('new-password')
   async newPassword(@Body() body: NewPasswordInputModel,
                     @Req() req: Request) {
-    const token  = req.cookies['refresh token']
-    const decodeToken = jwt.decode(token)
+    const token = req.cookies['refresh token'];
+    const decodeToken = jwt.decode(token);
     return await this.authService.newPassword(body, decodeToken.email);
   }
 
   @Post('registration-email-resending')
-  async resendingEmail(@Body() body: any){
-
+  async resendingEmail(@Body() body: ResendingEmailInputModel) {
+    return await this.authService.resendingEmail(body.email);
   }
 }

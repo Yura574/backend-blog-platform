@@ -136,18 +136,37 @@ export class AuthService {
 
   async newPassword(data: NewPasswordType, email: string) {
     const { newPassword, recoveryCode } = data;
-    const recoveryPassword:RecoveryPasswordDocType | null = await this.recoveryPasswordService.getUserRecoveryPassword(recoveryCode)
-    if(!recoveryPassword){
+    const recoveryPassword: RecoveryPasswordDocType | null = await this.recoveryPasswordService.getUserRecoveryPassword(recoveryCode);
+    if (!recoveryPassword) {
       throw new BadRequestException('recovery code not found');
     }
     // const getCode = await this.recoveryPasswordService.getUserRecoveryPassword()
-    if(new Date() > recoveryPassword.expirationDate){
-      throw new BadRequestException('The recovery code has expired')
+    if (new Date() > recoveryPassword.expirationDate) {
+      throw new BadRequestException('The recovery code has expired');
     }
 
-const hash = await hashPassword(newPassword)
+    const hash = await hashPassword(newPassword);
+    await this.recoveryPasswordService.deleteUserRecoveryPassword(recoveryCode);
 
-    return await this.userRepository.updatePasswordUser(hash, email)
+    return await this.userRepository.updatePasswordUser(hash, email);
+  }
 
+  async resendingEmail(email: string) {
+    const user = await this.userRepository.findUser(email)
+    if(user && user.emailConfirmation.isConfirm){
+      throw new BadRequestException('email already confirm')
+    }
+    const recoveryCode = v4();
+    const isRecoveryCode = await this.recoveryPasswordService.getUserRecoveryPasswordByEmail(email)
+    if(isRecoveryCode){
+      await this.recoveryPasswordService.deleteUserRecoveryPassword(isRecoveryCode.recoveryCode)
+    }
+    try {
+      await this.emailService.sendEmailForRecoveryPassword(email, recoveryCode);
+      await this.recoveryPasswordService.addUserRecoveryPassword(email, recoveryCode)
+      return
+    } catch (err){
+      console.log(err);
+    }
   }
 }

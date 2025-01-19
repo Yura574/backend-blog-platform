@@ -24,8 +24,12 @@ export class RecoveryPasswordRepository {
     return this.recoveryPasswordModel.findOne({ recoveryCode });
   }
 
-  async deleteUserRecoveryPassword(email: string) {
-    return this.recoveryPasswordModel.deleteOne({ email });
+  async getUserRecoveryPasswordByEmail(email: string) {
+    return this.recoveryPasswordModel.findOne({ email });
+  }
+
+  async deleteUserRecoveryPassword(recoveryCode: string) {
+    return this.recoveryPasswordModel.deleteOne({ recoveryCode });
   }
 
 

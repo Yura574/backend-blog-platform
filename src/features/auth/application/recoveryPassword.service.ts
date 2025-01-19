@@ -21,11 +21,13 @@ export class RecoveryPasswordService {
 
   async getUserRecoveryPassword(recoveryCode: string) {
     return await this.recoveryPasswordRepository.getUserRecoveryPassword(recoveryCode)
+  }
 
+  async getUserRecoveryPasswordByEmail(email: string) {
+    return await this.recoveryPasswordRepository.getUserRecoveryPasswordByEmail(email)
   }
 
   async deleteUserRecoveryPassword(recoveryCode: string) {
     return await this.recoveryPasswordRepository.deleteUserRecoveryPassword(recoveryCode)
-
   }
 }
