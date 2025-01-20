@@ -45,6 +45,12 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       const responseBody: any = exception.getResponse();
 
       response.status(status).json(responseBody);
+    }
+    else if(status === HttpStatus.UNAUTHORIZED){
+
+      const responseBody: any = exception.getResponse();
+
+      response.status(status).json(responseBody);
     }else {
       response.sendStatus(status)
         .json({
