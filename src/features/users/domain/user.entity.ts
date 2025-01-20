@@ -6,7 +6,7 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class EmailConfirmation {
-  @Prop({ required: true })
+  @Prop()
   confirmationCode: string;
 
   @Prop({ required: true })

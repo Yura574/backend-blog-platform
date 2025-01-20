@@ -51,6 +51,12 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       const responseBody: any = exception.getResponse();
 
       response.status(status).json(responseBody);
+    }
+    else if(status === HttpStatus.NOT_FOUND){
+
+      const responseBody: any = exception.getResponse();
+
+      response.status(status).json(responseBody);
     }else {
       response.sendStatus(status)
         .json({

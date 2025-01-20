@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { UserInputModel } from '../api/models/input/createUser.input.model';
 import {
@@ -18,7 +18,7 @@ export class UsersService {
     const {login, email, password} = dto
     const isUnique = await this.userRepository.uniqueUser(dto.login, dto.email);
     if (isUnique.length > 0) throw new BadRequestException(isUnique);
-    const user: RegistrationUserType = await newUser(login, email,password, )
+    const user: RegistrationUserType = await newUser(login, email,password, '', true)
     console.log('user serv', user);
     const createdUser = await this.userRepository.createUser(user);
     return {
@@ -29,6 +29,11 @@ export class UsersService {
 
 
   async deleteUser(id: string) {
-    return await this.userRepository.deleteUser(id);
+    const result  =  await this.userRepository.deleteUser(id);
+    if (!result.deletedCount) {
+      throw new NotFoundException('User not found');
+
+    }
+    return true
   }
 }

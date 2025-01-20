@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { UserInputModel } from '../../users/api/models/input/createUser.input.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
@@ -87,7 +87,7 @@ export class AuthService {
   async login(loginOrEmail: string, password: string) {
     const user: FindUserType | null = await this.userRepository.findUser(loginOrEmail);
     if (!user) {
-      throw new BadRequestException('If the password or login or email is wrong');
+      throw new UnauthorizedException('If the password or login or email is wrong');
     }
     if (!user.emailConfirmation.isConfirm) {
       throw new ForbiddenException('Confirmed our email');
@@ -95,7 +95,7 @@ export class AuthService {
     const isCompare = await bcrypt.compare(password, user.password);
 
     if (!isCompare) {
-      throw new BadRequestException('password or login or email is wrong');
+      throw new UnauthorizedException('password or login or email is wrong');
     }
     console.log(user);
 

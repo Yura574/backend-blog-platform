@@ -10,6 +10,6 @@ export class UserViewModel {
   @IsEmail()
   email: string;
 
-  // @IsString()
-  // createdAt: string;
+  @IsString()
+  createdAt: string;
 }

@@ -1,10 +1,10 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../domain/user.entity';
 import { UserViewModel } from '../api/models/output/createdUser.output.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
-import { EmailConfirmationType, FindUserType, RegistrationUserType, UserType } from '../api/models/types/userType';
+import { EmailConfirmationType, FindUserType, RegistrationUserType } from '../api/models/types/userType';
 
 @Injectable()
 export class UsersRepository {
@@ -16,8 +16,9 @@ export class UsersRepository {
     try {
       const createdUser = await this.userModel.create(dto);
       const user = await createdUser.save();
-      const { id, email, login } = user;
-      return { id, login, email };
+      const { id, email, login, createdAt } = user;
+      console.log(user);
+      return { id, login, email , createdAt};
     } catch (err) {
       console.log(err);
       throw new HttpException('Login or email already exist', HttpStatus.BAD_REQUEST);
@@ -40,21 +41,13 @@ export class UsersRepository {
   }
 
   async findUser(emailOrLogin: string) {
-    const errors: ErrorMessageType[] = [];
 
-    const userEmail = await this.userModel.findOne({
+    return  this.userModel.findOne({
       $or: [
         { login: { $regex: emailOrLogin } },
         { email: { $regex: emailOrLogin } }
       ]
     });
-    if (!userEmail) {
-      errors.push({ field: 'loginOrEmail', message: 'login or email is wrong' });
-    }
-    if (errors.length > 0) {
-      throw new BadRequestException(errors);
-    }
-    return userEmail;
   }
 
   async updateEmailConfirmationUser(email: string, emailConfirmation: EmailConfirmationType) {
@@ -69,16 +62,17 @@ export class UsersRepository {
   }
 
   async deleteUser(id: string) {
-    try {
-      const result = await this.userModel.deleteOne({ _id: id });
-      if (!result.deletedCount) {
-        throw new NotFoundException('User not found');
-
-      }
-      return result;
-    } catch (err) {
-      throw new NotFoundException();
-    }
+    // try {
+      return   this.userModel.deleteOne({ _id: id });
+    // console.log(result);
+    //   if (!result.deletedCount) {
+    //     throw new NotFoundException('User not found');
+    //
+    //   }
+      // return result;
+    // } catch (err) {
+    //   throw new NotFoundException('User not found');
+    // }
   }
 
 }

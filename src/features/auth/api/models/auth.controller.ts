@@ -35,10 +35,10 @@ export class AuthController {
 
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginInputModel,
               @Res({ passthrough: true }) res: Response) {
     const { loginOrEmail, password } = body;
-    console.log(loginOrEmail);
     const cookie = await this.authService.login(loginOrEmail, password);
 
     const accessToken = {
