@@ -22,7 +22,7 @@ export class AuthController {
   }
 
   @Post('registration')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() body: UserInputModel) {
     return await this.authService.registration(body);
   }
@@ -72,6 +72,7 @@ export class AuthController {
   }
 
   @Post('registration-email-resending')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async resendingEmail(@Body() body: ResendingEmailInputModel) {
     return await this.authService.resendingEmail(body.email);
   }
