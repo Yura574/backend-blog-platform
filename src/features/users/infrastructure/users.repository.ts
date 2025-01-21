@@ -62,17 +62,7 @@ export class UsersRepository {
   }
 
   async deleteUser(id: string) {
-    // try {
       return   this.userModel.deleteOne({ _id: id });
-    // console.log(result);
-    //   if (!result.deletedCount) {
-    //     throw new NotFoundException('User not found');
-    //
-    //   }
-      // return result;
-    // } catch (err) {
-    //   throw new NotFoundException('User not found');
-    // }
   }
 
 }

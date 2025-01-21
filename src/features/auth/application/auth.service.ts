@@ -45,10 +45,10 @@ export class AuthService {
 
     const findUser: FindUserType | null = await this.userRepository.findUser(email);
     if (!findUser) {
-      return false;
+      throw new BadRequestException({ message: 'invalid code', field: "code" })
     }
     if (findUser && findUser.emailConfirmation.isConfirm) {
-      return 'email already confirmed';
+      throw new BadRequestException({ message: 'email already confirmed', field: "code" });
     }
     const { expirationDate, confirmationCode } = findUser.emailConfirmation;
     if (new Date() > expirationDate) {
@@ -68,10 +68,10 @@ export class AuthService {
       await this.userRepository.updateEmailConfirmationUser(email, emailConfirmation);
       throw new BadRequestException('The confirmation code has been sent again, check your email and try again');
     }
-
+    console.log(code);
     if (confirmationCode !== code) {
 
-      throw new BadRequestException('incorrect confirmation code ');
+      throw new BadRequestException({ message: 'invalid code', field: "code" });
     }
     const emailConfirmation: EmailConfirmationType = {
       confirmationCode: findUser.emailConfirmation.confirmationCode,
@@ -152,8 +152,9 @@ export class AuthService {
 
   async resendingEmail(email: string) {
     const user = await this.userRepository.findUser(email)
+    if(!user) throw new BadRequestException([{ message: 'user not found', field: 'email' }])
     if(user && user.emailConfirmation.isConfirm){
-      throw new BadRequestException('email already confirm')
+      throw new BadRequestException({ message: 'email already confirm', field: "email" })
     }
     const recoveryCode = v4();
     const isRecoveryCode = await this.recoveryPasswordService.getUserRecoveryPasswordByEmail(email)
