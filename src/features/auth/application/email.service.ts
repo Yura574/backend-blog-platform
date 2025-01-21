@@ -27,7 +27,8 @@ export class EmailService {
 
   }
 
-  async sendEmailForRecoveryPassword(email: string, recoveryCode: string){
+  async sendEmailForRecoveryPassword(email: string, code: string){
+    const recoveryCode = email + '_' + code;
     try {
       await this.mailerService.sendMail({
         to: email,

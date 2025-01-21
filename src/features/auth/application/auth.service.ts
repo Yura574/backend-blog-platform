@@ -6,19 +6,17 @@ import { UsersRepository } from '../../users/infrastructure/users.repository';
 import {
   EmailConfirmationType,
   FindUserType,
-  RegistrationUserType, UpdateUserType
+  RegistrationUserType,
 } from '../../users/api/models/types/userType';
 import { v4 } from 'uuid';
 import { add } from 'date-fns';
 import bcrypt from 'bcrypt';
 import { newUser } from '../../../infrastructure/utils/newUser';
-import { UsersService } from '../../users/application/users.service';
 import jwt from 'jsonwebtoken';
 import { RecoveryPasswordService } from './recoveryPassword.service';
 import {
   NewPasswordType,
   RecoveryPasswordDocType,
-  RecoveryPasswordType
 } from '../api/models/types/recoveryPasswordType';
 import { hashPassword } from '../../../infrastructure/utils/hashPassword';
 
@@ -42,7 +40,8 @@ export class AuthService {
     return await this.userRepository.createUser(user);
   }
 
-  async confirmEmail(email: string, code: string) {
+  async confirmEmail( confirmCode: string) {
+    const [email, code] = confirmCode.split('_')
 
     const findUser: FindUserType | null = await this.userRepository.findUser(email);
     if (!findUser) {

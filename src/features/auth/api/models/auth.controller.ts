@@ -17,8 +17,7 @@ import { RequestType } from '../../../1_commonTypes/commonTypes';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService,
-              private userRepository: UsersRepository) {
+  constructor(private authService: AuthService) {
   }
 
   @Post('registration')
@@ -30,7 +29,7 @@ export class AuthController {
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmEmail(@Body() body: ConfirmationCodeInputModel) {
-    return await this.authService.confirmEmail(body.email, body.code);
+    return await this.authService.confirmEmail(body.code);
   }
 
 
