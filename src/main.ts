@@ -9,9 +9,7 @@ async function bootstrap() {
   app.enableCors();
   // app.useGlobalPipes(new ValidationPipe());
   applyAppSetting(app);
-  await app.listen(appSettings.api.APP_PORT
-
-    , () => {
+  await app.listen(appSettings.api.APP_PORT, () => {
     console.log('App starting listen port: ', appSettings.api.APP_PORT);
     console.log('ENV: ', appSettings.env.getEnv());
   });
