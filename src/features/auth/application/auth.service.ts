@@ -157,14 +157,17 @@ export class AuthService {
     if(user.emailConfirmation.isConfirm){
       throw new BadRequestException([{ message: 'email already confirm', field: "email" }])
     }
-    const codeForConfirm = v4();
+    console.log('user 1', user);
+    const confirmationCode = v4();
     const isRecoveryCode = await this.recoveryPasswordService.getUserRecoveryPasswordByEmail(email)
     if(isRecoveryCode){
       await this.recoveryPasswordService.deleteUserRecoveryPassword(isRecoveryCode.recoveryCode)
     }
     try {
-      await this.emailService.sendMailConfirmation(email, codeForConfirm);
-      await this.recoveryPasswordService.addUserRecoveryPassword(email, codeForConfirm)
+      await this.emailService.sendMailConfirmation(email, confirmationCode);
+      const expirationDate = add(new Date(), {hours: 1})
+      await this.userRepository.updateEmailConfirmationUser(email, {confirmationCode, expirationDate, isConfirm: false})
+      // await this.recoveryPasswordService.addUserRecoveryPassword(email, codeForConfirm)
       return
     } catch (err){
       console.log(err);
