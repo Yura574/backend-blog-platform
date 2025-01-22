@@ -16,7 +16,7 @@ export class EmailService {
         subject: 'Confirmation email',
         html: `<h1>Thanks for your registration</h1>
              <p>To finish registration please follow the link below:
-                 <a href='http://localhost:5000/auth/confirm-email?code=${confirmCode}'>complete registration</a>
+                 <a href='https://some-front.com/confirm-registration?code=${confirmCode}'>complete registration</a>
                  <div>Our code ${confirmCode}</div>
              </p>`
       });
