@@ -22,19 +22,20 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest<RequestType<any, any, any>>();
     const auth = request.headers['authorization'];
-
     if (!auth) throw new UnauthorizedException();
     const [type, token] = auth.split(' ');
-    if (type !== 'Basic' && type !== 'Bearer') throw new UnauthorizedException();
 
+    if (type !== 'Basic' && type !== 'Bearer') throw new UnauthorizedException();
     if (type === 'Bearer') {
       try {
         const payload = jwt.verify(token, process.env.REFRESH_SECRET as string) as JwtPayloadType;
+        console.log(payload);
         request.user = {
           userId: payload.userId,
           login: payload.login,
           email: payload.email
         };
+        return true
       } catch (err) {
         throw new UnauthorizedException()
       }
