@@ -43,7 +43,8 @@ export class AuthService {
   async confirmEmail( confirmCode: string) {
     const [email, code] = confirmCode.split('_')
 
-    const findUser: FindUserType | null = await this.userRepository.findUser(email);
+
+    const findUser: FindUserType | null = await this.userRepository.findUser(email.trim());
     if (!findUser) {
       throw new BadRequestException({ message: 'invalid code', field: "code" })
     }
@@ -53,7 +54,7 @@ export class AuthService {
     const { expirationDate, confirmationCode } = findUser.emailConfirmation;
     if (new Date() > expirationDate) {
       const codeForConfirm = v4();
-      const sendEmail = await this.emailService.sendMailConfirmation(email, codeForConfirm);
+      const sendEmail = await this.emailService.sendMailConfirmation(email.trim(), codeForConfirm);
       if (!sendEmail) {
         throw new BadRequestException('email not send');
       }
@@ -65,11 +66,11 @@ export class AuthService {
         isConfirm: false
       };
       console.log('ererre');
-      await this.userRepository.updateEmailConfirmationUser(email, emailConfirmation);
+      await this.userRepository.updateEmailConfirmationUser(email.trim(), emailConfirmation);
       throw new BadRequestException('The confirmation code has been sent again, check your email and try again');
     }
     console.log(code);
-    if (confirmationCode !== code) {
+    if (confirmationCode !== code.trim()) {
 
       throw new BadRequestException({ message: 'invalid code', field: "code" });
     }
@@ -153,8 +154,8 @@ export class AuthService {
   async resendingEmail(email: string) {
     const user = await this.userRepository.findUser(email)
     if(!user) throw new BadRequestException([{ message: 'user not found', field: 'email' }])
-    if(user && user.emailConfirmation.isConfirm){
-      throw new BadRequestException({ message: 'email already confirm', field: "email" })
+    if(user.emailConfirmation.isConfirm){
+      throw new BadRequestException([{ message: 'email already confirm', field: "email" }])
     }
     const codeForConfirm = v4();
     const isRecoveryCode = await this.recoveryPasswordService.getUserRecoveryPasswordByEmail(email)
