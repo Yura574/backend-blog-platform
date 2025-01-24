@@ -144,7 +144,6 @@ export class AuthService {
     if (new Date() > recoveryPassword.expirationDate) {
       throw new BadRequestException('The recovery code has expired');
     }
-
     const hash = await hashPassword(newPassword);
     await this.recoveryPasswordService.deleteUserRecoveryPassword(recoveryCode);
 
