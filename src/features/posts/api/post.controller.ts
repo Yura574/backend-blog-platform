@@ -8,7 +8,7 @@ import {
   NotFoundException,
   Param,
   Post, Put,
-  Req
+  Req, UseGuards
 } from '@nestjs/common';
 import { PostService } from '../application/postService';
 import { CreatePostInputModel } from './model/input/createPost.input.model';
@@ -17,6 +17,7 @@ import { QueryPostsType } from './types/queryPostsType';
 import { PostQueryRepository } from '../infrastructure/postQueryRepository';
 import { ParamType } from '../../1_commonTypes/paramType';
 import { UpdatePostInputModel } from './model/input/updatePost.input.model';
+import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
 
 
 @Controller('posts')
@@ -25,6 +26,7 @@ export class PostController {
               private  postQueryRepository: PostQueryRepository) {
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   async createPost(@Body() dto: CreatePostInputModel) {
     return await this.postService.createPost(dto);
@@ -42,6 +44,7 @@ export class PostController {
     return await this.postQueryRepository.getPostById(param.id)
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
 async updatePost(@Param() param: ParamType,
@@ -49,6 +52,7 @@ async updatePost(@Param() param: ParamType,
 return await this.postService.updatePost(param.id, body)
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param() param: ParamType) {

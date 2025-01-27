@@ -97,7 +97,6 @@ export class AuthService {
     if (!isCompare) {
       throw new UnauthorizedException('password or login or email is wrong');
     }
-    console.log(user);
 
     const accessPayload = {
       userId: user._id.toString(),

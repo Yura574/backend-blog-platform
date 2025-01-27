@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogInputModel } from './model/input/createBlog.input.model';
 import { BlogsQueryRepository } from '../infrastructure/blogsQuery.repository';
@@ -12,6 +12,7 @@ import { CreatePostInputModel } from '../../posts/api/model/input/createPost.inp
 import { PostViewModel } from '../../posts/api/model/output/postViewModel';
 import { QueryPostsType } from '../../posts/api/types/queryPostsType';
 import { PostService } from '../../posts/application/postService';
+import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
 
 
 @Controller('blogs')
@@ -21,6 +22,7 @@ export class BlogsController {
               private postService: PostService) {
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   async createBlog(@Body() dto: CreateBlogInputModel) {
     return await this.blogsService.createBlog(dto);
@@ -36,6 +38,7 @@ export class BlogsController {
     return this.blogsQueryRepository.getBlogById(param.id);
   }
 
+  @UseGuards(AuthGuard)
   @Post(':id/posts')
   async createPost(@Param() param: ParamType,
                    @Body() dto: CreatePostInputModel) {
@@ -55,6 +58,7 @@ return await this.blogsService.getPosts(param.id, req.query)
 
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param() param: ParamType,
@@ -62,6 +66,7 @@ return await this.blogsService.getPosts(param.id, req.query)
     return await this.blogsService.updateBlog(param.id, dto);
   }
 
+  @UseGuards(AuthGuard) 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param() param: ParamType) {

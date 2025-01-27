@@ -41,7 +41,7 @@ export class AuthController {
     const cookie = await this.authService.login(loginOrEmail, password);
 
     const accessToken = {
-      'accessToken': cookie.accessCookie
+      accessToken: cookie.accessCookie
     };
 
 
