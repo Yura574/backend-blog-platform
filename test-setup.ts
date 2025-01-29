@@ -14,7 +14,7 @@ import request from 'supertest';
 import { EmailService } from './src/features/auth/application/email.service';
 import { EmailServiceMock } from './test/mockServices/emailServiceMock';
 import {  RegistrationMockUseCase } from './test/mockServices/registrationMockService';
-import { RegistrationUseCase } from './src/features/auth/infractructure/registration.use-case';
+import { RegistrationUseCase } from './src/features/auth/application/registration.use-case';
 import { UsersRepository } from './src/features/users/infrastructure/users.repository';
 
 export let testApp: INestApplication;

@@ -13,7 +13,9 @@ import { AuthGuard } from '../../../../infrastructure/guards/auth.guard';
 import * as process from 'node:process';
 import { JwtPayloadType } from '../../../1_commonTypes/jwtPayloadType';
 import { RequestType } from '../../../1_commonTypes/commonTypes';
-import { RegistrationUseCase } from '../../infractructure/registration.use-case';
+import { RegistrationUseCase } from '../../application/registration.use-case';
+import { EmailConfirmation } from '../../../users/domain/user.entity';
+import { EmailConfirmationUseCase } from '../../application/emailConfirmation.use-case';
 
 export enum authEndPoints {
   BASE = 'auth',
@@ -32,7 +34,8 @@ export enum authEndPoints {
 @Controller(authEndPoints.BASE)
 export class AuthController {
   constructor(private authService: AuthService,
-              private registrationUseCase: RegistrationUseCase
+              private registrationUseCase: RegistrationUseCase,
+              private emailConfirmation: EmailConfirmationUseCase,
   ) {
   }
 
@@ -45,7 +48,7 @@ export class AuthController {
   @Post(authEndPoints.REGISTRATION_CONFIRMATION)
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmEmail(@Body() body: ConfirmationCodeInputModel) {
-    return await this.authService.confirmEmail(body.code);
+    return await this.emailConfirmation.execute(body.code);
   }
 
 

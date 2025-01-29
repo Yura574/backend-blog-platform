@@ -31,7 +31,8 @@ import { FallbackController } from './fallback.controller';
 import { RecoveryPassword, RecoveryPasswordSchema } from './entity/recoveryPassword.entity';
 import { RecoveryPasswordService } from './features/auth/application/recoveryPassword.service';
 import { RecoveryPasswordRepository } from './features/auth/infractructure/recoveryPassword.repository';
-import { RegistrationUseCase } from './features/auth/infractructure/registration.use-case';
+import { RegistrationUseCase } from './features/auth/application/registration.use-case';
+import { EmailConfirmationUseCase } from './features/auth/application/emailConfirmation.use-case';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -54,7 +55,8 @@ const recoveryPasswordProviders: Provider[] = [
 ];
 
 const authUseCases: Provider[] = [
-  RegistrationUseCase
+  RegistrationUseCase,
+  EmailConfirmationUseCase
 ];
 
 @Module({
@@ -100,7 +102,7 @@ const authUseCases: Provider[] = [
     EmailService,
     ...recoveryPasswordProviders,
     AuthService,
-   RegistrationUseCase,
+    ...authUseCases,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionsFilter

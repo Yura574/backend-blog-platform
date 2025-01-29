@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { RegistrationUserType } from '../../users/api/models/types/userType';
 import { newUser } from '../../../infrastructure/utils/newUser';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
-import { EmailService } from '../application/email.service';
+import { EmailService } from './email.service';
 
 
 @Injectable()
