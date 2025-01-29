@@ -5,15 +5,16 @@ import { testApp } from '../../test-setup';
 import { LoginInputModel } from '../../src/features/auth/api/models/input/login.input.model';
 import { authEndPoints } from '../../src/features/auth/api/models/auth.controller';
 import { ConfirmationCodeInputModel } from '../../src/features/auth/api/models/input/confirmationCode.input.model';
+import { RecoveryPasswordInputModel } from '../../src/features/auth/api/models/input/recoveryPassword.input.model';
 
-
+export const emailTest = 'test123@gmail.com'
 export class AuthTestManager {
   constructor(protected app: INestApplication) {
   }
 
   async registrationTestUser( statusCode = HttpStatus.NO_CONTENT){
     const dto: UserInputModel = {
-      email: 'test123@gmail.com',
+      email: emailTest,
       login: 'test',
       password: '123456'
     };
@@ -54,5 +55,12 @@ export class AuthTestManager {
       .send(data)
       .expect(statusCode);
     return res.body;
+  }
+
+  async recoveryPassword(email: RecoveryPasswordInputModel, statusCode = HttpStatus.NO_CONTENT){
+    const res = await request(testApp.getHttpServer())
+      .post(`/${authEndPoints.BASE}/${authEndPoints.RECOVERY_PASSWORD}`)
+      .send(email)
+      .expect(statusCode);
   }
 }

@@ -82,54 +82,54 @@ export class AuthService {
   //
   // }
 
-  async login(loginOrEmail: string, password: string) {
-    const user: FindUserType | null = await this.userRepository.findUser(loginOrEmail);
-    if (!user) {
-      throw new UnauthorizedException('If the password or login or email is wrong');
-    }
-    if (!user.emailConfirmation.isConfirm) {
-      throw new ForbiddenException('Confirmed our email');
-    }
-    const isCompare = await bcrypt.compare(password, user.password);
+  // async login(loginOrEmail: string, password: string) {
+  //   const user: FindUserType | null = await this.userRepository.findUser(loginOrEmail);
+  //   if (!user) {
+  //     throw new UnauthorizedException('If the password or login or email is wrong');
+  //   }
+  //   if (!user.emailConfirmation.isConfirm) {
+  //     throw new ForbiddenException('Confirmed our email');
+  //   }
+  //   const isCompare = await bcrypt.compare(password, user.password);
+  //
+  //   if (!isCompare) {
+  //     throw new UnauthorizedException('password or login or email is wrong');
+  //   }
+  //
+  //   const accessPayload = {
+  //     userId: user._id.toString(),
+  //     email: user.email,
+  //     login: user.login,
+  //     deviceId: v4()
+  //   };
+  //   const refreshPayload = {
+  //     userId: user._id.toString(),
+  //     email: user.email,
+  //     login: user.login,
+  //     deviceId: v4()
+  //   };
+  //   const cookies = {
+  //     accessCookie: jwt.sign(accessPayload, process.env.ACCESS_SECRET as string, { expiresIn: '10m' }),
+  //     refreshCookie: jwt.sign(refreshPayload, process.env.REFRESH_SECRET as string, { expiresIn: '20m'  }, )
+  //
+  //   };
+  //
+  //
+  //   return cookies;
+  // }
 
-    if (!isCompare) {
-      throw new UnauthorizedException('password or login or email is wrong');
-    }
-
-    const accessPayload = {
-      userId: user._id.toString(),
-      email: user.email,
-      login: user.login,
-      deviceId: v4()
-    };
-    const refreshPayload = {
-      userId: user._id.toString(),
-      email: user.email,
-      login: user.login,
-      deviceId: v4()
-    };
-    const cookies = {
-      accessCookie: jwt.sign(accessPayload, process.env.ACCESS_SECRET as string, { expiresIn: '10m' }),
-      refreshCookie: jwt.sign(refreshPayload, process.env.REFRESH_SECRET as string, { expiresIn: '20m'  }, )
-
-    };
-
-
-    return cookies;
-  }
-
-  async recoveryPassword(email: string) {
-    const user = await this.userRepository.findUser(email);
-    if (!user) throw new BadRequestException('email not found');
-    try {
-      const recoveryCode = v4();
-      await this.emailService.sendEmailForRecoveryPassword(email, recoveryCode);
-      await this.recoveryPasswordService.addUserRecoveryPassword(email, recoveryCode);
-      return true;
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  // async recoveryPassword(email: string) {
+  //   const user = await this.userRepository.findUser(email);
+  //   if (!user) throw new BadRequestException('email not found');
+  //   try {
+  //     const recoveryCode = v4();
+  //     await this.emailService.sendEmailForRecoveryPassword(email, recoveryCode);
+  //     await this.recoveryPasswordService.addUserRecoveryPassword(email, recoveryCode);
+  //     return true;
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
 
   async newPassword(data: NewPasswordType, email: string) {
     const { newPassword, recoveryCode } = data;

@@ -33,11 +33,13 @@ import { RecoveryPasswordService } from './features/auth/application/recoveryPas
 import { RecoveryPasswordRepository } from './features/auth/infractructure/recoveryPassword.repository';
 import { RegistrationUseCase } from './features/auth/application/registration.use-case';
 import { EmailConfirmationUseCase } from './features/auth/application/emailConfirmation.use-case';
+import { LoginUseCase } from './features/auth/application/login.use-case';
+import { RecoveryPasswordUseCase } from './features/auth/application/recoveryPassword.use-case';
 
 const usersProviders: Provider[] = [
   UsersRepository,
   UsersService,
-  UsersQueryRepository
+  UsersQueryRepository,
 ];
 const blogsProviders: Provider[] = [
   BlogsRepository,
@@ -56,7 +58,9 @@ const recoveryPasswordProviders: Provider[] = [
 
 const authUseCases: Provider[] = [
   RegistrationUseCase,
-  EmailConfirmationUseCase
+  EmailConfirmationUseCase,
+  LoginUseCase,
+  RecoveryPasswordUseCase,
 ];
 
 @Module({

@@ -16,6 +16,8 @@ import { EmailServiceMock } from './test/mockServices/emailServiceMock';
 import {  RegistrationMockUseCase } from './test/mockServices/registrationMockService';
 import { RegistrationUseCase } from './src/features/auth/application/registration.use-case';
 import { UsersRepository } from './src/features/users/infrastructure/users.repository';
+import { RecoveryPasswordUseCase } from './src/features/auth/application/recoveryPassword.use-case';
+import { RecoveryPasswordMockUseCase } from './test/mockServices/recoveryPasswordMockUseCase';
 
 export let testApp: INestApplication;
 export let testSetup: TestSetup;
@@ -54,6 +56,8 @@ export class TestSetup {
       .useClass(EmailServiceMock)
       .overrideProvider(RegistrationUseCase)
       .useClass(RegistrationMockUseCase)
+      .overrideProvider(RecoveryPasswordUseCase)
+      .useClass(RecoveryPasswordMockUseCase)
       .compile();
 
     this.app = moduleFixture.createNestApplication();

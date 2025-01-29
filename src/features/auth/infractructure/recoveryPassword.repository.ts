@@ -13,8 +13,7 @@ export class RecoveryPasswordRepository {
   async addUserRecoveryPassword(data: RecoveryPasswordType) {
     try {
       const recoveryPassword = await this.recoveryPasswordModel.create(data);
-     const pass =  await recoveryPassword.save();
-      console.log('pass',pass);
+      await recoveryPassword.save();
     } catch (err) {
       console.log('validation error', err);
     }

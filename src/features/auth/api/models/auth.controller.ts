@@ -1,6 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { UserInputModel } from '../../../users/api/models/input/createUser.input.model';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { AuthService } from '../../application/auth.service';
 import { ConfirmationCodeInputModel } from './input/confirmationCode.input.model';
 import { LoginInputModel } from './input/login.input.model';
@@ -14,8 +13,9 @@ import * as process from 'node:process';
 import { JwtPayloadType } from '../../../1_commonTypes/jwtPayloadType';
 import { RequestType } from '../../../1_commonTypes/commonTypes';
 import { RegistrationUseCase } from '../../application/registration.use-case';
-import { EmailConfirmation } from '../../../users/domain/user.entity';
 import { EmailConfirmationUseCase } from '../../application/emailConfirmation.use-case';
+import { LoginUseCase } from '../../application/login.use-case';
+import { RecoveryPasswordUseCase } from '../../application/recoveryPassword.use-case';
 
 export enum authEndPoints {
   BASE = 'auth',
@@ -36,6 +36,8 @@ export class AuthController {
   constructor(private authService: AuthService,
               private registrationUseCase: RegistrationUseCase,
               private emailConfirmation: EmailConfirmationUseCase,
+              private loginUseCase: LoginUseCase,
+              private recoveryPasswordUseCase: RecoveryPasswordUseCase,
   ) {
   }
 
@@ -57,22 +59,19 @@ export class AuthController {
   async login(@Body() body: LoginInputModel,
               @Res({ passthrough: true }) res: Response) {
     const { loginOrEmail, password } = body;
-    const cookie = await this.authService.login(loginOrEmail, password);
+    const cookie = await this.loginUseCase.execute(loginOrEmail, password);
 
     const accessToken = {
       accessToken: cookie.accessCookie
     };
-
-
     res.cookie('refresh token', cookie.refreshCookie);
-
     return accessToken;
   }
 
   @Post(authEndPoints.RECOVERY_PASSWORD)
   @HttpCode(HttpStatus.NO_CONTENT)
   async recoveryPassword(@Body() body: RecoveryPasswordInputModel) {
-    return await this.authService.recoveryPassword(body.email);
+    return await this.recoveryPasswordUseCase.execute(body.email);
   }
 
   @Post(authEndPoints.NEW_PASSWORD)

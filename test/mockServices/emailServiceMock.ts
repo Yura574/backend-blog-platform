@@ -10,4 +10,7 @@ export class EmailServiceMock {
     // await Promise.resolve()
     return true
   }
+  async sendEmailForRecoveryPassword(email: string, code: string){
+
+  }
 }
