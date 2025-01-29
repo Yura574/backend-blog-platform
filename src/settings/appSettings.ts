@@ -80,5 +80,4 @@ const env = new EnvironmentSettings(
 );
 
 const api = new APISettings(process.env);
-console.log('env', env);
 export const appSettings = new AppSettings(env, api);

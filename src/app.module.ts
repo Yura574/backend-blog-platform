@@ -31,6 +31,7 @@ import { FallbackController } from './fallback.controller';
 import { RecoveryPassword, RecoveryPasswordSchema } from './entity/recoveryPassword.entity';
 import { RecoveryPasswordService } from './features/auth/application/recoveryPassword.service';
 import { RecoveryPasswordRepository } from './features/auth/infractructure/recoveryPassword.repository';
+import { RegistrationUseCase } from './features/auth/infractructure/registration.use-case';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -49,7 +50,11 @@ const postsProviders: Provider[] = [
 ];
 const recoveryPasswordProviders: Provider[] = [
   RecoveryPasswordService,
-  RecoveryPasswordRepository,
+  RecoveryPasswordRepository
+];
+
+const authUseCases: Provider[] = [
+  RegistrationUseCase
 ];
 
 @Module({
@@ -60,7 +65,6 @@ const recoveryPasswordProviders: Provider[] = [
     MongooseModule.forRootAsync({
         useFactory: async (configService: ConfigService) => {
           let uri = appSettings.api.MONGO_CONNECTION_URI;
-          console.log('uri', uri);
           if (appSettings.env.isTesting()) {
             let mongo = await MongoMemoryServer.create();
             uri = mongo.getUri();
@@ -83,7 +87,7 @@ const recoveryPasswordProviders: Provider[] = [
           auth: {
             user: 'yura5742248@gmail.com',
             pass: 'evgs shsm qmme vibh'
-          },
+          }
         }
       }),
       inject: [ConfigService]
@@ -96,7 +100,8 @@ const recoveryPasswordProviders: Provider[] = [
     EmailService,
     ...recoveryPasswordProviders,
     AuthService,
-     {
+   RegistrationUseCase,
+    {
       provide: APP_FILTER,
       useClass: HttpExceptionsFilter
     }, AppService]
@@ -105,6 +110,6 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(IpRestrictionMiddleware)
-      .forRoutes('auth')
+      .forRoutes('auth');
   }
 }

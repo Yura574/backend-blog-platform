@@ -25,6 +25,7 @@
     "@nestjs/common": "8.0.0",
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "8.0.0",
+    "@nestjs/cqrs": "^11.0.0",
     "@nestjs/mongoose": "^10.0.6",
     "@nestjs/platform-express": "^8.0.0",
     "@types/bcrypt": "^5.0.2",

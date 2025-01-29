@@ -2,32 +2,57 @@ import { clearDatabase, closeTest, initializeTestSetup, testApp, TestSetup } fro
 import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
 import request from 'supertest';
+import { AuthTestManager } from '../../testManagers/authTestManager';
 
 
-describe('test for POST auth', ()=> {
-  let userTestManager: UsersTestManagers
-  beforeAll(async ()=>{
-    await initializeTestSetup()
-    userTestManager = new UsersTestManagers(testApp)
-  })
-  beforeEach(async ()=> {
-   await clearDatabase()
-  })
+describe('test for POST auth', () => {
+  let userTestManager: UsersTestManagers;
+  let authTestManager: AuthTestManager;
+  beforeAll(async () => {
+    await initializeTestSetup();
+    userTestManager = new UsersTestManagers(testApp);
+    authTestManager = new AuthTestManager(testApp);
+    await authTestManager.registrationTestUser()
+  });
+  beforeEach(async () => {
+    await clearDatabase();
+  });
 
-  afterAll(async ()=> {
-    await closeTest()
-  })
+  afterAll(async () => {
+    await closeTest();
+  });
 
-  it('registration user', async ()=> {
+  it('registration user', async () => {
     const dto: UserInputModel = {
       email: 'yura5742248@gmail.com',
-      login: 'yura22',
+      login: 'yura',
       password: '123456'
-    }
-    const result = await request(testApp.getHttpServer())
-      .post('/auth/registration')
-      .send(dto)
-      console.log(result.body);
-  })
+    };
+    const registr = await authTestManager.registrationUser(dto);
+    console.log(registr);
 
-})
+    const code = 'yura5742248@gmail.com_code for test';
+
+   await authTestManager.confirmRegistration({ code });
+
+    const login = await authTestManager.login({
+      loginOrEmail: dto.login,
+      password: dto.password
+    });
+    console.log(login);
+    expect(login.accessToken).toBeDefined();
+  });
+  it('login', async () => {
+
+  });
+
+  it('should send access token for login', async () => {
+    await authTestManager.registrationTestUser()
+    const login = await authTestManager.login({loginOrEmail: 'test', password: '123456'});
+    expect(login.accessToken).toBeDefined();
+  });
+  it('should confirm registration ', async () => {
+
+  });
+
+});

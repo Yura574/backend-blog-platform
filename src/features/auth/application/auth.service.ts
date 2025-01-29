@@ -27,22 +27,22 @@ export class AuthService {
               private emailService: EmailService) {
   }
 
-  async registration(data: UserInputModel) {
-    const { login, email, password } = data;
-    const isUnique: ErrorMessageType[] = await this.userRepository.uniqueUser(login, email);
-    if (isUnique.length > 0) throw new BadRequestException(isUnique);
-    const codeForConfirm = v4();
-    const sendEmail = await this.emailService.sendMailConfirmation(email, codeForConfirm);
-    if (!sendEmail) {
-      throw new BadRequestException('email not send');
-    }
-    const user: RegistrationUserType = await newUser(login, email, password, codeForConfirm);
-    return await this.userRepository.createUser(user);
-  }
+  // async registration(data: UserInputModel) {
+  //   const { login, email, password } = data;
+  //   const isUnique: ErrorMessageType[] = await this.userRepository.uniqueUser(login, email);
+  //   console.log(isUnique);
+  //   if (isUnique.length > 0) throw new BadRequestException(isUnique);
+  //   const codeForConfirm = v4();
+  //   const sendEmail = await this.emailService.sendMailConfirmation(email, codeForConfirm);
+  //   if (!sendEmail) {
+  //     throw new BadRequestException('email not send');
+  //   }
+  //   const user: RegistrationUserType = await newUser(login, email, password, codeForConfirm);
+  //   return await this.userRepository.createUser(user);
+  // }
 
   async confirmEmail( confirmCode: string) {
     const [email, code] = confirmCode.split('_')
-
 
     const findUser: FindUserType | null = await this.userRepository.findUser(email.trim());
     if (!findUser) {
@@ -65,11 +65,9 @@ export class AuthService {
         }),
         isConfirm: false
       };
-      console.log('ererre');
       await this.userRepository.updateEmailConfirmationUser(email.trim(), emailConfirmation);
       throw new BadRequestException('The confirmation code has been sent again, check your email and try again');
     }
-    console.log(code);
     if (confirmationCode !== code.trim()) {
 
       throw new BadRequestException({ message: 'invalid code', field: "code" });
@@ -112,7 +110,7 @@ export class AuthService {
     };
     const cookies = {
       accessCookie: jwt.sign(accessPayload, process.env.ACCESS_SECRET as string, { expiresIn: '10m' }),
-      refreshCookie: jwt.sign(refreshPayload, process.env.REFRESH_SECRET as string, { expiresIn: '20m' })
+      refreshCookie: jwt.sign(refreshPayload, process.env.REFRESH_SECRET as string, { expiresIn: '20m'  }, )
 
     };
 

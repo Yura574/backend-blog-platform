@@ -11,6 +11,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './src/app.module';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import request from 'supertest';
+import { EmailService } from './src/features/auth/application/email.service';
+import { EmailServiceMock } from './test/mockServices/emailServiceMock';
+import {  RegistrationMockUseCase } from './test/mockServices/registrationMockService';
+import { RegistrationUseCase } from './src/features/auth/infractructure/registration.use-case';
+import { UsersRepository } from './src/features/users/infrastructure/users.repository';
 
 export let testApp: INestApplication;
 export let testSetup: TestSetup;
@@ -44,10 +49,16 @@ export class TestSetup {
         MongooseModule.forRoot(uri, { dbName: 'test-db' }),
         AppModule
       ]
-    }).compile();
+    })
+      .overrideProvider(EmailService)
+      .useClass(EmailServiceMock)
+      .overrideProvider(RegistrationUseCase)
+      .useClass(RegistrationMockUseCase)
+      .compile();
 
     this.app = moduleFixture.createNestApplication();
     await this.app.init();
+
 
     this.mongoConnection = moduleFixture.get<Connection>(getConnectionToken());
     return this.app;

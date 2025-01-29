@@ -13,27 +13,43 @@ import { AuthGuard } from '../../../../infrastructure/guards/auth.guard';
 import * as process from 'node:process';
 import { JwtPayloadType } from '../../../1_commonTypes/jwtPayloadType';
 import { RequestType } from '../../../1_commonTypes/commonTypes';
+import { RegistrationUseCase } from '../../infractructure/registration.use-case';
+
+export enum authEndPoints {
+  BASE = 'auth',
+  REGISTRATION = 'registration',
+  REGISTRATION_CONFIRMATION = 'registration-confirmation',
+  LOGIN = 'login',
+  REFRESH_TOKEN = '',
+  RECOVERY_PASSWORD = 'recovery-password',
+  NEW_PASSWORD = 'new-password',
+  REGISTRATION_EMAIL_RESENDING = 'registration-email-resending',
+  ME = 'me'
+
+}
 
 
-@Controller('auth')
+@Controller(authEndPoints.BASE)
 export class AuthController {
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService,
+              private registrationUseCase: RegistrationUseCase
+  ) {
   }
 
-  @Post('registration')
+  @Post(authEndPoints.REGISTRATION)
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() body: UserInputModel) {
-    return await this.authService.registration(body);
+    return await this.registrationUseCase.execution(body);
   }
 
-  @Post('registration-confirmation')
+  @Post(authEndPoints.REGISTRATION_CONFIRMATION)
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmEmail(@Body() body: ConfirmationCodeInputModel) {
     return await this.authService.confirmEmail(body.code);
   }
 
 
-  @Post('login')
+  @Post(authEndPoints.LOGIN)
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginInputModel,
               @Res({ passthrough: true }) res: Response) {
@@ -50,13 +66,13 @@ export class AuthController {
     return accessToken;
   }
 
-  @Post('recovery-password')
+  @Post(authEndPoints.RECOVERY_PASSWORD)
   @HttpCode(HttpStatus.NO_CONTENT)
   async recoveryPassword(@Body() body: RecoveryPasswordInputModel) {
     return await this.authService.recoveryPassword(body.email);
   }
 
-  @Post('new-password')
+  @Post(authEndPoints.NEW_PASSWORD)
   async newPassword(@Body() body: NewPasswordInputModel,
                     @Req() req: RequestType<{}, {}, {}>
   ) {
@@ -70,14 +86,14 @@ export class AuthController {
     return await this.authService.newPassword(body, 'decodeToken');
   }
 
-  @Post('registration-email-resending')
+  @Post(authEndPoints.REGISTRATION_EMAIL_RESENDING)
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendingEmail(@Body() body: ResendingEmailInputModel) {
     return await this.authService.resendingEmail(body.email);
   }
 
   @UseGuards(AuthGuard)
-  @Get('me')
+  @Get(authEndPoints.ME)
   async me(@Req() req: Request) {
     console.log(12);
     const cookie = req.cookies['refresh token'];

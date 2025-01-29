@@ -20,7 +20,7 @@ export const EmailConfirmationSchema = SchemaFactory.createForClass(EmailConfirm
 
 @Schema()
 export class User {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true,  })
   login: string;
 
   @Prop({ required: true })
@@ -32,7 +32,7 @@ export class User {
   @Prop()
   createdAt: string;
 
-  @Prop({ type: EmailConfirmationSchema }) // Используем сгенерированную схему
+  @Prop({ type: EmailConfirmationSchema, _id: false})
   emailConfirmation: EmailConfirmation;
 }
 
