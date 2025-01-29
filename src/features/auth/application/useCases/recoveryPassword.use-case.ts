@@ -1,12 +1,8 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { EmailConfirmationType, FindUserType } from '../../users/api/models/types/userType';
+import { BadRequestException,  Injectable,  } from '@nestjs/common';
 import { v4 } from 'uuid';
-import { add } from 'date-fns';
-import { EmailService } from './email.service';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { RecoveryPasswordService } from './recoveryPassword.service';
+import { EmailService } from '../email.service';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { RecoveryPasswordService } from '../recoveryPassword.service';
 
 
 @Injectable()

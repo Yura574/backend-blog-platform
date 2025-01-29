@@ -1,12 +1,11 @@
-import { UserInputModel } from '../../users/api/models/input/createUser.input.model';
-import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { EmailService } from '../email.service';
+import { UserInputModel } from '../../../users/api/models/input/createUser.input.model';
+import { ErrorMessageType } from '../../../../infrastructure/exception-filters/exeptions';
 import { v4 } from 'uuid';
-import { RegistrationUserType } from '../../users/api/models/types/userType';
-import { newUser } from '../../../infrastructure/utils/newUser';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
-import { EmailService } from './email.service';
-
+import { newUser } from '../../../../infrastructure/utils/newUser';
+import { RegistrationUserType } from '../../../users/api/models/types/userType';
 
 @Injectable()
 export class RegistrationUseCase {

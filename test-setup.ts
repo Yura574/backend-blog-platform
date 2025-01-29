@@ -14,9 +14,9 @@ import request from 'supertest';
 import { EmailService } from './src/features/auth/application/email.service';
 import { EmailServiceMock } from './test/mockServices/emailServiceMock';
 import {  RegistrationMockUseCase } from './test/mockServices/registrationMockService';
-import { RegistrationUseCase } from './src/features/auth/application/registration.use-case';
+import { RegistrationUseCase } from './src/features/auth/application/useCases/registration.use-case';
 import { UsersRepository } from './src/features/users/infrastructure/users.repository';
-import { RecoveryPasswordUseCase } from './src/features/auth/application/recoveryPassword.use-case';
+import { RecoveryPasswordUseCase } from './src/features/auth/application/useCases/recoveryPassword.use-case';
 import { RecoveryPasswordMockUseCase } from './test/mockServices/recoveryPasswordMockUseCase';
 
 export let testApp: INestApplication;

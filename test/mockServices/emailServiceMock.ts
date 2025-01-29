@@ -11,6 +11,6 @@ export class EmailServiceMock {
     return true
   }
   async sendEmailForRecoveryPassword(email: string, code: string){
-
+    return true
   }
 }

@@ -131,21 +131,21 @@ export class AuthService {
   //   }
   // }
 
-  async newPassword(data: NewPasswordType, email: string) {
-    const { newPassword, recoveryCode } = data;
-    const recoveryPassword: RecoveryPasswordDocType | null = await this.recoveryPasswordService.getUserRecoveryPassword(recoveryCode);
-    if (!recoveryPassword) {
-      throw new BadRequestException('recovery code not found');
-    }
-    // const getCode = await this.recoveryPasswordService.getUserRecoveryPassword()
-    if (new Date() > recoveryPassword.expirationDate) {
-      throw new BadRequestException('The recovery code has expired');
-    }
-    const hash = await hashPassword(newPassword);
-    await this.recoveryPasswordService.deleteUserRecoveryPassword(recoveryCode);
-
-    return await this.userRepository.updatePasswordUser(hash, email);
-  }
+  // async newPassword(data: NewPasswordType, email: string) {
+  //   const { newPassword, recoveryCode } = data;
+  //   const recoveryPassword: RecoveryPasswordDocType | null = await this.recoveryPasswordService.getUserRecoveryPassword(recoveryCode);
+  //   if (!recoveryPassword) {
+  //     throw new BadRequestException('recovery code not found');
+  //   }
+  //   // const getCode = await this.recoveryPasswordService.getUserRecoveryPassword()
+  //   if (new Date() > recoveryPassword.expirationDate) {
+  //     throw new BadRequestException('The recovery code has expired');
+  //   }
+  //   const hash = await hashPassword(newPassword);
+  //   await this.recoveryPasswordService.deleteUserRecoveryPassword(recoveryCode);
+  //
+  //   return await this.userRepository.updatePasswordUser(hash, email);
+  // }
 
   async resendingEmail(email: string) {
     const user = await this.userRepository.findUser(email)

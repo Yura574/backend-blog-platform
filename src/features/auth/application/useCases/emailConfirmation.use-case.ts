@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { EmailConfirmationType, FindUserType } from '../../users/api/models/types/userType';
 import { v4 } from 'uuid';
 import { add } from 'date-fns';
-import { EmailService } from './email.service';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { EmailService } from '../email.service';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { EmailConfirmationType, FindUserType } from '../../../users/api/models/types/userType';
 
 
 @Injectable()

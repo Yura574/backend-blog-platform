@@ -2,7 +2,7 @@ import { clearDatabase, closeTest, initializeTestSetup, testApp, TestSetup } fro
 import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
 import request from 'supertest';
-import { AuthTestManager, emailTest } from '../../testManagers/authTestManager';
+import { AuthTestManager, codeForTest, userTestData } from '../../testManagers/authTestManager';
 
 
 describe('test for POST auth', () => {
@@ -51,10 +51,15 @@ describe('test for POST auth', () => {
     const login = await authTestManager.login({loginOrEmail: 'test', password: '123456'});
     expect(login.accessToken).toBeDefined();
   });
-  it('recovery password', async () => {
+  it('recovery password and new password', async () => {
 
     await authTestManager.registrationTestUser()
-    await authTestManager.recoveryPassword({ email:emailTest })
+    await authTestManager.recoveryPassword({ email:userTestData.email })
+
+    await authTestManager.newPassword({newPassword:'654321', recoveryCode: codeForTest})
+    const login =  await authTestManager.login({loginOrEmail: userTestData.email, password: '654321'})
+    console.log(login);
+    expect(login.accessToken).toBeDefined()
   });
 
 });

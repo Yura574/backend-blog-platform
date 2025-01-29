@@ -31,10 +31,11 @@ import { FallbackController } from './fallback.controller';
 import { RecoveryPassword, RecoveryPasswordSchema } from './entity/recoveryPassword.entity';
 import { RecoveryPasswordService } from './features/auth/application/recoveryPassword.service';
 import { RecoveryPasswordRepository } from './features/auth/infractructure/recoveryPassword.repository';
-import { RegistrationUseCase } from './features/auth/application/registration.use-case';
-import { EmailConfirmationUseCase } from './features/auth/application/emailConfirmation.use-case';
-import { LoginUseCase } from './features/auth/application/login.use-case';
-import { RecoveryPasswordUseCase } from './features/auth/application/recoveryPassword.use-case';
+import { RecoveryPasswordUseCase } from './features/auth/application/useCases/recoveryPassword.use-case';
+import { LoginUseCase } from './features/auth/application/useCases/login.use-case';
+import { EmailConfirmationUseCase } from './features/auth/application/useCases/emailConfirmation.use-case';
+import { RegistrationUseCase } from './features/auth/application/useCases/registration.use-case';
+import { NewPasswordUseCase } from './features/auth/application/useCases/newPassword.use-case';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -61,6 +62,7 @@ const authUseCases: Provider[] = [
   EmailConfirmationUseCase,
   LoginUseCase,
   RecoveryPasswordUseCase,
+  NewPasswordUseCase,
 ];
 
 @Module({

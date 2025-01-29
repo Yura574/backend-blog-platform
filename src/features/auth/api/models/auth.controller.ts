@@ -12,10 +12,11 @@ import { AuthGuard } from '../../../../infrastructure/guards/auth.guard';
 import * as process from 'node:process';
 import { JwtPayloadType } from '../../../1_commonTypes/jwtPayloadType';
 import { RequestType } from '../../../1_commonTypes/commonTypes';
-import { RegistrationUseCase } from '../../application/registration.use-case';
-import { EmailConfirmationUseCase } from '../../application/emailConfirmation.use-case';
-import { LoginUseCase } from '../../application/login.use-case';
-import { RecoveryPasswordUseCase } from '../../application/recoveryPassword.use-case';
+import { RegistrationUseCase } from '../../application/useCases/registration.use-case';
+import { EmailConfirmationUseCase } from '../../application/useCases/emailConfirmation.use-case';
+import { LoginUseCase } from '../../application/useCases/login.use-case';
+import { RecoveryPasswordUseCase } from '../../application/useCases/recoveryPassword.use-case';
+import { NewPasswordUseCase } from '../../application/useCases/newPassword.use-case';
 
 export enum authEndPoints {
   BASE = 'auth',
@@ -38,6 +39,7 @@ export class AuthController {
               private emailConfirmation: EmailConfirmationUseCase,
               private loginUseCase: LoginUseCase,
               private recoveryPasswordUseCase: RecoveryPasswordUseCase,
+              private newPasswordUseCase: NewPasswordUseCase
   ) {
   }
 
@@ -75,17 +77,9 @@ export class AuthController {
   }
 
   @Post(authEndPoints.NEW_PASSWORD)
-  async newPassword(@Body() body: NewPasswordInputModel,
-                    @Req() req: RequestType<{}, {}, {}>
-  ) {
-    const token = req.cookies['refresh token'];
-    const decodeToken = jwt.verify(token, process.env.REFRESH_SECRET as string) as JwtPayloadType;
-    req.user = {
-      userId: decodeToken.userid,
-      login: decodeToken.login,
-      email: decodeToken.email
-    };
-    return await this.authService.newPassword(body, 'decodeToken');
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async newPassword(@Body() body: NewPasswordInputModel) {
+    return await this.newPasswordUseCase.execute(body);
   }
 
   @Post(authEndPoints.REGISTRATION_EMAIL_RESENDING)

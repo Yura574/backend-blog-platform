@@ -6,19 +6,25 @@ import { LoginInputModel } from '../../src/features/auth/api/models/input/login.
 import { authEndPoints } from '../../src/features/auth/api/models/auth.controller';
 import { ConfirmationCodeInputModel } from '../../src/features/auth/api/models/input/confirmationCode.input.model';
 import { RecoveryPasswordInputModel } from '../../src/features/auth/api/models/input/recoveryPassword.input.model';
+import { NewPasswordInputModel } from '../../src/features/auth/api/models/input/newPassword.input.model';
 
-export const emailTest = 'test123@gmail.com'
+export const userTestData={
+  email:'test123@gmail.com',
+  login: 'test',
+  password: '123456'
+}
+export  const codeForTest = 'test123@gmail.com_code for test';
 export class AuthTestManager {
   constructor(protected app: INestApplication) {
   }
 
   async registrationTestUser( statusCode = HttpStatus.NO_CONTENT){
     const dto: UserInputModel = {
-      email: emailTest,
-      login: 'test',
-      password: '123456'
+      email: userTestData.email,
+      login: userTestData.login,
+      password: userTestData.password
     };
-    const code = 'test123@gmail.com_code for test';
+
 
     await request(testApp.getHttpServer())
       .post(`/${authEndPoints.BASE}/${authEndPoints.REGISTRATION}`)
@@ -27,7 +33,7 @@ export class AuthTestManager {
 
      await request(testApp.getHttpServer(), )
       .post(`/auth/registration-confirmation`)
-      .send({ code })
+      .send({ code: codeForTest })
       .expect(statusCode);
 
   }
@@ -61,6 +67,13 @@ export class AuthTestManager {
     const res = await request(testApp.getHttpServer())
       .post(`/${authEndPoints.BASE}/${authEndPoints.RECOVERY_PASSWORD}`)
       .send(email)
+      .expect(statusCode);
+  }
+
+  async newPassword(data: NewPasswordInputModel, statusCode = HttpStatus.NO_CONTENT){
+    const res = await request(testApp.getHttpServer())
+      .post(`/${authEndPoints.BASE}/${authEndPoints.NEW_PASSWORD}`)
+      .send(data)
       .expect(statusCode);
   }
 }
