@@ -23,7 +23,7 @@ import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
 @Controller('posts')
 export class PostController {
   constructor(private postService: PostService,
-              private  postQueryRepository: PostQueryRepository) {
+              private postQueryRepository: PostQueryRepository) {
   }
 
   @UseGuards(AuthGuard)
@@ -33,29 +33,29 @@ export class PostController {
   }
 
   @Get()
-  async getPosts(@Req() req:RequestType<{}, {}, QueryPostsType>){
-    return await this.postQueryRepository.getPosts(req.query)
+  async getPosts(@Req() req: RequestType<{}, {}, QueryPostsType>) {
+    return await this.postQueryRepository.getPosts(req.query);
   }
 
   @Get(':id')
-  async getPostById(@Param() param: ParamType){
+  async getPostById(@Param() param: ParamType) {
     // if(!param.id) throw new NotFoundException({}, 'Blog not found')
     console.log('sd');
-    return await this.postQueryRepository.getPostById(param.id)
+    return await this.postQueryRepository.getPostById(param.id);
   }
 
   @UseGuards(AuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-async updatePost(@Param() param: ParamType,
-                 @Body() body: UpdatePostInputModel){
-return await this.postService.updatePost(param.id, body)
+  async updatePost(@Param() param: ParamType,
+                   @Body() body: UpdatePostInputModel) {
+    return await this.postService.updatePost(param.id, body);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param() param: ParamType) {
-    return await this.postService.deletePost(param.id)
+    return await this.postService.deletePost(param.id);
   }
 }

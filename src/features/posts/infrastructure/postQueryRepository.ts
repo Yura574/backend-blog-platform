@@ -57,7 +57,6 @@ export class PostQueryRepository {
       totalCount,
       items: returnItems
     };
-    console.log(typeof obj.page);
     return obj
   }
 

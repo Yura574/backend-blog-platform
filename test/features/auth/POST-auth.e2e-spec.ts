@@ -22,14 +22,14 @@ describe('test for POST auth', () => {
     await closeTest();
   });
 
-  it('registration user', async () => {
+  it('registration user & registration-confirmation ', async () => {
     const dto: UserInputModel = {
       email: 'yura5742248@gmail.com',
       login: 'yura',
       password: '123456'
     };
-    const registr = await authTestManager.registrationUser(dto);
-    console.log(registr);
+     await authTestManager.registrationUser(dto);
+
 
     const code = 'yura5742248@gmail.com_code for test';
 
@@ -42,9 +42,7 @@ describe('test for POST auth', () => {
     console.log(login);
     expect(login.accessToken).toBeDefined();
   });
-  it('login', async () => {
 
-  });
 
   it('should send access token for login', async () => {
     await authTestManager.registrationTestUser()
@@ -61,5 +59,10 @@ describe('test for POST auth', () => {
     console.log(login);
     expect(login.accessToken).toBeDefined()
   });
+
+
+
+  
+
 
 });

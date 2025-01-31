@@ -12,8 +12,8 @@ type ErrorResponseType = {
   errorsMessages: ErrorMessageType[]
 }
 export type ErrorMessageType = {
-  field: string
   message: string
+  field: string
 }
 
 @Catch(HttpException)
@@ -23,6 +23,7 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
+    console.log(status);
     if (status === HttpStatus.BAD_REQUEST) {
       const errorsResponse: ErrorResponseType = {
         errorsMessages: []
@@ -30,14 +31,13 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       const responseBody: any = exception.getResponse();
       if (Array.isArray(responseBody.message)) {
         responseBody.message.forEach(
-          (e: { field: string; message: string }) => {
+          (e: { message: string; field: string }) => {
             errorsResponse.errorsMessages.push(e);
           }
         );
       } else {
         errorsResponse.errorsMessages.push(responseBody);
       }
-      console.log(errorsResponse);
       response.status(status).json(errorsResponse);
     }
     else if(status === HttpStatus.FORBIDDEN){

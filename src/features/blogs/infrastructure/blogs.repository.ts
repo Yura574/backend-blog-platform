@@ -15,7 +15,6 @@ export class BlogsRepository {
   async createBlog(dto: NewBlogType): Promise<BlogViewModel | null> {
     try {
       const createdBlog = await this.blogModel.create(dto);
-      console.log(createdBlog);
       const blog = await createdBlog.save();
       const { id, name, description, websiteUrl, createdAt, isMembership } = blog;
       return { id, name, description, websiteUrl, createdAt, isMembership };

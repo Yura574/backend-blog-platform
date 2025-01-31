@@ -1,9 +1,9 @@
 import * as process from 'node:process';
 
-process.env.ENV= 'TESTING'
+process.env.ENV = 'TESTING';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { INestApplication } from '@nestjs/common';
+import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
 
 
 import mongoose, { Connection } from 'mongoose';
@@ -13,11 +13,13 @@ import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import request from 'supertest';
 import { EmailService } from './src/features/auth/application/email.service';
 import { EmailServiceMock } from './test/mockServices/emailServiceMock';
-import {  RegistrationMockUseCase } from './test/mockServices/registrationMockService';
+import { RegistrationMockUseCase } from './test/mockServices/registrationMockService';
 import { RegistrationUseCase } from './src/features/auth/application/useCases/registration.use-case';
 import { UsersRepository } from './src/features/users/infrastructure/users.repository';
 import { RecoveryPasswordUseCase } from './src/features/auth/application/useCases/recoveryPassword.use-case';
 import { RecoveryPasswordMockUseCase } from './test/mockServices/recoveryPasswordMockUseCase';
+import { ErrorMessageType } from './src/infrastructure/exception-filters/exeptions';
+import { validationError } from './src/infrastructure/utils/validationError';
 
 export let testApp: INestApplication;
 export let testSetup: TestSetup;
@@ -44,7 +46,7 @@ export class TestSetup {
   async init() {
     this.mongod = await MongoMemoryServer.create();
     const uri = this.mongod.getUri();
-    await mongoose.connect(uri)
+    await mongoose.connect(uri);
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -61,6 +63,14 @@ export class TestSetup {
       .compile();
 
     this.app = moduleFixture.createNestApplication();
+    this.app.useGlobalPipes(new ValidationPipe({
+      stopAtFirstError: true,
+      whitelist: true,
+      exceptionFactory: (errors) => {
+        const errorsMessages = validationError(errors);
+        throw new BadRequestException(errorsMessages);
+      }
+    }));
     await this.app.init();
 
 

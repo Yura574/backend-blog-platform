@@ -1,29 +1,19 @@
-import { BadRequestException,  INestApplication, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
 import { ErrorMessageType, HttpExceptionsFilter } from '../infrastructure/exception-filters/exeptions';
-import cookieParser from 'cookie-parser'
+import cookieParser from 'cookie-parser';
+import { validationError } from '../infrastructure/utils/validationError';
 
 export const applyAppSetting = (app: INestApplication) => {
   // app.useGlobalInterceptors(new Logging)
   // app.use(Logge)
   // setSwagger(app)
   // app.useGlobalGuards(new AuthGuard())
-app.use(cookieParser())
+  app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({
-    stopAtFirstError: true, exceptionFactory: (errors) => {
-      const errorsMessages: ErrorMessageType[] = [];
-
-      // for (Object.keys(errors[0].))
-      for (let i = 0; i < errors.length; i++) {
-        const constraints = errors[i].constraints;
-        if (constraints) {
-          const keys = Object.keys(constraints);
-          const message = constraints[keys[0]]
-          errorsMessages.push({ message, field: errors[i].property})
-        }
-
-      }
-
-
+    stopAtFirstError: true,
+    whitelist: true,
+    exceptionFactory: (errors) => {
+      const errorsMessages = validationError(errors);
       throw new BadRequestException(errorsMessages);
     }
   }));

@@ -9,10 +9,10 @@ import { QueryBlogsTypes } from './model/types/queryBlogsTypes';
 import { ParamType } from '../../1_commonTypes/paramType';
 import { UpdateBlogInputModel } from './model/input/updateBlog.input.model';
 import { CreatePostInputModel } from '../../posts/api/model/input/createPost.input.model';
-import { PostViewModel } from '../../posts/api/model/output/postViewModel';
 import { QueryPostsType } from '../../posts/api/types/queryPostsType';
 import { PostService } from '../../posts/application/postService';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
+
 
 
 @Controller('blogs')
@@ -43,12 +43,14 @@ export class BlogsController {
   async createPost(@Param() param: ParamType,
                    @Body() dto: CreatePostInputModel) {
     const data: CreatePostInputModel = {
-      blogId: param.id,
       shortDescription: dto.shortDescription,
       content: dto.content,
-      title: dto.title
+      title: dto.title,
+      blogId: param.id
     }
-    return await this.postService.createPost(data)
+    const post =  await this.postService.createPost(data)
+
+    return post
   }
 
   @Get(':id/posts')
@@ -63,6 +65,7 @@ return await this.blogsService.getPosts(param.id, req.query)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param() param: ParamType,
                    @Body() dto: UpdateBlogInputModel) {
+    console.log(dto);
     return await this.blogsService.updateBlog(param.id, dto);
   }
 
