@@ -1,0 +1,123 @@
+import { BlogsTestManagers } from '../../testManagers/blogsTestManagers';
+import { clearDatabase, closeTest, initializeTestSetup, testApp } from '../../../test-setup';
+import { BlogViewModel } from '../../../src/features/blogs/api/model/output/createdBlog.output.model';
+import { PostsTestManagers } from '../../testManagers/postsTestManagers';
+import { CreatePostInputModel } from '../../../src/features/posts/api/model/input/createPost.input.model';
+import { HttpStatus } from '@nestjs/common';
+
+
+describe('test for GET blogs', () => {
+  let postsTestManagers: PostsTestManagers;
+  let blogsTestManagers: BlogsTestManagers;
+  let blog: BlogViewModel;
+  beforeAll(async () => {
+    await initializeTestSetup();
+    postsTestManagers = new PostsTestManagers(testApp);
+    blogsTestManagers = new BlogsTestManagers(testApp);
+
+    blog = await blogsTestManagers.createTestBlog();
+  });
+  beforeEach(async () => {
+    await clearDatabase();
+    blog = await blogsTestManagers.createTestBlog();
+  });
+
+  afterAll(async () => {
+    await closeTest();
+  });
+  it('should ba create new post', async () => {
+    const postData: CreatePostInputModel = {
+      title: 'new post',
+      content: 'content',
+      shortDescription: 'shortDescription',
+      blogId: blog.id
+    };
+    const res = await postsTestManagers.createPost({ data: postData });
+    expect(res).toStrictEqual({
+      id: expect.any(String),
+      title: postData.title,
+      shortDescription: postData.shortDescription,
+      content: postData.content,
+      blogId: blog.id,
+      blogName: blog.name,
+      createdAt: expect.any(String),
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: 'None',
+        newestLikes: []
+      }
+    });
+  });
+
+  it('shouldn`t be crate new post', async () => {
+    const wrongDataPost1: CreatePostInputModel = {
+      title: '',
+      content: '',
+      blogId: blog.id,
+      shortDescription: ''
+    };
+    const res1 = await postsTestManagers.createPost({ data: wrongDataPost1 , status: HttpStatus.BAD_REQUEST});
+    expect(res1).toEqual({
+      errorsMessages: [
+        {
+          message: 'title length should be  min 1, max 15 symbols',
+          field: 'title'
+        },
+        {
+          message: 'shortDescription length should be  min 1, max 100 symbols',
+          field: 'shortDescription'
+        },
+        {
+          message: 'content length should be  min 1, max 1000 symbols',
+          field: 'content'
+        }
+      ]
+    });
+  });
+  it('shouldn`t be crate new post, no content', async () => {
+    const wrongDataPost2 = {
+      title: 'asas',
+      blogId: blog.id,
+      shortDescription: '2355'
+    };
+    const res2 = await postsTestManagers.createPost({ data: wrongDataPost2, status: HttpStatus.BAD_REQUEST });
+    expect(res2).toEqual({
+      errorsMessages: [
+        {
+          message: 'content length should be  min 1, max 1000 symbols',
+          field: 'content'
+        }
+      ]
+    });
+  });
+  it('shouldn`t be crate new post, wrong blogId', async () => {
+    const wrongDataPost3: CreatePostInputModel = {
+      title: '1212',
+      content: 'dssd',
+      blogId: 'blog.id',
+      shortDescription: 'sdsd'
+    };
+
+    const res3 = await postsTestManagers.createPost({ data: wrongDataPost3, status: HttpStatus.NOT_FOUND });
+
+  });
+  it('shouldn`t be crate new post, not authorization ', async () => {
+    const postData: CreatePostInputModel = {
+      title: 'new post',
+      content: 'content',
+      shortDescription: 'shortDescription',
+      blogId: blog.id
+    };
+
+    await postsTestManagers.createPost(
+      {
+        data: postData,
+        login: 'qwerty',
+        status: HttpStatus.UNAUTHORIZED
+      });
+
+  });
+
+
+});

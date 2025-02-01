@@ -61,7 +61,6 @@ export class PostQueryRepository {
   }
 
   async getPostById(postId: string) {
-    console.log(postId);
     try {
       const postDB: PostDBType | null = await this.postModel.findById(postId);
       if (!postDB) {

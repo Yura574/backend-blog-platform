@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../domain/blog.entity';
-import { Model } from 'mongoose';
+import { Model, Schema } from 'mongoose';
 import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
 import { BlogViewModel } from '../api/model/output/createdBlog.output.model';
 import { QueryBlogsTypes } from '../api/model/types/queryBlogsTypes';
@@ -52,8 +52,9 @@ export class BlogsQueryRepository {
     };
   }
 
-  async getBlogById(blogId: string): Promise<BlogViewModel | null> {
-    const blog = await this.blogModel.findById(blogId);
+  async getBlogById(blogId: string): Promise<BlogViewModel | undefined> {
+
+  try{  const blog = await this.blogModel.findById(blogId);
     if (!blog) {
       throw new NotFoundException('Blog not found');
     }
@@ -65,5 +66,8 @@ export class BlogsQueryRepository {
       isMembership: blog.isMembership,
       createdAt: new Date(blog.createdAt).toISOString()
     };
-  }
+  }catch (err){
+    throw new NotFoundException('Blog not found');
+  }}
+
 }

@@ -15,7 +15,6 @@ export class RegistrationUseCase {
 
   async execution(data: UserInputModel) {
     const { login, email, password } = data;
-    console.log(data);
     const isUnique: ErrorMessageType[] = await this.userRepository.uniqueUser(login, email);
     if (isUnique.length > 0) throw new BadRequestException(isUnique);
     const codeForConfirm = v4();

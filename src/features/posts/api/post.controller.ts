@@ -29,6 +29,7 @@ export class PostController {
   @UseGuards(AuthGuard)
   @Post()
   async createPost(@Body() dto: CreatePostInputModel) {
+    console.log(typeof dto.blogId);
     return await this.postService.createPost(dto);
   }
 

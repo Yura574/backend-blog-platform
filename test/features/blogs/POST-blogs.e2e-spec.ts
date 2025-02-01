@@ -72,15 +72,15 @@ describe('test for GET blogs', () => {
     expect(res).toStrictEqual({
       errorsMessages: [
         {
-          message: 'title must be longer than or equal to 1 characters',
+          message: "title length should be  min 1, max 15 symbols",
           field: 'title'
         },
         {
-          message: 'shortDescription must be longer than or equal to 1 characters',
+          message: "shortDescription length should be  min 1, max 100 symbols",
           field: 'shortDescription'
         },
         {
-          message: 'content must be longer than or equal to 1 characters',
+          message: "content length should be  min 1, max 1000 symbols",
           field: 'content'
         }
       ]
