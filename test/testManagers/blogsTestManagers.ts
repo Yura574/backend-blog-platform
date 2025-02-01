@@ -28,7 +28,6 @@ export class BlogsTestManagers {
       .post('/blogs')
       .send(data)
       .auth('admin', 'qwerty')
-      // .set('Content-Type', 'application/json')
       .expect(status);
     return res.body;
   }
@@ -75,20 +74,34 @@ export class BlogsTestManagers {
     return res.body;
   }
 
-  async  getBlogById(blogId: string, status= HttpStatus.OK){
+  async getBlogById(blogId: string, status = HttpStatus.OK) {
     const res = await request(testApp.getHttpServer())
       .get(`/blogs/${blogId}`)
       .expect(status);
-    return res.body
+    return res.body;
   }
 
-  async updateBlogById(blogId: string, data: any, status= HttpStatus.NO_CONTENT){
+  async updateBlogById(blogId: string, data: any, status = HttpStatus.NO_CONTENT) {
     const res = await request(testApp.getHttpServer())
       .put(`/blogs/${blogId}`)
       .send(data)
       .auth('admin', 'qwerty')
       .expect(status);
-    return res.body
+    return res.body;
+  }
+
+  async deleteBlogById({
+                         blogId,
+                         status = HttpStatus.NO_CONTENT,
+                         login = 'admin', password = 'qwerty'
+                       }: DeleteBlogIdType) {
+
+    const res = await request(this.app.getHttpServer())
+      .delete(`/blogs/${blogId}`)
+      .auth(login, password)
+      .expect(status);
+    return res.body;
+
   }
 
   async createPost(blogId: string, data: any, status = HttpStatus.CREATED) {
@@ -127,4 +140,11 @@ export class BlogsTestManagers {
     return res.body;
   };
 
+}
+
+type DeleteBlogIdType = {
+  blogId: string,
+  status?: HttpStatus
+  login?: string
+  password?: string
 }

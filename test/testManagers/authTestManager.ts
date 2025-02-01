@@ -47,7 +47,6 @@ export class AuthTestManager {
   }
 
   async confirmRegistration (code: ConfirmationCodeInputModel, statusCode = HttpStatus.NO_CONTENT) {
-    console.log(code);
     const res = await request(testApp.getHttpServer(), )
       .post(`/auth/registration-confirmation`)
       .send(code)

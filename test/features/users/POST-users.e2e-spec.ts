@@ -27,6 +27,5 @@ describe('POST users', () => {
 
     const user = await userTestManager.createUser(dto);
     const getUser = await userTestManager.getUserById(user.id);
-    console.log(getUser);
   });
 });

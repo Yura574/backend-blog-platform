@@ -39,7 +39,6 @@ describe('test for POST auth', () => {
       loginOrEmail: dto.login,
       password: dto.password
     });
-    console.log(login);
     expect(login.accessToken).toBeDefined();
   });
 
@@ -56,7 +55,6 @@ describe('test for POST auth', () => {
 
     await authTestManager.newPassword({newPassword:'654321', recoveryCode: codeForTest})
     const login =  await authTestManager.login({loginOrEmail: userTestData.email, password: '654321'})
-    console.log(login);
     expect(login.accessToken).toBeDefined()
   });
 

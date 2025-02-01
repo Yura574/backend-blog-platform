@@ -23,7 +23,6 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
-    console.log(status);
     if (status === HttpStatus.BAD_REQUEST) {
       const errorsResponse: ErrorResponseType = {
         errorsMessages: []

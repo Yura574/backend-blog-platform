@@ -45,7 +45,6 @@ describe('test for PUT blogs', () => {
       description: false
     }
    const res= await blogsTestManagers.updateBlogById(blog.id, data, 400)
-    // const res = await blogsTestManagers.getBlogById(blog.id)
     expect(res).toEqual({
       errorsMessages: [
         {

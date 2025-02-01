@@ -48,9 +48,8 @@ export class BlogsController {
       title: dto.title,
       blogId: param.id
     }
-    const post =  await this.postService.createPost(data)
+   return  await this.postService.createPost(data)
 
-    return post
   }
 
   @Get(':id/posts')
@@ -65,7 +64,6 @@ return await this.blogsService.getPosts(param.id, req.query)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(@Param() param: ParamType,
                    @Body() dto: UpdateBlogInputModel) {
-    console.log(dto);
     return await this.blogsService.updateBlog(param.id, dto);
   }
 
