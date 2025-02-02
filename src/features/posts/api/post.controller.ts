@@ -29,7 +29,6 @@ export class PostController {
   @UseGuards(AuthGuard)
   @Post()
   async createPost(@Body() dto: CreatePostInputModel) {
-    console.log(typeof dto.blogId);
     return await this.postService.createPost(dto);
   }
 
@@ -41,7 +40,6 @@ export class PostController {
   @Get(':id')
   async getPostById(@Param() param: ParamType) {
     // if(!param.id) throw new NotFoundException({}, 'Blog not found')
-    console.log('sd');
     return await this.postQueryRepository.getPostById(param.id);
   }
 

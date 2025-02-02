@@ -6,7 +6,7 @@ import { CreatePostInputModel } from '../../../src/features/posts/api/model/inpu
 import { HttpStatus } from '@nestjs/common';
 
 
-describe('test for GET blogs', () => {
+describe('test for POST posts', () => {
   let postsTestManagers: PostsTestManagers;
   let blogsTestManagers: BlogsTestManagers;
   let blog: BlogViewModel;
