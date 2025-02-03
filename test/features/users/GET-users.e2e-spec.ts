@@ -35,8 +35,6 @@ describe('AppController (e2e)', () => {
     expect(res.body.items.length).toBe(5);
   });
 
-  it('registration user', async () => {
 
-  });
 
 });

@@ -18,6 +18,7 @@ import { PostQueryRepository } from '../infrastructure/postQueryRepository';
 import { ParamType } from '../../1_commonTypes/paramType';
 import { UpdatePostInputModel } from './model/input/updatePost.input.model';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
+import { LikeStatus } from './model/output/postViewModel';
 
 
 @Controller('posts')
@@ -39,7 +40,6 @@ export class PostController {
 
   @Get(':id')
   async getPostById(@Param() param: ParamType) {
-    // if(!param.id) throw new NotFoundException({}, 'Blog not found')
     return await this.postQueryRepository.getPostById(param.id);
   }
 
@@ -48,7 +48,16 @@ export class PostController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(@Param() param: ParamType,
                    @Body() body: UpdatePostInputModel) {
+    console.log(123);
     return await this.postService.updatePost(param.id, body);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put(':id/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updatePostLikeStatus(@Param() param: ParamType,
+                   @Body() body: LikeStatus) {
+    return await this.postService.updateLikeStatusPost(param.id, body);
   }
 
   @UseGuards(AuthGuard)

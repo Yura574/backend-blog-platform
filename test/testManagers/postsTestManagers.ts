@@ -3,6 +3,8 @@ import request from 'supertest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { createBlogTestData } from './blogsTestManagers';
 import { QueryPostsType } from '../../src/features/posts/api/types/queryPostsType';
+import { UpdatePostInputModel } from '../../src/features/posts/api/model/input/updatePost.input.model';
+import { LikeStatus } from '../../src/features/posts/api/model/output/postViewModel';
 
 
 export class PostsTestManagers {
@@ -24,12 +26,12 @@ export class PostsTestManagers {
     return res.body;
   }
 
-  async createTestPost(count?: number) {
+  async createTestPost(count?: number, status = HttpStatus.CREATED) {
     const resBlog = await request(this.app.getHttpServer())
       .post('/blogs')
       .auth('admin', 'qwerty')
       .send(createBlogTestData)
-      .expect(HttpStatus.CREATED);
+      .expect(status);
 
     const postTestData: CreatePostInputModel = {
       blogId: resBlog.body.id,
@@ -74,7 +76,46 @@ export class PostsTestManagers {
     const res = await request(this.app.getHttpServer())
       .get(`/posts?pageNumber=${query.pageNumber}&pageSize=${query.pageSize}&sortDirection=${query.sortDirection}&sortBy=${query.sortBy}`)
       .expect(status);
-    return res.body
+    return res.body;
+  }
+
+  async getPostById(postId: string, status = HttpStatus.OK) {
+    const res = await request(this.app.getHttpServer())
+      .get(`/posts/${postId}`)
+      .expect(status);
+    return res.body;
+
+  }
+
+  async updatePost(
+    postID: string,
+    data?: any,
+    status = HttpStatus.NO_CONTENT,
+    login = 'admin', password = 'qwerty'
+  ) {
+    const res = await request(this.app.getHttpServer())
+      .put(`/posts/${postID}`)
+      .send(data)
+      .auth(login, password)
+      .expect(status);
+    return res.body;
+  }
+
+  async updateLikeStatusPost(postId: string, likeStatus: any, status = HttpStatus.NO_CONTENT, login = 'admin', password = 'qwerty') {
+    const res = await request(this.app.getHttpServer())
+      .put(`/posts/${postId}/like-status`)
+      .send(likeStatus)
+      .auth(login, password)
+      // .expect(status);
+    return res.body;
+
+  }
+
+  async deletePost(postId: string, status = HttpStatus.NO_CONTENT, login = 'admin', password = 'qwerty') {
+    return request(this.app.getHttpServer())
+      .delete(`/posts/${postId}`)
+      .auth(login, password)
+      .expect(status);
   }
 }
 

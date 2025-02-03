@@ -3,7 +3,7 @@ import { PostRepository } from '../infrastructure/postRepository';
 import { CreatePostInputModel } from '../api/model/input/createPost.input.model';
 import { NewPost } from '../api/model/output/newPost';
 import { BlogsQueryRepository } from '../../blogs/infrastructure/blogsQuery.repository';
-import { PostViewModel } from '../api/model/output/postViewModel';
+import { LikeStatus, PostViewModel } from '../api/model/output/postViewModel';
 import { UpdatePostInputModel } from '../api/model/input/updatePost.input.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
 
@@ -66,7 +66,12 @@ export class PostService{
     return await this.postRepository.updatePost(postId, dto)
   }
 
+
+  async updateLikeStatusPost(postId: string, dto: LikeStatus){
+    return await this.postRepository.updateLikeStatusPost(postId, dto)
+  }
+
   async deletePost(id: string){
-    return await this.postRepository.deleteBlog(id)
+    return await this.postRepository.deletePost(id)
   }
 }

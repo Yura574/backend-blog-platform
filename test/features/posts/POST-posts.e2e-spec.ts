@@ -49,7 +49,6 @@ describe('test for POST posts', () => {
       }
     });
   });
-
   it('shouldn`t be crate new post', async () => {
     const wrongDataPost1: CreatePostInputModel = {
       title: '',
