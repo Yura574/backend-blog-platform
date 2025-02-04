@@ -1,12 +1,15 @@
-import { IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 
 export class LoginInputModel {
   @IsString()
+  @Transform(({value})=> typeof value === 'string'? value.trim() : '')
+  @IsNotEmpty()
   loginOrEmail: string
+
   @IsString()
-  @Length(6, 20, {
-    message: 'length password min 6, max 20'
-  })
+  @Transform(({value})=> typeof value === 'string'? value.trim() : '')
+  @IsNotEmpty()
   password: string
 }

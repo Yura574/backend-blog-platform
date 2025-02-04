@@ -49,7 +49,6 @@ describe('test for GET posts', () => {
       totalCount: 12,
       items: expect.any(Array)
     });
-    console.log(posts);
     expect(posts.items?.length).toBe(2);
     expect(posts.items?.[0]?.title).toBe('title 7');
   });
@@ -81,7 +80,7 @@ describe('test for GET posts', () => {
   it('shouldn`t get post by id', async () => {
     const post: PostViewModel = await postsTestManagers.createTestPost();
 
-    await postsTestManagers.getPostById('post.id', HttpStatus.NOT_FOUND);
+    await postsTestManagers.getPostById('post.id','', HttpStatus.NOT_FOUND);
 
 
   });

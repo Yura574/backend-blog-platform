@@ -57,17 +57,18 @@ export class PostQueryRepository {
       totalCount,
       items: returnItems
     };
-    return obj
+    return obj;
   }
 
-  async getPostById(postId: string) {
+  async getPostById(postId: string, userData?: any) {
+
     try {
       const postDB: PostDBType | null = await this.postModel.findById(postId);
       if (!postDB) {
         throw new NotFoundException();
       }
 
-      const likeInfo = this.getLikesInfoForPost(postDB);
+      const likeInfo = this.getLikesInfoForPost(postDB, userData);
       const post: PostViewModel = {
         id: postDB._id.toString(),
         title: postDB.title,
@@ -91,10 +92,10 @@ export class PostQueryRepository {
 
   }
 
-  getLikesInfoForPost(post: PostDBType) {
+  getLikesInfoForPost(post: PostDBType, userData?: any) {
+
     let userStatus: LikeStatus;
     const likePosts: LikeUserInfo[] = post.extendedLikesInfo.likeUserInfo;
-
     let sortedLikePosts: LikeUserInfo[] = likePosts.sort((a: LikeUserInfo, b: LikeUserInfo) => a.addedAt > b.addedAt ? -1 : 1);
     const likesCount = likePosts.filter((like: LikeUserInfo) => like.likeStatus === 'Like');
 
@@ -110,8 +111,9 @@ export class PostQueryRepository {
         newestLikes.push(post);
       }
     }
-    const findUserStatus = likePosts.find((likeStatus: LikeUserInfo) => likeStatus.userId === '');
+    const findUserStatus = likePosts.find((likeStatus: LikeUserInfo) => userData && likeStatus.userId === userData.userId );
     userStatus = findUserStatus ? findUserStatus.likeStatus : 'None';
+
     return {
       likesCount: likesCount.length,
       dislikesCount: dislikesCount.length,

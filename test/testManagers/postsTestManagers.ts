@@ -3,9 +3,6 @@ import request from 'supertest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { createBlogTestData } from './blogsTestManagers';
 import { QueryPostsType } from '../../src/features/posts/api/types/queryPostsType';
-import { UpdatePostInputModel } from '../../src/features/posts/api/model/input/updatePost.input.model';
-import { LikeStatus } from '../../src/features/posts/api/model/output/postViewModel';
-
 
 export class PostsTestManagers {
   constructor(protected app: INestApplication) {
@@ -79,10 +76,11 @@ export class PostsTestManagers {
     return res.body;
   }
 
-  async getPostById(postId: string, status = HttpStatus.OK) {
+  async getPostById(postId: string, token: string = '', status = HttpStatus.OK) {
     const res = await request(this.app.getHttpServer())
       .get(`/posts/${postId}`)
-      .expect(status);
+      .auth(token, { type: 'bearer' })
+      // .expect(status);
     return res.body;
 
   }
@@ -101,12 +99,12 @@ export class PostsTestManagers {
     return res.body;
   }
 
-  async updateLikeStatusPost(postId: string, likeStatus: any, status = HttpStatus.NO_CONTENT, login = 'admin', password = 'qwerty') {
+  async updateLikeStatusPost(token: string, postId: string, likeStatus: any, status = HttpStatus.NO_CONTENT) {
     const res = await request(this.app.getHttpServer())
       .put(`/posts/${postId}/like-status`)
       .send(likeStatus)
-      .auth(login, password)
-      // .expect(status);
+      .auth(token, { type: 'bearer' })
+      .expect(status);
     return res.body;
 
   }

@@ -3,13 +3,17 @@ import { PostsTestManagers } from '../../testManagers/postsTestManagers';
 import { HttpStatus } from '@nestjs/common';
 import { UpdatePostInputModel } from '../../../src/features/posts/api/model/input/updatePost.input.model';
 import { PostViewModel } from '../../../src/features/posts/api/model/output/postViewModel';
+import { AuthTestManager } from '../../testManagers/authTestManager';
+import e from 'express';
 
 
 describe('test for PUT posts', () => {
   let postsTestManagers: PostsTestManagers;
+  let authTestManagers: AuthTestManager;
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
+    authTestManagers = new AuthTestManager(testApp);
 
   });
   beforeEach(async () => {
@@ -96,12 +100,99 @@ describe('test for PUT posts', () => {
 
   });
 
-  it('should be like status for post', async ()=> {
-    const post: PostViewModel = await postsTestManagers.createTestPost()
-    await postsTestManagers.updateLikeStatusPost(post.id, 'Like')
+  it('should be like status for post', async () => {
+    const users = await authTestManagers.registrationTestUser(5);
 
-    const updatedPost: PostViewModel = await postsTestManagers.getPostById(post.id)
-    // expect(updatedPost.extendedLikesInfo.myStatus).toBe('Like')
+    const post: PostViewModel = await postsTestManagers.createTestPost();
+    //user-1 поставил лайк
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, { status: 'Like' });
+    //
+    // // //user-2 поставил дизлайк
+    await postsTestManagers.updateLikeStatusPost(users[1].accessToken, post.id, { status: 'Like' });
+    // //
+    await postsTestManagers.updateLikeStatusPost(users[2].accessToken, post.id, { status: 'Dislike' });
+    //
+
+    const postUser1: PostViewModel = await postsTestManagers.getPostById(post.id, users[0].accessToken);
+    const postUser2: PostViewModel = await postsTestManagers.getPostById(post.id, users[1].accessToken);
+    const postUser3: PostViewModel = await postsTestManagers.getPostById(post.id, users[2].accessToken);
+    const postUser4: PostViewModel = await postsTestManagers.getPostById(post.id, users[3].accessToken);
+    const postNoUser: PostViewModel = await postsTestManagers.getPostById(post.id);
+    // //
+    expect(postUser1.extendedLikesInfo.likesCount).toBe(2);
+    expect(postUser1.extendedLikesInfo.dislikesCount).toBe(1);
+    expect(postUser1.extendedLikesInfo.myStatus).toBe('Like');
+    expect(postUser3.extendedLikesInfo.myStatus).toBe('Dislike');
+    expect(postUser4.extendedLikesInfo.myStatus).toBe('None');
+    expect(postNoUser.extendedLikesInfo.myStatus).toBe('None');
+
+
+  });
+
+
+  it('should get 3 last users like post', async () => {
+    const users = await authTestManagers.registrationTestUser(5);
+
+    const post: PostViewModel = await postsTestManagers.createTestPost();
+    //user-1 поставил лайк
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, { status: 'Like' });
+
+    // //user-2 поставил дизлайк
+    await postsTestManagers.updateLikeStatusPost(users[1].accessToken, post.id, { status: 'Like' });
+    //
+    await postsTestManagers.updateLikeStatusPost(users[2].accessToken, post.id, { status: 'Like' });
+    await postsTestManagers.updateLikeStatusPost(users[3].accessToken, post.id, { status: 'Like' });
+    await postsTestManagers.updateLikeStatusPost(users[4].accessToken, post.id, { status: 'Like' });
+
+
+    const postUser1: PostViewModel = await postsTestManagers.getPostById(post.id, users[0].accessToken);
+
+
+    expect(postUser1.extendedLikesInfo.likesCount).toBe(5);
+    expect(postUser1.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(postUser1.extendedLikesInfo.myStatus).toBe('Like');
+    expect(postUser1.extendedLikesInfo.newestLikes.length).toBe(3);
+    expect(postUser1.extendedLikesInfo.newestLikes).toEqual([
+      {
+        addedAt: expect.any(String),
+        userId: users[4].userId,
+        login: users[4].login
+      },
+      {
+        addedAt: expect.any(String),
+        userId: users[3].userId,
+        login: users[3].login
+      },
+      {
+        addedAt: expect.any(String),
+        userId: users[2].userId,
+        login: users[2].login
+      }
+    ]);
+  });
+
+  it('shouldn`t be like status for post, invalid status', async () => {
+    const user = await authTestManagers.registrationTestUser();
+
+    const post = await postsTestManagers.createTestPost();
+
+    const res1 = await postsTestManagers.updateLikeStatusPost(user[0].accessToken, post.id, 'Lik', HttpStatus.BAD_REQUEST);
+
+    expect(res1).toEqual({
+      errorsMessages: [
+        {
+          message: 'Invalid status',
+          field: 'status'
+        }
+      ]
+    });
   })
+  it('shouldn`t be like status for post,unauthorized', async () => {
+    const post = await postsTestManagers.createTestPost();
+
+     await postsTestManagers.updateLikeStatusPost('user[0].accessToken', post.id, 'Like', HttpStatus.UNAUTHORIZED);
+
+
+  });
 
 });

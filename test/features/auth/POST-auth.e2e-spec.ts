@@ -1,8 +1,8 @@
-import { clearDatabase, closeTest, initializeTestSetup, testApp, TestSetup } from '../../../test-setup';
+import { clearDatabase, closeTest, initializeTestSetup, testApp } from '../../../test-setup';
 import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
-import request from 'supertest';
 import { AuthTestManager, codeForTest, userTestData } from '../../testManagers/authTestManager';
+import { HttpStatus } from '@nestjs/common';
 
 
 describe('test for POST auth', () => {
@@ -45,9 +45,15 @@ describe('test for POST auth', () => {
 
   it('should send access token for login', async () => {
     await authTestManager.registrationTestUser()
-    const login = await authTestManager.login({loginOrEmail: 'test', password: '123456'});
+    const login = await authTestManager.login({loginOrEmail: userTestData.login, password: userTestData.password});
     expect(login.accessToken).toBeDefined();
   });
+  it('shouldn`t login', async ()=> {
+    await authTestManager.registrationTestUser()
+  const res = await authTestManager.login({loginOrEmail: '', password: '  '}, HttpStatus.BAD_REQUEST);
+  })
+
+
   it('recovery password and new password', async () => {
 
     await authTestManager.registrationTestUser()

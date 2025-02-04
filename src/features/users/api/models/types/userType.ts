@@ -7,8 +7,8 @@ export type UserType = {
   createdAt: string;
 };
 
-export type UpdateUserType = {
-  id: string;
+export type AuthUserType = {
+  userId: string;
   login: string;
   email: string;
 }

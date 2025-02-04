@@ -57,6 +57,7 @@ export class HttpExceptionsFilter implements ExceptionFilter {
 
       response.status(status).json(responseBody);
     }else {
+      console.log(status);
       response.sendStatus(status)
         .json({
           statusCode: status,

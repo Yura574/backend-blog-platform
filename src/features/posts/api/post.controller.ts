@@ -5,10 +5,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Post, Put,
-  Req, UseGuards
+  Req, UnauthorizedException, UseGuards
 } from '@nestjs/common';
 import { PostService } from '../application/postService';
 import { CreatePostInputModel } from './model/input/createPost.input.model';
@@ -18,7 +17,10 @@ import { PostQueryRepository } from '../infrastructure/postQueryRepository';
 import { ParamType } from '../../1_commonTypes/paramType';
 import { UpdatePostInputModel } from './model/input/updatePost.input.model';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
-import { LikeStatus } from './model/output/postViewModel';
+import { AuthUserType,  } from '../../users/api/models/types/userType';
+import { LikeStatusInputModel } from './model/input/LikeStatus.input.model';
+import jwt from 'jsonwebtoken';
+import * as process from 'node:process';
 
 
 @Controller('posts')
@@ -39,7 +41,19 @@ export class PostController {
   }
 
   @Get(':id')
-  async getPostById(@Param() param: ParamType) {
+  async getPostById(@Param() param: ParamType,
+                    @Req() req: RequestType<{}, {}, {}>) {
+    const header = req.headers['authorization'];
+
+    if (header) {
+      const [type, token] = header.split(' ');
+      if(type === 'Bearer' && token && token.trim() !== ''){
+        const userData = token && jwt.verify(token, process.env.ACCESS_SECRET as string);
+        return await this.postQueryRepository.getPostById(param.id, userData);
+      }
+
+    }
+
     return await this.postQueryRepository.getPostById(param.id);
   }
 
@@ -48,7 +62,6 @@ export class PostController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(@Param() param: ParamType,
                    @Body() body: UpdatePostInputModel) {
-    console.log(123);
     return await this.postService.updatePost(param.id, body);
   }
 
@@ -56,8 +69,12 @@ export class PostController {
   @Put(':id/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePostLikeStatus(@Param() param: ParamType,
-                   @Body() body: LikeStatus) {
-    return await this.postService.updateLikeStatusPost(param.id, body);
+                             @Req() req: RequestType<{}, {}, {}>,
+                             @Body() body: LikeStatusInputModel) {
+    const userData: AuthUserType | undefined = req.user;
+
+    if (!userData) throw new UnauthorizedException();
+    await this.postService.updateLikeStatusPost(param.id, body.status, userData);
   }
 
   @UseGuards(AuthGuard)

@@ -17,6 +17,8 @@ import { EmailConfirmationUseCase } from '../../application/useCases/emailConfir
 import { LoginUseCase } from '../../application/useCases/login.use-case';
 import { RecoveryPasswordUseCase } from '../../application/useCases/recoveryPassword.use-case';
 import { NewPasswordUseCase } from '../../application/useCases/newPassword.use-case';
+import { LoginOutputModel } from './output/login.output.model';
+import { UserViewModel } from '../../../users/api/models/output/createdUser.output.model';
 
 export enum authEndPoints {
   BASE = 'auth',
@@ -45,7 +47,7 @@ export class AuthController {
 
   @Post(authEndPoints.REGISTRATION)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registration(@Body() body: UserInputModel) {
+  async registration(@Body() body: UserInputModel): Promise<UserViewModel | void> {
     return await this.registrationUseCase.execution(body);
   }
 
@@ -59,7 +61,7 @@ export class AuthController {
   @Post(authEndPoints.LOGIN)
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginInputModel,
-              @Res({ passthrough: true }) res: Response) {
+              @Res({ passthrough: true }) res: Response): Promise<LoginOutputModel> {
     const { loginOrEmail, password } = body;
     const cookie = await this.loginUseCase.execute(loginOrEmail, password);
 

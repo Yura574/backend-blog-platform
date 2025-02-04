@@ -24,12 +24,10 @@ export class AuthGuard implements CanActivate {
     const auth = request.headers['authorization'];
     if (!auth) throw new UnauthorizedException();
     const [type, token] = auth.split(' ');
-
     if (type !== 'Basic' && type !== 'Bearer') throw new UnauthorizedException();
     if (type === 'Bearer') {
       try {
-        const payload = jwt.verify(token, process.env.REFRESH_SECRET as string) as JwtPayloadType;
-        console.log(payload);
+        const payload = jwt.verify(token, process.env.ACCESS_SECRET  as string) as JwtPayloadType;
         request.user = {
           userId: payload.userId,
           login: payload.login,

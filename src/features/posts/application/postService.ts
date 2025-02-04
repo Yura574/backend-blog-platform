@@ -6,6 +6,7 @@ import { BlogsQueryRepository } from '../../blogs/infrastructure/blogsQuery.repo
 import { LikeStatus, PostViewModel } from '../api/model/output/postViewModel';
 import { UpdatePostInputModel } from '../api/model/input/updatePost.input.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
+import { AuthUserType, UserType } from '../../users/api/models/types/userType';
 
 
 @Injectable()
@@ -67,8 +68,8 @@ export class PostService{
   }
 
 
-  async updateLikeStatusPost(postId: string, dto: LikeStatus){
-    return await this.postRepository.updateLikeStatusPost(postId, dto)
+  async updateLikeStatusPost(postId: string, dto: LikeStatus, userData: AuthUserType){
+    return await this.postRepository.updateLikeStatusPost(postId, dto, userData)
   }
 
   async deletePost(id: string){
