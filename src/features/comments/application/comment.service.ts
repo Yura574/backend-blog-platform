@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CommentRepository } from '../infrastructure/comment.repository';
 import { CreateNewCommentType } from '../api/types/createNewComment.type';
 import { CommentOutputModel } from '../api/output/comment.output.model';
+import { QueryCommentsType } from '../api/types/QueryComments.type';
 
 
 @Injectable()
@@ -41,5 +42,10 @@ export class CommentService {
        myStatus: 'None'
      }
    }
+  }
+
+  async getCommentsByPostId(postId: string, query: QueryCommentsType){
+return await this.commentRepository.getCommentsByPostId(postId, query)
+
   }
 }

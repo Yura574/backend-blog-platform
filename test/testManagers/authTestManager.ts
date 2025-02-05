@@ -11,6 +11,11 @@ import { LoginOutputModel } from '../../src/features/auth/api/models/output/logi
 import jwt from 'jsonwebtoken';
 import { JwtUserType } from '../../src/features/users/api/models/types/jwtUserType';
 
+export type UserViewTestType={
+  userId: string,
+  login: string,
+  accessToken: string
+}
 export const userTestData = {
   email: 'user-1@example.com',
   login: 'user-1',
@@ -24,7 +29,7 @@ export class AuthTestManager {
 
   async registrationTestUser(count: number = 1) {
 
-    const usersData: { userId: string, login: string, accessToken: string }[] = [];
+    const usersData: UserViewTestType[] = [];
     for (let i = 0; count > i; i++) {
 
       const dataUser: UserInputModel = {

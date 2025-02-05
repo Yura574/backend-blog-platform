@@ -4,17 +4,30 @@ import { PostsTestManagers } from '../../testManagers/postsTestManagers';
 import { HttpStatus } from '@nestjs/common';
 import { PostViewModel } from '../../../src/features/posts/api/model/output/postViewModel';
 import { ReturnViewModel } from '../../../src/features/1_commonTypes/returnViewModel';
+import { CommentOutputModel } from '../../../src/features/comments/api/output/comment.output.model';
+import { CommentTestManagers } from '../../testManagers/commentTestManagers';
+import { AuthTestManager, UserViewTestType } from '../../testManagers/authTestManager';
 
 
 describe('test for GET posts', () => {
   let postsTestManagers: PostsTestManagers;
+  let commentsTestManagers: CommentTestManagers;
+  let authTestManagers: AuthTestManager;
+  let user: UserViewTestType[];
+  let post: PostViewModel;
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
+    commentsTestManagers = new CommentTestManagers(testApp);
+    authTestManagers= new AuthTestManager(testApp)
+    user = await authTestManagers.registrationTestUser();
+    post = await postsTestManagers.createTestPost();
 
   });
   beforeEach(async () => {
     await clearDatabase();
+    user = await authTestManagers.registrationTestUser();
+    post = await postsTestManagers.createTestPost();
   });
 
   afterAll(async () => {
@@ -54,8 +67,6 @@ describe('test for GET posts', () => {
   });
 
   it('should get post by id', async () => {
-    const post: PostViewModel = await postsTestManagers.createTestPost();
-
     const createdPost = await postsTestManagers.getPostById(post.id);
 
     expect(createdPost).toEqual({
@@ -78,11 +89,13 @@ describe('test for GET posts', () => {
   });
 
   it('shouldn`t get post by id', async () => {
-    const post: PostViewModel = await postsTestManagers.createTestPost();
+    await postsTestManagers.getPostById('post.id', '', HttpStatus.NOT_FOUND);
+  });
 
-    await postsTestManagers.getPostById('post.id','', HttpStatus.NOT_FOUND);
-
-
+  it('should get comments for post', async () => {
+    await commentsTestManagers.createTestComments(post.id, user[0].accessToken, 9);
+    const comments = await commentsTestManagers.getComments(post.id, 2, 3, );
+    console.log(comments);
   });
 
 

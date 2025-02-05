@@ -24,6 +24,7 @@ import * as process from 'node:process';
 import { CommentInputModel } from '../../comments/api/input/comment.input.model';
 import { CommentService } from '../../comments/application/comment.service';
 import { CommentOutputModel } from '../../comments/api/output/comment.output.model';
+import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
 
 
 @Controller('posts')
@@ -92,11 +93,15 @@ export class PostController {
   @Post(`:id/comments`)
   @UseGuards(AuthGuard)
   async createComment(@Body() body: CommentInputModel,
-    @Req() req: RequestType<ParamType, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
+                      @Req() req: RequestType<ParamType, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
     if (!req.user) throw new UnauthorizedException();
     const { userId, login } = req.user;
 
     return await this.commentService.createComment(req.params.id, body.content, userId, login);
+  }
 
+  @Get(':id/comments')
+  async getCommentsByPostId(@Req() req: RequestType<ParamType, {}, QueryCommentsType>){
+return await this.commentService.getCommentsByPostId(req.params.id, req.query)
   }
 }
