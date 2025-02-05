@@ -126,6 +126,12 @@ describe('test for PUT posts', () => {
     expect(postUser4.extendedLikesInfo.myStatus).toBe('None');
     expect(postNoUser.extendedLikesInfo.myStatus).toBe('None');
 
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, { status: 'None' });
+    const postUser1_1: PostViewModel = await postsTestManagers.getPostById(post.id, users[0].accessToken);
+    expect(postUser1_1.extendedLikesInfo.likesCount).toBe(1);
+    expect(postUser1_1.extendedLikesInfo.dislikesCount).toBe(1);
+    expect(postUser1_1.extendedLikesInfo.myStatus).toBe('None');
+
 
   });
 

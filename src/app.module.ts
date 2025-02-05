@@ -36,11 +36,15 @@ import { LoginUseCase } from './features/auth/application/useCases/login.use-cas
 import { EmailConfirmationUseCase } from './features/auth/application/useCases/emailConfirmation.use-case';
 import { RegistrationUseCase } from './features/auth/application/useCases/registration.use-case';
 import { NewPasswordUseCase } from './features/auth/application/useCases/newPassword.use-case';
+import { CommentRepository } from './features/comments/infrastructure/comment.repository';
+import { CommentService } from './features/comments/application/comment.service';
+import { Comment, CommentSchema } from './features/comments/domain/comment.entity';
+import { CommentsController } from './features/comments/api/comments.controller';
 
 const usersProviders: Provider[] = [
   UsersRepository,
   UsersService,
-  UsersQueryRepository,
+  UsersQueryRepository
 ];
 const blogsProviders: Provider[] = [
   BlogsRepository,
@@ -52,6 +56,11 @@ const postsProviders: Provider[] = [
   PostService,
   PostQueryRepository
 ];
+
+const commentsProviders: Provider[] = [
+  CommentRepository,
+  CommentService
+];
 const recoveryPasswordProviders: Provider[] = [
   RecoveryPasswordService,
   RecoveryPasswordRepository
@@ -62,7 +71,7 @@ const authUseCases: Provider[] = [
   EmailConfirmationUseCase,
   LoginUseCase,
   RecoveryPasswordUseCase,
-  NewPasswordUseCase,
+  NewPasswordUseCase
 ];
 
 @Module({
@@ -84,6 +93,7 @@ const authUseCases: Provider[] = [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: RecoveryPassword.name, schema: RecoveryPasswordSchema }]),
     MailerModule.forRootAsync({
       useFactory: () => ({
@@ -101,10 +111,19 @@ const authUseCases: Provider[] = [
       inject: [ConfigService]
     })
   ],
-  controllers: [UserController, BlogsController, PostController, AppController, AuthController, FallbackController],
+  controllers: [
+    UserController,
+    BlogsController,
+    PostController,
+    CommentsController,
+    AppController,
+    AuthController,
+    FallbackController,
+  ],
   providers: [...usersProviders,
     ...blogsProviders,
     ...postsProviders,
+    ...commentsProviders,
     EmailService,
     ...recoveryPasswordProviders,
     AuthService,

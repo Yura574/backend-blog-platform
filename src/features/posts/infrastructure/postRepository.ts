@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument } from '../domain/post.entity';
 import { Model, Types } from 'mongoose';
@@ -7,7 +7,6 @@ import { UpdatePostInputModel } from '../api/model/input/updatePost.input.model'
 import { LikeStatus } from '../api/model/output/postViewModel';
 import { LikeUserInfo, PostDBType } from '../api/types/postDBType';
 import { AuthUserType, UserType } from '../../users/api/models/types/userType';
-import { LikeUserInfoType } from '../api/types/likeUserInfoType';
 
 
 @Injectable()
@@ -57,16 +56,26 @@ export class PostRepository {
       };
       const myLikeStatus = postInfo.extendedLikesInfo.likeUserInfo.find(el => el.userId === userId);
       if (myLikeStatus) {
-        const res = await this.postModel.updateOne({ _id: postId }, {
-          $set: {
-            'extendedLikesInfo.likesCount': postInfo.extendedLikesInfo.likesCount + (likeStatus === 'Like' ? 1 : -1),
-            'extendedLikesInfo.dislikesCount': postInfo.extendedLikesInfo.dislikesCount + (likeStatus === 'Dislike' ? 1 : -1)
-          },
-          $pull: { 'extendedLikesInfo.likeUserInfo': { userId } },
-          $push: { 'extendedLikesInfo.likeUserInfo': likeUserInfo }
-        });
-        if (res.modifiedCount === 0) throw new NotFoundException();
-
+        if(likeStatus === 'None'){
+          const res = await this.postModel.updateOne({ _id: postId }, {
+            $set: {
+              'extendedLikesInfo.likesCount': postInfo.extendedLikesInfo.likesCount - (myLikeStatus.likeStatus === 'Like' ? 1 : 0),
+              'extendedLikesInfo.dislikesCount': postInfo.extendedLikesInfo.dislikesCount - (myLikeStatus.likeStatus === 'Dislike' ? 1 : 0)
+            },
+            $pull: { 'extendedLikesInfo.likeUserInfo': { userId } },
+          })
+          if (res.modifiedCount === 0) throw new NotFoundException();
+        } else {
+          const res = await this.postModel.updateOne({ _id: postId }, {
+            $set: {
+              'extendedLikesInfo.likesCount': postInfo.extendedLikesInfo.likesCount + (likeStatus === 'Like' ? 1 : -1),
+              'extendedLikesInfo.dislikesCount': postInfo.extendedLikesInfo.dislikesCount + (likeStatus === 'Dislike' ? 1 : -1)
+            },
+            $pull: { 'extendedLikesInfo.likeUserInfo': { userId } },
+            $push: { 'extendedLikesInfo.likeUserInfo': likeUserInfo }
+          });
+          if (res.modifiedCount === 0) throw new NotFoundException();
+        }
       } else {
         //если юзер лайк не ставил, просто устанавливаем статус который отправил
         const res = await this.postModel.updateOne({ _id: postId }, {
@@ -81,7 +90,6 @@ export class PostRepository {
 
 
     } catch (err) {
-      console.log(err);
       if (err instanceof NotFoundException) {
         throw new NotFoundException();
       }

@@ -4,16 +4,23 @@ import { BlogViewModel } from '../../../src/features/blogs/api/model/output/crea
 import { PostsTestManagers } from '../../testManagers/postsTestManagers';
 import { CreatePostInputModel } from '../../../src/features/posts/api/model/input/createPost.input.model';
 import { HttpStatus } from '@nestjs/common';
+import { CommentTestManagers, contentTestComment } from '../../testManagers/commentTestManagers';
+import { AuthTestManager } from '../../testManagers/authTestManager';
+import { PostViewModel } from '../../../src/features/posts/api/model/output/postViewModel';
 
 
 describe('test for POST posts', () => {
   let postsTestManagers: PostsTestManagers;
   let blogsTestManagers: BlogsTestManagers;
+  let commentsTestManagers: CommentTestManagers;
+  let authTestManagers: AuthTestManager;
   let blog: BlogViewModel;
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
     blogsTestManagers = new BlogsTestManagers(testApp);
+    commentsTestManagers = new CommentTestManagers(testApp);
+    authTestManagers = new AuthTestManager(testApp);
 
     blog = await blogsTestManagers.createTestBlog();
   });
@@ -56,7 +63,7 @@ describe('test for POST posts', () => {
       blogId: blog.id,
       shortDescription: ''
     };
-    const res1 = await postsTestManagers.createPost({ data: wrongDataPost1 , status: HttpStatus.BAD_REQUEST});
+    const res1 = await postsTestManagers.createPost({ data: wrongDataPost1, status: HttpStatus.BAD_REQUEST });
     expect(res1).toEqual({
       errorsMessages: [
         {
@@ -117,6 +124,46 @@ describe('test for POST posts', () => {
       });
 
   });
+
+  it('should be create comment', async () => {
+    const user = await authTestManagers.registrationTestUser();
+    const post: PostViewModel = await postsTestManagers.createTestPost();
+
+
+    const comment = await commentsTestManagers.createComment(post.id, contentTestComment, user[0].accessToken);
+    expect(comment).toEqual({
+      id: expect.any(String),
+      content: contentTestComment,
+      commentatorInfo: {
+        userId: user[0].userId,
+        userLogin: user[0].login
+      },
+      createdAt: expect.any(String),
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: 'None'
+      }
+    });
+  });
+
+  it('shouldn`t be create new comment, not authorization', async ()=> {
+    const post: PostViewModel = await postsTestManagers.createTestPost()
+    await commentsTestManagers.createComment(post.id, contentTestComment, '', HttpStatus.UNAUTHORIZED)
+  })
+  it('shouldn`t be create new comment, incorrect content', async ()=> {
+    const user = await authTestManagers.registrationTestUser()
+    const post: PostViewModel = await postsTestManagers.createTestPost()
+   const res1 =  await commentsTestManagers.createComment(post.id, 'contentTest', user[0].accessToken, HttpStatus.BAD_REQUEST)
+    expect(res1).toEqual({
+      errorsMessages: [
+        {
+          message: 'content length should be  min 20, max 300 symbols',
+          field: 'content'
+        }
+      ]
+    })
+  })
 
 
 });

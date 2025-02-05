@@ -17,16 +17,20 @@ import { PostQueryRepository } from '../infrastructure/postQueryRepository';
 import { ParamType } from '../../1_commonTypes/paramType';
 import { UpdatePostInputModel } from './model/input/updatePost.input.model';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
-import { AuthUserType,  } from '../../users/api/models/types/userType';
+import { AuthUserType } from '../../users/api/models/types/userType';
 import { LikeStatusInputModel } from './model/input/LikeStatus.input.model';
 import jwt from 'jsonwebtoken';
 import * as process from 'node:process';
+import { CommentInputModel } from '../../comments/api/input/comment.input.model';
+import { CommentService } from '../../comments/application/comment.service';
+import { CommentOutputModel } from '../../comments/api/output/comment.output.model';
 
 
 @Controller('posts')
 export class PostController {
   constructor(private postService: PostService,
-              private postQueryRepository: PostQueryRepository) {
+              private postQueryRepository: PostQueryRepository,
+              private commentService: CommentService) {
   }
 
   @UseGuards(AuthGuard)
@@ -47,7 +51,7 @@ export class PostController {
 
     if (header) {
       const [type, token] = header.split(' ');
-      if(type === 'Bearer' && token && token.trim() !== ''){
+      if (type === 'Bearer' && token && token.trim() !== '') {
         const userData = token && jwt.verify(token, process.env.ACCESS_SECRET as string);
         return await this.postQueryRepository.getPostById(param.id, userData);
       }
@@ -82,5 +86,17 @@ export class PostController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param() param: ParamType) {
     return await this.postService.deletePost(param.id);
+  }
+
+
+  @Post(`:id/comments`)
+  @UseGuards(AuthGuard)
+  async createComment(@Body() body: CommentInputModel,
+    @Req() req: RequestType<ParamType, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
+    if (!req.user) throw new UnauthorizedException();
+    const { userId, login } = req.user;
+
+    return await this.commentService.createComment(req.params.id, body.content, userId, login);
+
   }
 }
