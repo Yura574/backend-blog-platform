@@ -66,7 +66,7 @@ export class AuthController {
     const cookie = await this.loginUseCase.execute(loginOrEmail, password);
 
     const accessToken = {
-      accessToken: cookie.accessCookie
+      access: cookie.accessCookie
     };
     res.cookie('refresh', cookie.refreshCookie, {httpOnly: true, secure: true});
     return accessToken;
