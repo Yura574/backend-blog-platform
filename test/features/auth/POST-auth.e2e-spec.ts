@@ -3,6 +3,7 @@ import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
 import { AuthTestManager, codeForTest, userTestData } from '../../testManagers/authTestManager';
 import { HttpStatus } from '@nestjs/common';
+import {parse} from 'cookie'
 
 
 describe('test for POST auth', () => {
@@ -47,6 +48,7 @@ describe('test for POST auth', () => {
     await authTestManager.registrationTestUser()
     const login = await authTestManager.login({loginOrEmail: userTestData.login, password: userTestData.password});
     expect(login.accessToken).toBeDefined();
+
   });
   it('shouldn`t login', async ()=> {
     await authTestManager.registrationTestUser()

@@ -10,6 +10,7 @@ import { UserViewModel } from '../../src/features/users/api/models/output/create
 import { LoginOutputModel } from '../../src/features/auth/api/models/output/login.output.model';
 import jwt from 'jsonwebtoken';
 import { JwtUserType } from '../../src/features/users/api/models/types/jwtUserType';
+import { parse } from 'cookie';
 
 export type UserViewTestType={
   userId: string,
@@ -91,6 +92,11 @@ export class AuthTestManager {
       .post('/auth/login')
       .send(data)
       .expect(statusCode);
+
+    const setCookieObject = parse(res.headers['set-cookie'][0]);
+
+    expect(setCookieObject.refreshToken).toEqual(expect.stringContaining('.'))
+
     return res.body;
   }
 

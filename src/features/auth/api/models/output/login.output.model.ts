@@ -3,5 +3,5 @@
 
 
 export type LoginOutputModel ={
-  access: string
+  accessToken: string
 }
