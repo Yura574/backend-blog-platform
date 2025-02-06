@@ -23,7 +23,7 @@ export class PostsTestManagers {
     return res.body;
   }
 
-  async createTestPost(count?: number, status = HttpStatus.CREATED) {
+  async createTestPost(count=1 , status = HttpStatus.CREATED) {
     const resBlog = await request(this.app.getHttpServer())
       .post('/blogs')
       .auth('admin', 'qwerty')
@@ -37,8 +37,9 @@ export class PostsTestManagers {
       shortDescription: 'shortDescription'
     };
 
-    if (count) {
-      for (let i = 0; i < count; i++) {
+    if (count> 1) {
+      for (let i = 0; count > i; i++) {
+        // console.log(i);
         const data: CreatePostInputModel = {
           blogId: resBlog.body.id,
           content: `content ${i}`,

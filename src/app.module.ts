@@ -40,6 +40,7 @@ import { CommentRepository } from './features/comments/infrastructure/comment.re
 import { CommentService } from './features/comments/application/comment.service';
 import { Comment, CommentSchema } from './features/comments/domain/comment.entity';
 import { CommentsController } from './features/comments/api/comments.controller';
+import { CommentQueryRepository } from './features/comments/infrastructure/commentQuery.repository';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -59,6 +60,7 @@ const postsProviders: Provider[] = [
 
 const commentsProviders: Provider[] = [
   CommentRepository,
+   CommentQueryRepository,
   CommentService
 ];
 const recoveryPasswordProviders: Provider[] = [

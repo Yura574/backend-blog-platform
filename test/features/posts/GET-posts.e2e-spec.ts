@@ -1,4 +1,3 @@
-import { BlogsTestManagers } from '../../testManagers/blogsTestManagers';
 import { clearDatabase, closeTest, initializeTestSetup, testApp } from '../../../test-setup';
 import { PostsTestManagers } from '../../testManagers/postsTestManagers';
 import { HttpStatus } from '@nestjs/common';
@@ -14,20 +13,20 @@ describe('test for GET posts', () => {
   let commentsTestManagers: CommentTestManagers;
   let authTestManagers: AuthTestManager;
   let user: UserViewTestType[];
-  let post: PostViewModel;
+  // let post: PostViewModel;
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
     commentsTestManagers = new CommentTestManagers(testApp);
-    authTestManagers= new AuthTestManager(testApp)
+    authTestManagers = new AuthTestManager(testApp);
     user = await authTestManagers.registrationTestUser();
-    post = await postsTestManagers.createTestPost();
+    // post = await postsTestManagers.createTestPost();
 
   });
   beforeEach(async () => {
     await clearDatabase();
     user = await authTestManagers.registrationTestUser();
-    post = await postsTestManagers.createTestPost();
+    // post = await postsTestManagers.createTestPost();
   });
 
   afterAll(async () => {
@@ -67,6 +66,7 @@ describe('test for GET posts', () => {
   });
 
   it('should get post by id', async () => {
+    const post = await postsTestManagers.createTestPost()
     const createdPost = await postsTestManagers.getPostById(post.id);
 
     expect(createdPost).toEqual({
@@ -93,9 +93,46 @@ describe('test for GET posts', () => {
   });
 
   it('should get comments for post', async () => {
+    const post = await postsTestManagers.createTestPost()
+
     await commentsTestManagers.createTestComments(post.id, user[0].accessToken, 9);
-    const comments = await commentsTestManagers.getComments(post.id, 2, 3, );
-    console.log(comments);
+    const res1: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post.id);
+    expect(res1).toEqual({
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 9,
+      items: expect.any(Array)
+    });
+
+    expect(res1.items![0].content).toBe('comment 9 should be count');
+  });
+
+  it('should get comments for post, with query', async () => {
+    const post = await postsTestManagers.createTestPost()
+
+    await commentsTestManagers.createTestComments(post.id, user[0].accessToken, 10);
+    //комменты сначало старые
+    const res1: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post.id, 2, 3, 'asc' );
+    expect(res1).toEqual({
+      pagesCount: 4,
+      page: 2,
+      pageSize: 3,
+      totalCount: 10,
+      items: expect.any(Array)
+    });
+    //комменты сначало новые
+    expect(res1.items![0].content).toBe('comment 4 should be count');
+    const res2: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post.id, 2, 3,  );
+    expect(res2).toEqual({
+      pagesCount: 4,
+      page: 2,
+      pageSize: 3,
+      totalCount: 10,
+      items: expect.any(Array)
+    });
+
+    expect(res2.items![0].content).toBe('comment 7 should be count');
   });
 
 

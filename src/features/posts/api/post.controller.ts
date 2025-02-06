@@ -25,13 +25,15 @@ import { CommentInputModel } from '../../comments/api/input/comment.input.model'
 import { CommentService } from '../../comments/application/comment.service';
 import { CommentOutputModel } from '../../comments/api/output/comment.output.model';
 import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
+import { CommentQueryRepository } from '../../comments/infrastructure/commentQuery.repository';
 
 
 @Controller('posts')
 export class PostController {
   constructor(private postService: PostService,
               private postQueryRepository: PostQueryRepository,
-              private commentService: CommentService) {
+              private commentService: CommentService,
+              private commentQueryRepository: CommentQueryRepository) {
   }
 
   @UseGuards(AuthGuard)
@@ -102,6 +104,6 @@ export class PostController {
 
   @Get(':id/comments')
   async getCommentsByPostId(@Req() req: RequestType<ParamType, {}, QueryCommentsType>){
-return await this.commentService.getCommentsByPostId(req.params.id, req.query)
+return await this.commentQueryRepository.getCommentsByPostId(req.params.id, req.query)
   }
 }

@@ -27,25 +27,25 @@ export class CommentService {
       }
 
     };
-   const comment = await this.commentRepository.createComment(newComment);
+    const comment = await this.commentRepository.createComment(newComment);
     return {
-     id: comment.id,
-     content: comment.content,
-     createdAt: comment.createdAt,
-     commentatorInfo: {
-       userId: comment.commentatorInfo.userId,
-       userLogin: comment.commentatorInfo.userLogin,
-     },
-     likesInfo: {
-       likesCount: comment.likesInfo.likesCount,
-       dislikesCount: comment.likesInfo.dislikesCount,
-       myStatus: 'None'
-     }
-   }
+      id: comment.id,
+      content: comment.content,
+      createdAt: comment.createdAt,
+      commentatorInfo: {
+        userId: comment.commentatorInfo.userId,
+        userLogin: comment.commentatorInfo.userLogin
+      },
+      likesInfo: {
+        likesCount: comment.likesInfo.likesCount,
+        dislikesCount: comment.likesInfo.dislikesCount,
+        myStatus: 'None'
+      }
+    };
   }
 
-  async getCommentsByPostId(postId: string, query: QueryCommentsType){
-return await this.commentRepository.getCommentsByPostId(postId, query)
 
+  async deleteComment(commentId: string, userId: string){
+    return await this.commentRepository.deleteComment(commentId, userId)
   }
 }

@@ -27,10 +27,11 @@ export class CommentTestManagers {
         .expect(status);
       return res.body;
     } else {
-      for (let i = 0; count > i ; i++) {
+      for (let i = 0; count > i; i++) {
+        const content = `comment ${1 + i} should be count`;
         await request(this.app.getHttpServer())
           .post(`/posts/${postId}/comments`)
-          .send({ content: contentTestComment })
+          .send({ content })
           .auth(token, { type: 'bearer' })
           .expect(status);
       }
@@ -38,10 +39,25 @@ export class CommentTestManagers {
 
   }
 
-  async getComments(postId: string, pageNumber =1, pageSize = 10, sortBy='createdAt', sortDirection='desc'){
+  async getComments(postId: string, pageNumber = 1, pageSize = 10, sortDirection = 'desc', sortBy = 'createdAt') {
     const res = await request(this.app.getHttpServer())
-      .get(`/posts/${postId}/comments?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
+      .get(`/posts/${postId}/comments?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`);
 
-    return res.body
+    return res.body;
+  }
+
+  async getCommentById(commentId: string, status = HttpStatus.OK) {
+    const res = await request(this.app.getHttpServer())
+      .get(`/comments/${commentId}`)
+      .expect(status);
+
+    return res.body;
+  }
+
+  async deleteCommentById(commentId: string, token = '', status = HttpStatus.NO_CONTENT) {
+    await request(this.app.getHttpServer())
+      .delete(`/comments/${commentId}`)
+      .auth(token, { type: 'bearer' })
+      .expect(status);
   }
 }

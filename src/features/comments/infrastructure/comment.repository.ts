@@ -1,12 +1,14 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Comment, CommentDocument } from '../domain/comment.entity';
 import { CreateNewCommentType } from '../api/types/createNewComment.type';
-import { QueryCommentsType } from '../api/types/QueryComments.type';
-import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
-import { CommentOutputModel } from '../api/output/comment.output.model';
-
 
 @Injectable()
 export class CommentRepository {
@@ -15,29 +17,30 @@ export class CommentRepository {
 
   async createComment(comment: CreateNewCommentType) {
     try {
-      const res = await this.commentModel.create(comment);
-      return res;
+      return await this.commentModel.create(comment);
     } catch (err) {
-      console.log(err);
-      throw new BadRequestException();
+      throw new BadRequestException('comment not found');
     }
   }
 
-  async getCommentsByPostId(postId: string, query: QueryCommentsType) {
-    const { pageNumber, pageSize, sortBy, sortDirection } = query;
-    const countDocument = await this.commentModel.countDocuments({postId})
-    const pagesCount = Math.ceil(countDocument)
-    const skip = (+pageNumber - 1) * +pageSize;
-    const sort: any ={}
-    sort[sortBy] = sortDirection === 'asc' ? 1 : -1
-    const res = await this.commentModel.find({postId}).sort(sort).skip(skip).limit(+pageSize);
-    console.log(res);
-    return {
-      page: pageNumber,
-      pageSize,
-      totalCount: countDocument,
-      pagesCount,
-      items: res
+  async deleteComment(commentId: string, userId: string) {
+    try {
+      if (!Types.ObjectId.isValid(commentId)) throw new NotFoundException();
+      const comment: CommentDocument | null = await this.commentModel.findOne({ _id: commentId });
+      if (!comment) throw new NotFoundException();
+
+      if (comment.commentatorInfo.userId !== userId) throw new ForbiddenException();
+
+      return await this.commentModel.deleteOne({ _id: commentId });
+
+    } catch (err) {
+      if (err instanceof NotFoundException) throw new NotFoundException();
+
+      if (err instanceof ForbiddenException) throw new ForbiddenException();
+
+      throw new InternalServerErrorException();
     }
   }
+
+
 }
