@@ -58,19 +58,11 @@ export class PostRepository {
       if (myLikeStatus) {
         if(likeStatus === 'None'){
           const res = await this.postModel.updateOne({ _id: postId }, {
-            $set: {
-              'extendedLikesInfo.likesCount': postInfo.extendedLikesInfo.likesCount - (myLikeStatus.likeStatus === 'Like' ? 1 : 0),
-              'extendedLikesInfo.dislikesCount': postInfo.extendedLikesInfo.dislikesCount - (myLikeStatus.likeStatus === 'Dislike' ? 1 : 0)
-            },
             $pull: { 'extendedLikesInfo.likeUserInfo': { userId } },
           })
           if (res.modifiedCount === 0) throw new NotFoundException();
         } else {
           const res = await this.postModel.updateOne({ _id: postId }, {
-            $set: {
-              'extendedLikesInfo.likesCount': postInfo.extendedLikesInfo.likesCount + (likeStatus === 'Like' ? 1 : -1),
-              'extendedLikesInfo.dislikesCount': postInfo.extendedLikesInfo.dislikesCount + (likeStatus === 'Dislike' ? 1 : -1)
-            },
             $pull: { 'extendedLikesInfo.likeUserInfo': { userId } },
             $push: { 'extendedLikesInfo.likeUserInfo': likeUserInfo }
           });
@@ -79,10 +71,6 @@ export class PostRepository {
       } else {
         //если юзер лайк не ставил, просто устанавливаем статус который отправил
         const res = await this.postModel.updateOne({ _id: postId }, {
-          $set: {
-            'extendedLikesInfo.likesCount': postInfo.extendedLikesInfo.likesCount + (likeStatus=== 'Like'? 1: 0),
-            'extendedLikesInfo.dislikesCount': postInfo.extendedLikesInfo.dislikesCount + (likeStatus=== 'Dislike'? 1: 0)
-          },
           $push: { 'extendedLikesInfo.likeUserInfo': likeUserInfo }
         });
         if (res.modifiedCount === 0) throw new NotFoundException();

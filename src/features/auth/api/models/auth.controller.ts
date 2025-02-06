@@ -68,7 +68,7 @@ export class AuthController {
     const accessToken = {
       accessToken: cookie.accessCookie
     };
-    res.cookie('refresh token', cookie.refreshCookie);
+    res.cookie('refresh token', cookie.refreshCookie, {httpOnly: true, secure: true});
     return accessToken;
   }
 

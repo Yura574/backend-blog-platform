@@ -1,5 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { LikeStatusInputModel } from '../../src/features/posts/api/model/input/LikeStatus.input.model';
+import { LikeStatus } from '../../src/features/posts/api/model/output/postViewModel';
 
 
 export const contentTestComment = 'length content should be min 20 symbols';
@@ -46,9 +48,10 @@ export class CommentTestManagers {
     return res.body;
   }
 
-  async getCommentById(commentId: string, status = HttpStatus.OK) {
+  async getCommentById(commentId: string, token='', status = HttpStatus.OK) {
     const res = await request(this.app.getHttpServer())
       .get(`/comments/${commentId}`)
+      .auth(token, {type: 'bearer'})
       .expect(status);
 
     return res.body;
@@ -61,12 +64,21 @@ export class CommentTestManagers {
       .expect(status);
   }
 
-  async updateCommentById(commentId: string, content: string, token: string, status= HttpStatus.NO_CONTENT){
+  async updateCommentById(commentId: string, content: string, token: string, status = HttpStatus.NO_CONTENT) {
     const res = await request(this.app.getHttpServer())
       .put(`/comments/${commentId}`)
-      .send({content})
-      .auth(token, {type: 'bearer'})
-      .expect(status)
-    return res.body
+      .send({ content })
+      .auth(token, { type: 'bearer' })
+      .expect(status);
+    return res.body;
+  }
+
+  async updateLikeStatus(commentId: string, token: string, likeStatus: LikeStatus, status = HttpStatus.NO_CONTENT) {
+    const res = await request(this.app.getHttpServer())
+      .put(`/comments/${commentId}/like-status`)
+      .send({ status: likeStatus })
+      .auth(token, { type: 'bearer' })
+      .expect(status);
+    return res.body;
   }
 }

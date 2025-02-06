@@ -5,6 +5,9 @@ import { Model, Types } from 'mongoose';
 import { QueryCommentsType } from '../api/types/QueryComments.type';
 import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
 import { CommentOutputModel } from '../api/output/comment.output.model';
+import { LikeUserInfoType } from '../../posts/api/types/likeUserInfoType';
+import { LikesInfoType } from '../../1_commonTypes/likesInfoType';
+import { likeInfoHandler } from '../../../infrastructure/utils/likeInfoHandler';
 
 
 @Injectable()
@@ -45,12 +48,14 @@ export class CommentQueryRepository {
     };
   }
 
-  async getCommentById(id: string): Promise<CommentOutputModel | null> {
+  async getCommentById(id: string, userId?: string): Promise<CommentOutputModel | null> {
     try {
       if (!Types.ObjectId.isValid(id)) throw new NotFoundException();
 
       const comment: CommentDocument | null = await this.commentModel.findOne({ _id: id });
       if(!comment) throw new NotFoundException()
+
+      const likeInfo: LikesInfoType = likeInfoHandler(comment.likesUserInfo, userId)
       return {
         id: comment.id,
         content: comment.content,
@@ -60,9 +65,9 @@ export class CommentQueryRepository {
           userLogin: comment.commentatorInfo.userLogin,
         },
         likesInfo: {
-          likesCount: comment.likesInfo.likesCount,
-          dislikesCount: comment.likesInfo.dislikesCount,
-          myStatus: 'None'
+          likesCount: likeInfo.likesCount,
+          dislikesCount: likeInfo.dislikesCount,
+          myStatus: likeInfo.myStatus
         }
       };
     } catch (err) {

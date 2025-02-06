@@ -9,6 +9,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Comment, CommentDocument } from '../domain/comment.entity';
 import { CreateNewCommentType } from '../api/types/createNewComment.type';
+import { LikeUserInfo } from '../../posts/api/types/postDBType';
+import { AuthUserType } from '../../users/api/models/types/userType';
 
 @Injectable()
 export class CommentRepository {
@@ -23,15 +25,62 @@ export class CommentRepository {
     }
   }
 
-  async updateComment(commentId: string, content: string){
-    try{
-return await this.commentModel.updateOne({_id: commentId},{
-  $set: {
-    content
+  async updateComment(commentId: string, content: string) {
+    try {
+      return await this.commentModel.updateOne({ _id: commentId }, {
+        $set: {
+          content
+        }
+      });
+    } catch (err) {
+      throw new InternalServerErrorException('something went wrong');
+    }
   }
-})
-    } catch (err){
 
+  async updateLikeStatus(commentId: string, likeUserInfo: LikeUserInfo) {
+    const userId = likeUserInfo.userId;
+    try {
+      //проверка корректности id, ошибка если не соответствует ObjectId
+      if (!Types.ObjectId.isValid(commentId)) throw new NotFoundException();
+
+      const comment: CommentDocument | null = await this.commentModel.findOne({ _id: commentId });
+      if (!comment) throw new NotFoundException();
+
+
+      const myLikeStatus = comment.likesUserInfo.find(el => el.userId === likeUserInfo.userId);
+      if (myLikeStatus) {
+        if (likeUserInfo.likeStatus === 'None') {
+          const res = await this.commentModel.updateOne({ _id: commentId }, {
+            $pull: { likesUserInfo: { userId } }
+          });
+          if (res.modifiedCount === 0) throw new NotFoundException();
+        } else {
+          const res = await this.commentModel.updateOne({ _id: commentId }, {
+            $pull: {
+              likesUserInfo: { userId }
+            },
+            $push: {
+              likesUserInfo: likeUserInfo
+            }
+          });
+
+          if (res.modifiedCount === undefined) throw new NotFoundException();
+        }
+
+      } else {
+        if (likeUserInfo.likeStatus !== 'None') {
+          const res = await this.commentModel.updateOne({ _id: commentId }, {
+              $push: { likesUserInfo: likeUserInfo }
+            }
+          );
+          if (res.modifiedCount === 0) throw new NotFoundException();
+        }
+      }
+      return;
+    } catch (err) {
+      if (err instanceof NotFoundException) throw new NotFoundException('comment not found');
+      if (err instanceof ForbiddenException) throw new ForbiddenException();
+      throw new InternalServerErrorException('something went wrong');
     }
   }
 

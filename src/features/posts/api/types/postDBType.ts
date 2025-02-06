@@ -14,8 +14,6 @@ export type PostDBType = {
 }
 
 type ExtendedLikesInfoType = {
-  likesCount: number
-  dislikesCount: number
   likeUserInfo: LikeUserInfo[]
 }
 

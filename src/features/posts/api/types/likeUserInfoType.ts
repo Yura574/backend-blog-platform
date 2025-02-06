@@ -8,4 +8,6 @@ export type LikeUserInfoType = {
   login: string
 
   likeStatus: 'Like' | 'Dislike' | 'None'
+
+  addedAt: string
 }

@@ -6,7 +6,6 @@ import { QueryPostsType } from '../api/types/queryPostsType';
 import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
 import { NewestLikesType, PostViewModel } from '../api/model/output/postViewModel';
 import { LikeStatus, LikeUserInfo, PostDBType } from '../api/types/postDBType';
-import { BlogsService } from '../../blogs/application/blogs.service';
 import { BlogsQueryRepository } from '../../blogs/infrastructure/blogsQuery.repository';
 
 
@@ -43,21 +42,20 @@ export class PostQueryRepository {
         shortDescription: item.shortDescription,
         createdAt: item.createdAt,
         extendedLikesInfo: {
-          likesCount: item.extendedLikesInfo.likesCount,
-          dislikesCount: item.extendedLikesInfo.dislikesCount,
+          likesCount: likeInfo.likesCount,
+          dislikesCount: likeInfo.dislikesCount,
           newestLikes: likeInfo.newestLikes,
           myStatus: likeInfo.userStatus
         }
       };
     });
-    const obj = {
+    return {
       pagesCount,
       page: +pageNumber,
       pageSize: +pageSize,
       totalCount,
       items: returnItems
     };
-    return obj;
   }
 
   async getPostById(postId: string, userData?: any) {
@@ -78,8 +76,8 @@ export class PostQueryRepository {
         blogName: postDB.blogName,
         createdAt: postDB.createdAt,
         extendedLikesInfo: {
-          likesCount: postDB.extendedLikesInfo.likesCount,
-          dislikesCount: postDB.extendedLikesInfo.dislikesCount,
+          likesCount: likeInfo.likesCount,
+          dislikesCount: likeInfo.dislikesCount,
           myStatus: likeInfo.userStatus,
           newestLikes: likeInfo.newestLikes
         }

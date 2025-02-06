@@ -53,7 +53,7 @@ describe('test for GET posts', () => {
   })
 
   it('shouldn`t get comment by id, invalid id', async ()=> {
-   await commentsTestManagers.getCommentById('comment.id', HttpStatus.NOT_FOUND)
+   await commentsTestManagers.getCommentById('comment.id', '',HttpStatus.NOT_FOUND)
   })
 
 });

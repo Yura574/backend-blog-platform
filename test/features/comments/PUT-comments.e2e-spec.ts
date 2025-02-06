@@ -11,6 +11,7 @@ describe('test for PUT comments', () => {
   let postsTestManagers: PostsTestManagers;
   let authTestManagers: AuthTestManager;
   let commentTestManagers: CommentTestManagers
+
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
@@ -21,7 +22,6 @@ describe('test for PUT comments', () => {
   beforeEach(async () => {
     await clearDatabase();
   });
-
   afterAll(async () => {
     await closeTest();
   });
@@ -78,5 +78,62 @@ describe('test for PUT comments', () => {
     await commentTestManagers.updateCommentById(comment.id, newContent, user[1].accessToken, HttpStatus.FORBIDDEN)
 
   })
+
+  it('should be update like status for comment', async ()=> {
+    const users = await authTestManagers.registrationTestUser()
+    const post  = await postsTestManagers.createTestPost()
+    const comment: CommentOutputModel =await commentTestManagers.createTestComments(post.id, users[0].accessToken)
+    await commentTestManagers.updateLikeStatus(comment.id, users[0].accessToken,  'Like')
+    const res: CommentOutputModel = await commentTestManagers.getCommentById(comment.id, users[0].accessToken)
+    expect(res.likesInfo.likesCount).toBe(1)
+    expect(res.likesInfo.dislikesCount).toBe(0)
+    expect(res.likesInfo.myStatus).toBe('Like')
+  })
+
+  it('should be update like status for comment, with different user', async ()=> {
+    const users = await authTestManagers.registrationTestUser(5)
+    const post  = await postsTestManagers.createTestPost()
+    const comment: CommentOutputModel =await commentTestManagers.createTestComments(post.id, users[0].accessToken)
+
+    await commentTestManagers.updateLikeStatus(comment.id, users[0].accessToken,  'Like')
+    await commentTestManagers.updateLikeStatus(comment.id, users[1].accessToken,  'Dislike')
+    await commentTestManagers.updateLikeStatus(comment.id, users[2].accessToken,  'Like')
+    await commentTestManagers.updateLikeStatus(comment.id, users[3].accessToken,  'Like')
+    await commentTestManagers.updateLikeStatus(comment.id, users[4].accessToken,  'Dislike')
+
+    const res1: CommentOutputModel = await commentTestManagers.getCommentById(comment.id, users[0].accessToken)
+    expect(res1.likesInfo.likesCount).toBe(3)
+    expect(res1.likesInfo.dislikesCount).toBe(2)
+    expect(res1.likesInfo.myStatus).toBe('Like')
+
+
+    const res2: CommentOutputModel = await commentTestManagers.getCommentById(comment.id, users[4].accessToken)
+    expect(res2.likesInfo.likesCount).toBe(3)
+    expect(res2.likesInfo.dislikesCount).toBe(2)
+    expect(res2.likesInfo.myStatus).toBe('Dislike')
+
+    await commentTestManagers.updateLikeStatus(comment.id, users[0].accessToken,  'None')
+    const res3: CommentOutputModel = await commentTestManagers.getCommentById(comment.id, users[0].accessToken)
+
+    expect(res3.likesInfo.likesCount).toBe(2)
+    expect(res3.likesInfo.dislikesCount).toBe(2)
+    expect(res3.likesInfo.myStatus).toBe('None')
+  })
+
+  it('shouldn`t ve update like status, not authorization', async ()=> {
+    const users = await authTestManagers.registrationTestUser()
+    const post = await postsTestManagers.createTestPost()
+    const comment = await commentTestManagers.createTestComments(post.id, users[0].accessToken)
+    await commentTestManagers.updateLikeStatus(comment.id, 'token','Like', HttpStatus.UNAUTHORIZED)
+  })
+
+
+  it('shouldn`t ve update like status, not found comment', async ()=> {
+    const users = await authTestManagers.registrationTestUser()
+    const post = await postsTestManagers.createTestPost()
+    await commentTestManagers.updateLikeStatus('comment.id', users[0].accessToken,'Like', HttpStatus.NOT_FOUND)
+  })
+
+
 
 });

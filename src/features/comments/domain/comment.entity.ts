@@ -25,17 +25,12 @@ class LikeUserInfo {
   addedAt: string
 }
 
-@Schema()
-class LikesInfo {
-  @Prop()
-  likesCount: number
-  @Prop()
-  dislikesCount: number
-
-  @Prop({type: [LikeUserInfo]})
-  @IsArray()
-  likeUserInfo: LikeUserInfo[]
-}
+// @Schema()
+// class LikesInfo {
+//   @Prop({type: [LikeUserInfo]})
+//   @IsArray()
+//   likeUserInfo: LikeUserInfo[]
+// }
 
 @Schema()
 export class Comment {
@@ -51,8 +46,9 @@ export class Comment {
   @Prop({type: CommentatorInfo, _id: false})
   commentatorInfo: CommentatorInfo
 
-  @Prop({ type: LikesInfo, _id: false})
-  likesInfo: LikesInfo
+  @Prop({ type: [LikeUserInfo], default: [],_id: false})
+  @IsArray()
+  likesUserInfo: LikeUserInfo[]
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)

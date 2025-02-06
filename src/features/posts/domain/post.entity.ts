@@ -20,11 +20,6 @@ class LikeUserInfo {
 
 @Schema()
 class ExtendedLikesInfo{
-  @Prop()
-  likesCount: number
-
-  @Prop()
-  dislikesCount: number
 
   @Prop({type: [LikeUserInfo]})
   @IsArray()
