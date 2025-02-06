@@ -45,7 +45,7 @@ export class CommentQueryRepository {
     };
   }
 
-  async getCommentById(id: string): Promise<CommentOutputModel | void> {
+  async getCommentById(id: string): Promise<CommentOutputModel | null> {
     try {
       if (!Types.ObjectId.isValid(id)) throw new NotFoundException();
 

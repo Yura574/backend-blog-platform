@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -16,6 +17,7 @@ import { CommentOutputModel } from './output/comment.output.model';
 import { CommentQueryRepository } from '../infrastructure/commentQuery.repository';
 import { RequestType } from '../../1_commonTypes/commonTypes';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
+import { CommentInputModel } from './input/comment.input.model';
 
 
 @Controller('comments')
@@ -31,12 +33,16 @@ export class CommentsController {
   }
 
   @Put(':id')
-  async updateComment() {
-
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateComment(@Body() body: CommentInputModel,
+                      @Req() req: RequestType<ParamType, {}, {}>) {
+    if(!req.user?.userId) throw new UnauthorizedException()
+return this.commentService.updateComment(req.params.id, body.content, req.user.userId)
   }
 
   @Get(':id')
-  async getCommentById(@Param() param: ParamType): Promise<CommentOutputModel | void> {
+  async getCommentById(@Param() param: ParamType): Promise<CommentOutputModel | null> {
     return await this.commentQueryRepository.getCommentById(param.id);
 
   }

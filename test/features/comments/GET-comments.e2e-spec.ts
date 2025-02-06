@@ -34,7 +34,6 @@ describe('test for GET posts', () => {
 
   it('should get comment by id', async ()=> {
     const comment: CommentOutputModel = await commentsTestManagers.createTestComments(post.id, user[0].accessToken)
-    console.log(comment);
     const res:CommentOutputModel  = await commentsTestManagers.getCommentById(comment.id)
     expect(res).toEqual({
       id: comment.id,

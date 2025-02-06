@@ -23,6 +23,18 @@ export class CommentRepository {
     }
   }
 
+  async updateComment(commentId: string, content: string){
+    try{
+return await this.commentModel.updateOne({_id: commentId},{
+  $set: {
+    content
+  }
+})
+    } catch (err){
+
+    }
+  }
+
   async deleteComment(commentId: string, userId: string) {
     try {
       if (!Types.ObjectId.isValid(commentId)) throw new NotFoundException();

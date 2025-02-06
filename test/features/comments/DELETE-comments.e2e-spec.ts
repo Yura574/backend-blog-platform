@@ -33,9 +33,16 @@ describe('test for DELETE posts', () => {
   });
 
 
-  it('shouldn`t delete comment, not authorization', async () => {
+  it('shouldn`t delete comment, invalid id', async () => {
     const user: UserViewTestType[] = await authTestManagers.registrationTestUser(2)
     await commentTestManagers.deleteCommentById('comment.id', user[0].accessToken, HttpStatus.NOT_FOUND)
+  });
+  it('shouldn`t delete comment, not authorization', async () => {
+    const user: UserViewTestType[] = await authTestManagers.registrationTestUser(2)
+    const post: PostViewModel = await postsTestManagers.createTestPost()
+    const comment: CommentOutputModel = await commentTestManagers.createTestComments(post.id, user[0].accessToken)
+
+    await commentTestManagers.deleteCommentById(comment.id, '', HttpStatus.UNAUTHORIZED)
   });
 
 

@@ -9,7 +9,7 @@ export class CommentTestManagers {
   }
 
 
-  async createComment(postId: string, content: string, token = '', status = HttpStatus.CREATED) {
+  async createComment(postId: string, content: string, token: string, status = HttpStatus.CREATED) {
     const res = await request(this.app.getHttpServer())
       .post(`/posts/${postId}/comments`)
       .send({ content })
@@ -54,10 +54,19 @@ export class CommentTestManagers {
     return res.body;
   }
 
-  async deleteCommentById(commentId: string, token = '', status = HttpStatus.NO_CONTENT) {
+  async deleteCommentById(commentId: string, token: string, status = HttpStatus.NO_CONTENT) {
     await request(this.app.getHttpServer())
       .delete(`/comments/${commentId}`)
       .auth(token, { type: 'bearer' })
       .expect(status);
+  }
+
+  async updateCommentById(commentId: string, content: string, token: string, status= HttpStatus.NO_CONTENT){
+    const res = await request(this.app.getHttpServer())
+      .put(`/comments/${commentId}`)
+      .send({content})
+      .auth(token, {type: 'bearer'})
+      .expect(status)
+    return res.body
   }
 }
