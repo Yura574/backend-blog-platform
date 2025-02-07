@@ -55,6 +55,7 @@ export class PostRepository {
         addedAt: new Date().toISOString()
       };
       const myLikeStatus = postInfo.extendedLikesInfo.likeUserInfo.find(el => el.userId === userId);
+      if(myLikeStatus && myLikeStatus.likeStatus === likeStatus) return
       if (myLikeStatus) {
         if(likeStatus === 'None'){
           const res = await this.postModel.updateOne({ _id: postId }, {
@@ -62,11 +63,13 @@ export class PostRepository {
           })
           if (res.modifiedCount === 0) throw new NotFoundException();
         } else {
-          const res = await this.postModel.updateOne({ _id: postId }, {
+          const res1 = await this.postModel.updateOne({ _id: postId }, {
             $pull: { 'extendedLikesInfo.likeUserInfo': { userId } },
+          }, {new: true});
+          const res2 = await this.postModel.updateOne({ _id: postId }, {
             $push: { 'extendedLikesInfo.likeUserInfo': likeUserInfo }
-          });
-          if (res.modifiedCount === 0) throw new NotFoundException();
+          }, {new: true});
+          // if (res.modifiedCount === 0) throw new NotFoundException();
         }
       } else {
         //если юзер лайк не ставил, просто устанавливаем статус который отправил

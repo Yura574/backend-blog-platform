@@ -3,7 +3,7 @@ import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
 import { AuthTestManager, codeForTest, userTestData } from '../../testManagers/authTestManager';
 import { HttpStatus } from '@nestjs/common';
-import {parse} from 'cookie'
+import { parse } from 'cookie';
 
 
 describe('test for POST auth', () => {
@@ -13,7 +13,7 @@ describe('test for POST auth', () => {
     await initializeTestSetup();
     userTestManager = new UsersTestManagers(testApp);
     authTestManager = new AuthTestManager(testApp);
-    await authTestManager.registrationTestUser()
+    await authTestManager.registrationTestUser();
   });
   beforeEach(async () => {
     await clearDatabase();
@@ -29,12 +29,12 @@ describe('test for POST auth', () => {
       login: 'yura',
       password: '123456'
     };
-     await authTestManager.registrationUser(dto);
+    await authTestManager.registrationUser(dto);
 
 
     const code = 'yura5742248@gmail.com_code for test';
 
-   await authTestManager.confirmRegistration({ code });
+    await authTestManager.confirmRegistration({ code });
 
     const login = await authTestManager.login({
       loginOrEmail: dto.login,
@@ -45,30 +45,26 @@ describe('test for POST auth', () => {
 
 
   it('should send access token for login', async () => {
-    await authTestManager.registrationTestUser()
-    const login = await authTestManager.login({loginOrEmail: userTestData.login, password: userTestData.password});
+    await authTestManager.registrationTestUser();
+    const login = await authTestManager.login({ loginOrEmail: userTestData.login, password: userTestData.password });
     expect(login.accessToken).toBeDefined();
 
   });
-  it('shouldn`t login', async ()=> {
-    await authTestManager.registrationTestUser()
-  await authTestManager.login({loginOrEmail: '', password: '  '}, HttpStatus.BAD_REQUEST);
-  })
+  it('shouldn`t login', async () => {
+    await authTestManager.registrationTestUser();
+    await authTestManager.login({ loginOrEmail: '', password: '  ' }, HttpStatus.BAD_REQUEST);
+  });
 
 
   it('recovery password and new password', async () => {
 
-    await authTestManager.registrationTestUser()
-    await authTestManager.recoveryPassword({ email:userTestData.email })
+    await authTestManager.registrationTestUser();
+    await authTestManager.recoveryPassword({ email: userTestData.email });
 
-    await authTestManager.newPassword({newPassword:'654321', recoveryCode: codeForTest})
-    const login =  await authTestManager.login({loginOrEmail: userTestData.email, password: '654321'})
-    expect(login.accessToken).toBeDefined()
+    await authTestManager.newPassword({ newPassword: '654321', recoveryCode: codeForTest });
+    const login = await authTestManager.login({ loginOrEmail: userTestData.email, password: '654321' });
+    expect(login.accessToken).toBeDefined();
   });
-
-
-
-  
 
 
 });

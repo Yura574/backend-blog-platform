@@ -27,6 +27,7 @@ import { CommentOutputModel } from '../../comments/api/output/comment.output.mod
 import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
 import { CommentQueryRepository } from '../../comments/infrastructure/commentQuery.repository';
 import { parse } from 'cookie';
+import { JwtPayloadType } from '../../1_commonTypes/jwtPayloadType';
 
 
 @Controller('posts')
@@ -51,18 +52,21 @@ export class PostController {
   @Get(':id')
   async getPostById(@Param() param: ParamType,
                     @Req() req: RequestType<{}, {}, {}>) {
-    const header = req.headers['authorization'];
+    const auth = req.headers['authorization'];
 
-    if (header) {
-      const [type, token] = header.split(' ');
-      if (type === 'Bearer' && token && token.trim() !== '') {
-        const userData = token && jwt.verify(token, process.env.ACCESS_SECRET as string);
-        return await this.postQueryRepository.getPostById(param.id, userData);
+    if(auth){
+      const [type, token ] = auth.split(' ')
+      if(type === 'Bearer' && token && token.trim() !== ''){
+        const user =  jwt.verify(token, process.env.ACCESS_SECRET as string) as JwtPayloadType
+        req.user = {
+          userId: user.userId,
+          login: user.login,
+          email: user.email
+        }
       }
-
     }
 
-    return await this.postQueryRepository.getPostById(param.id);
+    return await this.postQueryRepository.getPostById(param.id, req.user?.userId);
   }
 
   @UseGuards(AuthGuard)

@@ -135,6 +135,28 @@ describe('test for PUT posts', () => {
 
   });
 
+  it('shouldn`t add like twice one user ', async ()=> {
+    const users = await authTestManagers.registrationTestUser(5)
+    const post = await postsTestManagers.createTestPost()
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, 'Like')
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, 'Like')
+const res = await postsTestManagers.getPostById(post.id, users[0].accessToken)
+    console.log(res);
+  })
+  it('shouldn`t add like twice one user test ', async ()=> {
+    const users = await authTestManagers.registrationTestUser(5)
+    const post = await postsTestManagers.createTestPost()
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, 'Like')
+    const resPost1: PostViewModel = await postsTestManagers.getPostById(post.id, users[0].accessToken)
+    expect(resPost1.extendedLikesInfo.myStatus).toBe('Like')
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, 'Dislike')
+    const resPost2: PostViewModel = await postsTestManagers.getPostById(post.id, users[0].accessToken)
+    expect(resPost2.extendedLikesInfo.myStatus).toBe('Dislike')
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post.id, 'None')
+    const resPost3: PostViewModel = await postsTestManagers.getPostById(post.id, users[0].accessToken)
+    expect(resPost3.extendedLikesInfo.myStatus).toBe('None')
+
+  })
 
   it('should get 3 last users like post', async () => {
     const users = await authTestManagers.registrationTestUser(5);
