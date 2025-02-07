@@ -37,7 +37,7 @@ export class CommentsController {
   async updateCommentLikeStatus(@Body() body: LikeStatusInputModel,
                                 @Req() req: RequestType<ParamType, {}, {}>) {
     if (!req.user) throw new UnauthorizedException();
-    return await this.commentService.updateLikeStatus(req.params.id, body.status, req.user.userId, req.user.login);
+    return await this.commentService.updateLikeStatus(req.params.id, body.likeStatus, req.user.userId, req.user.login);
   }
 
   @Put(':id')

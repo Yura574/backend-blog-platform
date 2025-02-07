@@ -26,6 +26,7 @@ import { CommentService } from '../../comments/application/comment.service';
 import { CommentOutputModel } from '../../comments/api/output/comment.output.model';
 import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
 import { CommentQueryRepository } from '../../comments/infrastructure/commentQuery.repository';
+import { parse } from 'cookie';
 
 
 @Controller('posts')
@@ -81,7 +82,7 @@ export class PostController {
     const userData: AuthUserType | undefined = req.user;
 
     if (!userData) throw new UnauthorizedException();
-    await this.postService.updateLikeStatusPost(param.id, body.status, userData);
+    await this.postService.updateLikeStatusPost(param.id, body.likeStatus, userData);
   }
 
   @UseGuards(AuthGuard)

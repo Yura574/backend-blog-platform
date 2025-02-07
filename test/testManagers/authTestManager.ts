@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken';
 import { JwtUserType } from '../../src/features/users/api/models/types/jwtUserType';
 import { parse } from 'cookie';
 
-export type UserViewTestType={
+export type UserViewTestType = {
   userId: string,
   login: string,
   accessToken: string
@@ -92,10 +92,11 @@ export class AuthTestManager {
       .post('/auth/login')
       .send(data)
       .expect(statusCode);
+    if (res.headers['set-cookie']) {
+      const setCookieObject = parse(res.headers['set-cookie'][0]);
+      expect(setCookieObject.refreshToken).toEqual(expect.stringContaining('.'));
+    }
 
-    const setCookieObject = parse(res.headers['set-cookie'][0]);
-
-    expect(setCookieObject.refreshToken).toEqual(expect.stringContaining('.'))
 
     return res.body;
   }

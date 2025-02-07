@@ -11,8 +11,6 @@ import { QueryPostsType } from '../../posts/api/types/queryPostsType';
 @Injectable()
 export class BlogsService {
   constructor(private blogRepository: BlogsRepository,
-              private blogQueryRepository: BlogsQueryRepository,
-              private postRepository: PostRepository,
               private  postQueryRepository: PostQueryRepository,) {
   }
 

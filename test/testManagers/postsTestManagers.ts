@@ -81,7 +81,7 @@ export class PostsTestManagers {
     const res = await request(this.app.getHttpServer())
       .get(`/posts/${postId}`)
       .auth(token, { type: 'bearer' })
-      // .expect(status);
+      .expect(status);
     return res.body;
 
   }
@@ -103,7 +103,7 @@ export class PostsTestManagers {
   async updateLikeStatusPost(token: string, postId: string, likeStatus: any, status = HttpStatus.NO_CONTENT) {
     const res = await request(this.app.getHttpServer())
       .put(`/posts/${postId}/like-status`)
-      .send(likeStatus)
+      .send({ likeStatus })
       .auth(token, { type: 'bearer' })
       .expect(status);
     return res.body;

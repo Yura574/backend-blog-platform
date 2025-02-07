@@ -76,7 +76,7 @@ export class CommentTestManagers {
   async updateLikeStatus(commentId: string, token: string, likeStatus: LikeStatus, status = HttpStatus.NO_CONTENT) {
     const res = await request(this.app.getHttpServer())
       .put(`/comments/${commentId}/like-status`)
-      .send({ status: likeStatus })
+      .send({ likeStatus })
       .auth(token, { type: 'bearer' })
       .expect(status);
     return res.body;

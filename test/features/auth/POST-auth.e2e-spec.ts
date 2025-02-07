@@ -52,7 +52,7 @@ describe('test for POST auth', () => {
   });
   it('shouldn`t login', async ()=> {
     await authTestManager.registrationTestUser()
-  const res = await authTestManager.login({loginOrEmail: '', password: '  '}, HttpStatus.BAD_REQUEST);
+  await authTestManager.login({loginOrEmail: '', password: '  '}, HttpStatus.BAD_REQUEST);
   })
 
 
