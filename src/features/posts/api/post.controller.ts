@@ -28,6 +28,7 @@ import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
 import { CommentQueryRepository } from '../../comments/infrastructure/commentQuery.repository';
 import { parse } from 'cookie';
 import { JwtPayloadType } from '../../1_commonTypes/jwtPayloadType';
+import { GetUserDataGuard } from '../../../infrastructure/guards/getUserData.guard';
 
 
 @Controller('posts')
@@ -46,7 +47,20 @@ export class PostController {
 
   @Get()
   async getPosts(@Req() req: RequestType<{}, {}, QueryPostsType>) {
-    return await this.postQueryRepository.getPosts(req.query);
+    const auth = req.headers['authorization'];
+
+    if(auth){
+      const [type, token ] = auth.split(' ')
+      if(type === 'Bearer' && token && token.trim() !== ''){
+        const user =  jwt.verify(token, process.env.ACCESS_SECRET as string) as JwtPayloadType
+        req.user = {
+          userId: user.userId,
+          login: user.login,
+          email: user.email
+        }
+      }
+    }
+    return await this.postQueryRepository.getPosts(req.query, req.user?.userId);
   }
 
   @Get(':id')
@@ -108,7 +122,9 @@ export class PostController {
   }
 
   @Get(':id/comments')
+  @UseGuards(GetUserDataGuard)
   async getCommentsByPostId(@Req() req: RequestType<ParamType, {}, QueryCommentsType>){
-return await this.commentQueryRepository.getCommentsByPostId(req.params.id, req.query)
+
+return await this.commentQueryRepository.getCommentsByPostId(req.params.id, req.query,  req.user?.userId)
   }
 }

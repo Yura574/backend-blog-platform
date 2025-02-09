@@ -55,16 +55,13 @@ export class CommentRepository {
           });
           if (res.modifiedCount === 0) throw new NotFoundException();
         } else {
-          const res = await this.commentModel.updateOne({ _id: commentId }, {
-            $pull: {
-              likesUserInfo: { userId }
-            },
-            $push: {
-              likesUserInfo: likeUserInfo
-            }
+          await this.commentModel.updateOne({ _id: commentId }, {
+            $pull: { likesUserInfo: { userId } }
+          });
+          await this.commentModel.updateOne({ _id: commentId }, {
+            $push: { likesUserInfo: likeUserInfo }
           });
 
-          if (res.modifiedCount === undefined) throw new NotFoundException();
         }
 
       } else {

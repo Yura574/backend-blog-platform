@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { LikeStatusInputModel } from '../../src/features/posts/api/model/input/LikeStatus.input.model';
 import { LikeStatus } from '../../src/features/posts/api/model/output/postViewModel';
+import { CommentOutputModel } from '../../src/features/comments/api/output/comment.output.model';
 
 
 export const contentTestComment = 'length content should be min 20 symbols';
@@ -29,21 +30,25 @@ export class CommentTestManagers {
         .expect(status);
       return res.body;
     } else {
+      let comments: CommentOutputModel[] = []
       for (let i = 0; count > i; i++) {
         const content = `comment ${1 + i} should be count`;
-        await request(this.app.getHttpServer())
+        const res = await request(this.app.getHttpServer())
           .post(`/posts/${postId}/comments`)
           .send({ content })
           .auth(token, { type: 'bearer' })
           .expect(status);
+        comments.push(res.body)
       }
+      return comments
     }
 
   }
 
-  async getComments(postId: string, pageNumber = 1, pageSize = 10, sortDirection = 'desc', sortBy = 'createdAt') {
+  async getComments(postId: string,token ='', {pageNumber = 1, pageSize = 10, sortDirection = 'desc', sortBy = 'createdAt'}) {
     const res = await request(this.app.getHttpServer())
-      .get(`/posts/${postId}/comments?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`);
+      .get(`/posts/${postId}/comments?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
+      .auth(token, {type: 'bearer'})
 
     return res.body;
   }

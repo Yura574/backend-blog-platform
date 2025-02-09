@@ -2,7 +2,7 @@ import { CreatePostInputModel } from '../../src/features/posts/api/model/input/c
 import request from 'supertest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { createBlogTestData } from './blogsTestManagers';
-import { QueryPostsType } from '../../src/features/posts/api/types/queryPostsType';
+import { PostViewModel } from '../../src/features/posts/api/model/output/postViewModel';
 
 export class PostsTestManagers {
   constructor(protected app: INestApplication) {
@@ -23,56 +23,46 @@ export class PostsTestManagers {
     return res.body;
   }
 
-  async createTestPost(count=1 , status = HttpStatus.CREATED) {
+  async createTestPost(count = 1, status = HttpStatus.CREATED) {
     const resBlog = await request(this.app.getHttpServer())
       .post('/blogs')
       .auth('admin', 'qwerty')
       .send(createBlogTestData)
       .expect(status);
 
-    const postTestData: CreatePostInputModel = {
-      blogId: resBlog.body.id,
-      content: 'content',
-      title: 'title',
-      shortDescription: 'shortDescription'
-    };
 
-    if (count> 1) {
-      for (let i = 0; count > i; i++) {
-        // console.log(i);
-        const data: CreatePostInputModel = {
-          blogId: resBlog.body.id,
-          content: `content ${i}`,
-          title: `title ${i}`,
-          shortDescription: `shortDescription ${i}`
-        };
-        await request(this.app.getHttpServer())
-          .post('/posts')
-          .auth('admin', 'qwerty')
-          .send(data)
-          .expect(HttpStatus.CREATED);
-      }
-
-    } else {
+    const posts: PostViewModel[] = [];
+    for (let i = 0; count > i; i++) {
+      const data: CreatePostInputModel = {
+        blogId: resBlog.body.id,
+        content: `content`,
+        title: `title ${1+i}`,
+        shortDescription: `shortDescription`
+      };
       const res = await request(this.app.getHttpServer())
         .post('/posts')
         .auth('admin', 'qwerty')
-        .send(postTestData)
+        .send(data)
         .expect(HttpStatus.CREATED);
-      return res.body;
+      posts.push(res.body);
     }
+    return posts;
+
+
   }
 
-  async getAllPosts({ sortBy, sortDirection, pageSize, pageNumber }: QueryPostsType,
+  async getAllPosts(token = '',
+                    {
+                      sortBy = 'createdAt',
+                      sortDirection = 'desc',
+                      pageSize = 10,
+                      pageNumber = 1
+                    },
                     status = HttpStatus.OK) {
-    const query: QueryPostsType = {
-      pageNumber: pageNumber ? pageNumber : 1,
-      pageSize: pageSize ? pageSize : 10,
-      sortDirection: sortDirection ? sortDirection : 'desc',
-      sortBy: sortBy ? sortBy : 'createdAt'
-    };
+
     const res = await request(this.app.getHttpServer())
-      .get(`/posts?pageNumber=${query.pageNumber}&pageSize=${query.pageSize}&sortDirection=${query.sortDirection}&sortBy=${query.sortBy}`)
+      .get(`/posts?pageNumber=${pageNumber}&pageSize=${pageSize}&sortDirection=${sortDirection}&sortBy=${sortBy}`)
+      .auth(token, { type: 'bearer' })
       .expect(status);
     return res.body;
   }

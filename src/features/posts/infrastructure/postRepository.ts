@@ -63,12 +63,12 @@ export class PostRepository {
           })
           if (res.modifiedCount === 0) throw new NotFoundException();
         } else {
-          const res1 = await this.postModel.updateOne({ _id: postId }, {
+           await this.postModel.updateOne({ _id: postId }, {
             $pull: { 'extendedLikesInfo.likeUserInfo': { userId } },
-          }, {new: true});
-          const res2 = await this.postModel.updateOne({ _id: postId }, {
+          });
+           await this.postModel.updateOne({ _id: postId }, {
             $push: { 'extendedLikesInfo.likeUserInfo': likeUserInfo }
-          }, {new: true});
+          });
           // if (res.modifiedCount === 0) throw new NotFoundException();
         }
       } else {

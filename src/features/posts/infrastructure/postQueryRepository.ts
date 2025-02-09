@@ -16,22 +16,18 @@ export class PostQueryRepository {
   }
 
 
-  async getPosts(query: QueryPostsType, blogId?: string): Promise<ReturnViewModel<PostViewModel[]> | null> {
+  async getPosts(query: QueryPostsType,  userId? : string): Promise<ReturnViewModel<PostViewModel[]> | null> {
     const { pageNumber = 1, pageSize = 10, sortBy = 'createdAt', sortDirection = 'desc' } = query;
-    if (blogId) {
-      const blog = await this.blogQueryRepository.getBlogById(blogId);
-      if (!blog) throw new NotFoundException();
-    }
+
     const skip = (pageNumber - 1) * pageSize;
-    const totalCount = await this.postModel.countDocuments(blogId ? { blogId } : {});
+    const totalCount = await this.postModel.countDocuments();
     const pagesCount = Math.ceil(totalCount / pageSize);
     const sortObject: any = {};
     sortObject[sortBy] = sortDirection === 'asc' ? 1 : -1;
 
-    const items: PostDBType[] = await this.postModel.find(blogId ? { blogId } : {}).skip(skip).limit(pageSize).sort(sortObject);
-
+    const items: PostDBType[] = await this.postModel.find().skip(skip).limit(pageSize).sort(sortObject);
     const returnItems: PostViewModel[] = items.map(item => {
-      const likeInfo = this.getLikesInfoForPost(item);
+      const likeInfo = this.getLikesInfoForPost(item, userId);
       return {
 
         id: item._id.toString(),
@@ -96,7 +92,6 @@ export class PostQueryRepository {
     const likePosts: LikeUserInfo[] = post.extendedLikesInfo.likeUserInfo;
     let sortedLikePosts: LikeUserInfo[] = likePosts.sort((a: LikeUserInfo, b: LikeUserInfo) => a.addedAt > b.addedAt ? -1 : 1);
     const likesCount = likePosts.filter((like: LikeUserInfo) => like.likeStatus === 'Like');
-
     const dislikesCount = likePosts.filter((like: LikeUserInfo) => like.likeStatus === 'Dislike');
 
     let newestLikes: NewestLikesType[] = [];
@@ -112,7 +107,6 @@ export class PostQueryRepository {
     }
 
     const findUserStatus = likePosts.find((likeStatus: LikeUserInfo) =>  likeStatus.userId === userId );
-
     userStatus = findUserStatus ? findUserStatus.likeStatus : 'None';
 
     return {

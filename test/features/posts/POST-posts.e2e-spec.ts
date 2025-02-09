@@ -127,10 +127,10 @@ describe('test for POST posts', () => {
 
   it('should be create comment', async () => {
     const user = await authTestManagers.registrationTestUser();
-    const post: PostViewModel = await postsTestManagers.createTestPost();
+    const post: PostViewModel[] = await postsTestManagers.createTestPost();
 
 
-    const comment = await commentsTestManagers.createComment(post.id, contentTestComment, user[0].accessToken);
+    const comment = await commentsTestManagers.createComment(post[0].id, contentTestComment, user[0].accessToken);
     expect(comment).toEqual({
       id: expect.any(String),
       content: contentTestComment,
@@ -148,13 +148,13 @@ describe('test for POST posts', () => {
   });
 
   it('shouldn`t be create new comment, not authorization', async ()=> {
-    const post: PostViewModel = await postsTestManagers.createTestPost()
-    await commentsTestManagers.createComment(post.id, contentTestComment, '', HttpStatus.UNAUTHORIZED)
+    const post: PostViewModel[] = await postsTestManagers.createTestPost()
+    await commentsTestManagers.createComment(post[0].id, contentTestComment, '', HttpStatus.UNAUTHORIZED)
   })
   it('shouldn`t be create new comment, incorrect content', async ()=> {
     const user = await authTestManagers.registrationTestUser()
-    const post: PostViewModel = await postsTestManagers.createTestPost()
-   const res1 =  await commentsTestManagers.createComment(post.id, 'contentTest', user[0].accessToken, HttpStatus.BAD_REQUEST)
+    const post: PostViewModel[] = await postsTestManagers.createTestPost()
+   const res1 =  await commentsTestManagers.createComment(post[0].id, 'contentTest', user[0].accessToken, HttpStatus.BAD_REQUEST)
     expect(res1).toEqual({
       errorsMessages: [
         {

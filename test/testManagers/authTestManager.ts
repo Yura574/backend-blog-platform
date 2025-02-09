@@ -6,7 +6,6 @@ import { authEndPoints } from '../../src/features/auth/api/models/auth.controlle
 import { ConfirmationCodeInputModel } from '../../src/features/auth/api/models/input/confirmationCode.input.model';
 import { RecoveryPasswordInputModel } from '../../src/features/auth/api/models/input/recoveryPassword.input.model';
 import { NewPasswordInputModel } from '../../src/features/auth/api/models/input/newPassword.input.model';
-import { UserViewModel } from '../../src/features/users/api/models/output/createdUser.output.model';
 import { LoginOutputModel } from '../../src/features/auth/api/models/output/login.output.model';
 import jwt from 'jsonwebtoken';
 import { JwtUserType } from '../../src/features/users/api/models/types/jwtUserType';

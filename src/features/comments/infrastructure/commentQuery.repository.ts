@@ -12,10 +12,10 @@ import { likeInfoHandler } from '../../../infrastructure/utils/likeInfoHandler';
 
 @Injectable()
 export class CommentQueryRepository {
-  constructor(@InjectModel(Comment.name) private commentModel: Model<CommentDocument> ) {
+  constructor(@InjectModel(Comment.name) private commentModel: Model<CommentDocument>) {
   }
 
-  async getCommentsByPostId(postId: string, query: QueryCommentsType): Promise<ReturnViewModel<CommentOutputModel[] | void>> {
+  async getCommentsByPostId(postId: string, query: QueryCommentsType, userId?: string): Promise<ReturnViewModel<CommentOutputModel[] | void>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
     const countDocument = await this.commentModel.countDocuments({ postId });
     const pagesCount = Math.ceil(countDocument / pageSize);
@@ -24,6 +24,7 @@ export class CommentQueryRepository {
     sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
     const res: CommentDocument[] | null = await this.commentModel.find({ postId }).sort(sort).skip(skip).limit(+pageSize);
     const returnComments: CommentOutputModel[] = res.map((el: CommentDocument) => {
+      const commentLikeInfo = likeInfoHandler(el.likesUserInfo, userId);
       return {
         id: el.id,
         content: el.content,
@@ -33,9 +34,9 @@ export class CommentQueryRepository {
           userLogin: el.commentatorInfo.userLogin
         },
         likesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: 'None'
+          likesCount: commentLikeInfo.likesCount,
+          dislikesCount: commentLikeInfo.dislikesCount,
+          myStatus: commentLikeInfo.userStatus
         }
       };
     });
@@ -53,21 +54,21 @@ export class CommentQueryRepository {
       if (!Types.ObjectId.isValid(id)) throw new NotFoundException();
 
       const comment: CommentDocument | null = await this.commentModel.findOne({ _id: id });
-      if(!comment) throw new NotFoundException()
+      if (!comment) throw new NotFoundException();
 
-      const likeInfo: LikesInfoType = likeInfoHandler(comment.likesUserInfo, userId)
+      const likeInfo = likeInfoHandler(comment.likesUserInfo, userId);
       return {
         id: comment.id,
         content: comment.content,
         createdAt: comment.createdAt,
         commentatorInfo: {
           userId: comment.commentatorInfo.userId,
-          userLogin: comment.commentatorInfo.userLogin,
+          userLogin: comment.commentatorInfo.userLogin
         },
         likesInfo: {
           likesCount: likeInfo.likesCount,
           dislikesCount: likeInfo.dislikesCount,
-          myStatus: likeInfo.myStatus
+          myStatus: likeInfo.userStatus
         }
       };
     } catch (err) {

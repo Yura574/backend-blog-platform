@@ -20,11 +20,11 @@ describe('test for DELETE posts', () => {
   });
 
 it('should be delete post', async ()=> {
-  const post:PostViewModel = await postsTestManagers.createTestPost()
+  const post:PostViewModel[] = await postsTestManagers.createTestPost()
 
   // await postsTestManagers.deletePost(post.id,HttpStatus.UNAUTHORIZED, 'qwerty', 'pass')
 
-  await postsTestManagers.deletePost(post.id + 'a', HttpStatus.NOT_FOUND )
+  await postsTestManagers.deletePost(post[0].id + 'a', HttpStatus.NOT_FOUND )
 
   // await postsTestManagers.deletePost(post.id)
 

@@ -12,7 +12,7 @@ describe('test for GET posts', () => {
   let commentsTestManagers: CommentTestManagers;
   let authTestManagers: AuthTestManager;
   let user: UserViewTestType[];
-  let post: PostViewModel;
+  let post: PostViewModel[];
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
@@ -33,7 +33,7 @@ describe('test for GET posts', () => {
   });
 
   it('should get comment by id', async ()=> {
-    const comment: CommentOutputModel = await commentsTestManagers.createTestComments(post.id, user[0].accessToken)
+    const comment: CommentOutputModel = await commentsTestManagers.createTestComments(post[0].id, user[0].accessToken)
     const res:CommentOutputModel  = await commentsTestManagers.getCommentById(comment.id)
     expect(res).toEqual({
       id: comment.id,
