@@ -21,42 +21,40 @@ export class CommentTestManagers {
     return res.body;
   }
 
-  async createTestComments(postId: string, token: string, count = 1, status = HttpStatus.CREATED) {
-    if (count === 1) {
+  async createTestComments(postId: string, token: string, count = 1, status = HttpStatus.CREATED): Promise<CommentOutputModel[]> {
+
+    let comments: CommentOutputModel[] = [];
+    for (let i = 0; count > i; i++) {
+      const content = `comment ${1 + i} should be count`;
       const res = await request(this.app.getHttpServer())
         .post(`/posts/${postId}/comments`)
-        .send({ content: contentTestComment })
+        .send({ content })
         .auth(token, { type: 'bearer' })
         .expect(status);
-      return res.body;
-    } else {
-      let comments: CommentOutputModel[] = []
-      for (let i = 0; count > i; i++) {
-        const content = `comment ${1 + i} should be count`;
-        const res = await request(this.app.getHttpServer())
-          .post(`/posts/${postId}/comments`)
-          .send({ content })
-          .auth(token, { type: 'bearer' })
-          .expect(status);
-        comments.push(res.body)
-      }
-      return comments
+      comments.push(res.body);
     }
+    return comments;
+
 
   }
 
-  async getComments(postId: string,token ='', {pageNumber = 1, pageSize = 10, sortDirection = 'desc', sortBy = 'createdAt'}) {
+  async getComments(postId: string, token = '', {
+    pageNumber = 1,
+    pageSize = 10,
+    sortDirection = 'desc',
+    sortBy = 'createdAt'
+  }) {
     const res = await request(this.app.getHttpServer())
       .get(`/posts/${postId}/comments?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
-      .auth(token, {type: 'bearer'})
+      .auth(token, { type: 'bearer' });
 
     return res.body;
   }
 
-  async getCommentById(commentId: string, token='', status = HttpStatus.OK) {
+  async getCommentById(commentId: string, token = '', status = HttpStatus.OK) {
     const res = await request(this.app.getHttpServer())
       .get(`/comments/${commentId}`)
-      .auth(token, {type: 'bearer'})
+      .auth(token, { type: 'bearer' })
       .expect(status);
 
     return res.body;

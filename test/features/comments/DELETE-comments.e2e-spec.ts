@@ -27,9 +27,9 @@ describe('test for DELETE posts', () => {
   it('should delete comment', async () => {
     const user: UserViewTestType[] = await authTestManagers.registrationTestUser(2)
     const post: PostViewModel[] = await postsTestManagers.createTestPost()
-    const comment: CommentOutputModel = await commentTestManagers.createTestComments(post[0].id, user[0].accessToken)
-    await commentTestManagers.deleteCommentById(comment.id, user[0].accessToken)
-    await commentTestManagers.deleteCommentById(comment.id, user[0].accessToken, HttpStatus.NOT_FOUND)
+    const comment: CommentOutputModel[] = await commentTestManagers.createTestComments(post[0].id, user[0].accessToken)
+    await commentTestManagers.deleteCommentById(comment[0].id, user[0].accessToken)
+    await commentTestManagers.deleteCommentById(comment[0].id, user[0].accessToken, HttpStatus.NOT_FOUND)
   });
 
 
@@ -40,18 +40,26 @@ describe('test for DELETE posts', () => {
   it('shouldn`t delete comment, not authorization', async () => {
     const user: UserViewTestType[] = await authTestManagers.registrationTestUser(2)
     const post: PostViewModel[] = await postsTestManagers.createTestPost()
-    const comment: CommentOutputModel = await commentTestManagers.createTestComments(post[0].id, user[0].accessToken)
+    const comment: CommentOutputModel[] = await commentTestManagers.createTestComments(post[0].id, user[0].accessToken)
 
-    await commentTestManagers.deleteCommentById(comment.id, '', HttpStatus.UNAUTHORIZED)
+    await commentTestManagers.deleteCommentById(comment[0].id, '', HttpStatus.UNAUTHORIZED)
   });
 
 
   it('shouldn`t delete comment, try delete someone else`s comment ', async () => {
     const user: UserViewTestType[] = await authTestManagers.registrationTestUser(2)
     const post: PostViewModel[] = await postsTestManagers.createTestPost()
-    const comment: CommentOutputModel = await commentTestManagers.createTestComments(post[0].id, user[0].accessToken)
-    await commentTestManagers.deleteCommentById(comment.id, user[1].accessToken, HttpStatus.FORBIDDEN)
+    const comment: CommentOutputModel[] = await commentTestManagers.createTestComments(post[0].id, user[0].accessToken)
+    await commentTestManagers.deleteCommentById(comment[0].id, user[1].accessToken, HttpStatus.FORBIDDEN)
   });
+
+
+  it(' should return error if access denied', async ()=> {
+    const users = await authTestManagers.registrationTestUser(2)
+    const post = await postsTestManagers.createTestPost()
+    const comment = await commentTestManagers.createTestComments(post[0].id, users[0].accessToken)
+    await commentTestManagers.deleteCommentById(comment[0].id, users[1].accessToken, HttpStatus.FORBIDDEN)
+  })
 
 
 });

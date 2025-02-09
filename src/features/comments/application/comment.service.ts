@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CommentRepository } from '../infrastructure/comment.repository';
 import { CreateNewCommentType } from '../api/types/createNewComment.type';
 import { CommentOutputModel } from '../api/output/comment.output.model';
@@ -57,24 +57,29 @@ export class CommentService {
     return await this.commentRepository.updateComment(commentId, content);
   }
 
-  async updateLikeStatus(commentId: string, likeStatus: LikeStatus, userId: string, userLogin: string){
-    const likeUserInfo: LikeUserInfo ={
+  async updateLikeStatus(commentId: string, likeStatus: LikeStatus, userId: string, userLogin: string) {
+    const likeUserInfo: LikeUserInfo = {
       userId,
       likeStatus,
       login: userLogin,
       addedAt: new Date().toISOString()
-    }
-    return await this.commentRepository.updateLikeStatus(commentId,likeUserInfo)
+    };
+    return await this.commentRepository.updateLikeStatus(commentId, likeUserInfo);
   }
 
   async deleteComment(commentId: string, userId: string) {
+    if (!Types.ObjectId.isValid(commentId)) throw new NotFoundException();
+
     try {
-      if (!Types.ObjectId.isValid(commentId)) throw new NotFoundException()
+      const comment: CommentOutputModel | null = await this.commentQueryRepository.getCommentById(commentId);
+      if (!comment) throw new NotFoundException();
+      if (comment.commentatorInfo.userId !== userId) throw new ForbiddenException();
       return await this.commentRepository.deleteComment(commentId, userId);
-    } catch (err){
+    } catch (err) {
 
-      if(err instanceof NotFoundException)         throw new NotFoundException()
-
+      if (err instanceof NotFoundException) throw new NotFoundException();
+      if (err instanceof ForbiddenException) throw new ForbiddenException();
+      throw new InternalServerErrorException();
     }
   }
 }

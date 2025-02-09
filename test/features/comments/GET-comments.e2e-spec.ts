@@ -33,14 +33,14 @@ describe('test for GET posts', () => {
   });
 
   it('should get comment by id', async ()=> {
-    const comment: CommentOutputModel = await commentsTestManagers.createTestComments(post[0].id, user[0].accessToken)
-    const res:CommentOutputModel  = await commentsTestManagers.getCommentById(comment.id)
+    const comment: CommentOutputModel[] = await commentsTestManagers.createTestComments(post[0].id, user[0].accessToken)
+    const res:CommentOutputModel  = await commentsTestManagers.getCommentById(comment[0].id)
     expect(res).toEqual({
-      id: comment.id,
-      content: comment.content,
+      id: comment[0].id,
+      content: comment[0].content,
       commentatorInfo: {
-       userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin
+       userId: comment[0].commentatorInfo.userId,
+        userLogin: comment[0].commentatorInfo.userLogin
       },
       createdAt: expect.any(String),
       likesInfo: {
@@ -55,5 +55,7 @@ describe('test for GET posts', () => {
   it('shouldn`t get comment by id, invalid id', async ()=> {
    await commentsTestManagers.getCommentById('comment.id', '',HttpStatus.NOT_FOUND)
   })
+
+
 
 });

@@ -140,8 +140,8 @@ describe('test for PUT posts', () => {
     await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[0].id, 'Like');
     await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[0].id, 'Like');
     const res: PostViewModel = await postsTestManagers.getPostById(post[0].id, users[0].accessToken);
-    expect(res.extendedLikesInfo.myStatus).toBe('Like')
-    expect(res.extendedLikesInfo.likesCount).toBe(1)
+    expect(res.extendedLikesInfo.myStatus).toBe('Like');
+    expect(res.extendedLikesInfo.likesCount).toBe(1);
   });
   it('should get post with likes for different users ', async () => {
     const users = await authTestManagers.registrationTestUser(5);
@@ -162,7 +162,7 @@ describe('test for PUT posts', () => {
     await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[5].id, 'Like');
     await postsTestManagers.updateLikeStatusPost(users[1].accessToken, post[5].id, 'Dislike');
 
-    const res1: ReturnViewModel<PostViewModel[]> = await postsTestManagers.getAllPosts(users[0].accessToken, {})
+    const res1: ReturnViewModel<PostViewModel[]> = await postsTestManagers.getAllPosts(users[0].accessToken, {});
   });
   it('should get my like status for post', async () => {
     const users = await authTestManagers.registrationTestUser(3);
@@ -171,9 +171,9 @@ describe('test for PUT posts', () => {
     await postsTestManagers.updateLikeStatusPost(users[1].accessToken, posts[2].id, 'Like');
 
     const res: ReturnViewModel<PostViewModel[]> = await postsTestManagers.getAllPosts(users[0].accessToken, {});
-    expect(res.items![2].extendedLikesInfo.myStatus).toBe('Like')
-    expect(res.items![1].extendedLikesInfo.myStatus).toBe('None')
-    expect(res.items![0].extendedLikesInfo.myStatus).toBe('None')
+    expect(res.items![2].extendedLikesInfo.myStatus).toBe('Like');
+    expect(res.items![1].extendedLikesInfo.myStatus).toBe('None');
+    expect(res.items![0].extendedLikesInfo.myStatus).toBe('None');
 
     const res2: ReturnViewModel<PostViewModel[]> = await postsTestManagers.getAllPosts(users[1].accessToken, {});
     expect(res2.items![0].extendedLikesInfo.myStatus).toBe('Like');
@@ -246,10 +246,20 @@ describe('test for PUT posts', () => {
   });
   it('shouldn`t be like status for post,unauthorized', async () => {
     const post: PostViewModel[] = await postsTestManagers.createTestPost();
-
     await postsTestManagers.updateLikeStatusPost('user[0].accessToken', post[0].id, 'Like', HttpStatus.UNAUTHORIZED);
-
-
   });
+
+  it('should return error if passed body is incorrect', async () => {
+    const post: PostViewModel[] = await postsTestManagers.createTestPost(1);
+    const data = {
+      title: 'valid',
+      content: 'valid',
+      blogId: '67a8e4d43a0f1ad9399782a0',
+      shortDescription: 'length_101-DnZlTI1khUHpqOqCzftIYiSHCV8fKjYFQOoCIwmUczzW9V5K8cqY3aPKo3XKwbfrmeWOJyQgGnlX5sP3aW3RlaRSQx'
+    };
+    const update = await postsTestManagers.updatePost(post[0].id, data, HttpStatus.BAD_REQUEST);
+    console.log(update);
+  });
+
 
 });

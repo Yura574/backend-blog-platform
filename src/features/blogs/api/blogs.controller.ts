@@ -55,6 +55,7 @@ export class BlogsController {
   @Get(':id/posts')
   @UseGuards(GetUserDataGuard)
   async getPosts(@Req() req: RequestType<ParamType, {}, QueryPostsType>) {
+    await this.blogsQueryRepository.getBlogById(req.params.id)
     return await this.blogsQueryRepository.getBlogPosts(req.params.id, req.query, req.user?.userId);
 
   }
