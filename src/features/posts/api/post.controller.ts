@@ -19,15 +19,11 @@ import { UpdatePostInputModel } from './model/input/updatePost.input.model';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
 import { AuthUserType } from '../../users/api/models/types/userType';
 import { LikeStatusInputModel } from './model/input/LikeStatus.input.model';
-import jwt from 'jsonwebtoken';
-import * as process from 'node:process';
 import { CommentInputModel } from '../../comments/api/input/comment.input.model';
 import { CommentService } from '../../comments/application/comment.service';
 import { CommentOutputModel } from '../../comments/api/output/comment.output.model';
 import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
 import { CommentQueryRepository } from '../../comments/infrastructure/commentQuery.repository';
-import { parse } from 'cookie';
-import { JwtPayloadType } from '../../1_commonTypes/jwtPayloadType';
 import { GetUserDataGuard } from '../../../infrastructure/guards/getUserData.guard';
 
 

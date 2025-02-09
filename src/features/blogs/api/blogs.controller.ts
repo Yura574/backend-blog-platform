@@ -8,7 +8,10 @@ import { RequestType } from '../../1_commonTypes/commonTypes';
 import { QueryBlogsTypes } from './model/types/queryBlogsTypes';
 import { ParamType } from '../../1_commonTypes/paramType';
 import { UpdateBlogInputModel } from './model/input/updateBlog.input.model';
-import { CreatePostInputModel } from '../../posts/api/model/input/createPost.input.model';
+import {
+  CreatePostInputModel,
+  CreatePostInputModelWithoutBlogId
+} from '../../posts/api/model/input/createPost.input.model';
 import { QueryPostsType } from '../../posts/api/types/queryPostsType';
 import { PostService } from '../../posts/application/postService';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
@@ -41,13 +44,14 @@ export class BlogsController {
   @UseGuards(AuthGuard)
   @Post(':id/posts')
   async createPost(@Param() param: ParamType,
-                   @Body() dto: Omit<CreatePostInputModel, 'blogId'>) {
+                   @Body() dto: CreatePostInputModelWithoutBlogId) {
     const data: CreatePostInputModel = {
       shortDescription: dto.shortDescription,
       content: dto.content,
       title: dto.title,
       blogId: param.id
     };
+
     return await this.postService.createPost(data);
 
   }

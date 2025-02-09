@@ -105,7 +105,7 @@ describe('test for POST posts', () => {
       shortDescription: 'sdsd'
     };
 
-    const res3 = await postsTestManagers.createPost({ data: wrongDataPost3, status: HttpStatus.NOT_FOUND });
+    await postsTestManagers.createPost({ data: wrongDataPost3, status: HttpStatus.NOT_FOUND });
 
   });
   it('shouldn`t be crate new post, not authorization ', async () => {
