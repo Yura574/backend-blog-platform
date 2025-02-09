@@ -93,6 +93,7 @@ export class PostController {
                       @Req() req: RequestType<ParamType, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
     if (!req.user) throw new UnauthorizedException();
     const { userId, login } = req.user;
+    await this.postQueryRepository.getPostById(req.params.id)
 
     return await this.commentService.createComment(req.params.id, body.content, userId, login);
   }

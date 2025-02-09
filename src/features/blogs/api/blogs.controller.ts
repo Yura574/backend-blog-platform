@@ -41,7 +41,7 @@ export class BlogsController {
   @UseGuards(AuthGuard)
   @Post(':id/posts')
   async createPost(@Param() param: ParamType,
-                   @Body() dto: CreatePostInputModel) {
+                   @Body() dto: Omit<CreatePostInputModel, 'blogId'>) {
     const data: CreatePostInputModel = {
       shortDescription: dto.shortDescription,
       content: dto.content,

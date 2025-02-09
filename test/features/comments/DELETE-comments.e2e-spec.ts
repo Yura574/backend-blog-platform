@@ -70,7 +70,4 @@ describe('test for DELETE posts', () => {
     await commentTestManagers.getCommentById(comment[0].id, users[0].accessToken, HttpStatus.NOT_FOUND )
   })
 
-
-
-
 });

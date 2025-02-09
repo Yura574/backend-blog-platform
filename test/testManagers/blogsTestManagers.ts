@@ -13,7 +13,7 @@ export const createBlogTestData: CreateBlogInputModel = {
   description: `description for blog`
 };
 
-export const createPostTestData: CreatePostInputModel = {
+export const createPostTestData: Omit<CreatePostInputModel, 'blogId'> = {
   title: 'post for blog',
   content: 'post content',
   shortDescription: 'description post'
@@ -116,7 +116,7 @@ export class BlogsTestManagers {
 
   async createPosts(blogId: string, count= 1, status = HttpStatus.CREATED) {
     for (let i = 0; i < count; i++) {
-      const newBlog: CreatePostInputModel = {
+      const newBlog: Omit<CreatePostInputModel, 'blogId'> = {
         title: `post title ${i}`,
         content: 'post content',
         shortDescription: `short description for post ${i}`

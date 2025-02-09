@@ -21,8 +21,10 @@ export class CreatePostInputModel {
   @Length(1,1000,{message: 'content length should be  min 1, max 1000 symbols'} )
   content: string
 
-  @IsOptional()
+
   @IsString()
-  blogId?: string
+  @Transform(({value})=> typeof value === 'string'? value.trim() : '')
+  @IsNotEmpty()
+  blogId: string
 
 }

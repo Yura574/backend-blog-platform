@@ -147,14 +147,14 @@ describe('test for POST posts', () => {
     });
   });
 
-  it('shouldn`t be create new comment, not authorization', async ()=> {
-    const post: PostViewModel[] = await postsTestManagers.createTestPost()
-    await commentsTestManagers.createComment(post[0].id, contentTestComment, '', HttpStatus.UNAUTHORIZED)
-  })
-  it('shouldn`t be create new comment, incorrect content', async ()=> {
-    const user = await authTestManagers.registrationTestUser()
-    const post: PostViewModel[] = await postsTestManagers.createTestPost()
-   const res1 =  await commentsTestManagers.createComment(post[0].id, 'contentTest', user[0].accessToken, HttpStatus.BAD_REQUEST)
+  it('shouldn`t be create new comment, not authorization', async () => {
+    const post: PostViewModel[] = await postsTestManagers.createTestPost();
+    await commentsTestManagers.createComment(post[0].id, contentTestComment, '', HttpStatus.UNAUTHORIZED);
+  });
+  it('shouldn`t be create new comment, incorrect content', async () => {
+    const user = await authTestManagers.registrationTestUser();
+    const post: PostViewModel[] = await postsTestManagers.createTestPost();
+    const res1 = await commentsTestManagers.createComment(post[0].id, 'contentTest', user[0].accessToken, HttpStatus.BAD_REQUEST);
     expect(res1).toEqual({
       errorsMessages: [
         {
@@ -162,8 +162,13 @@ describe('test for POST posts', () => {
           field: 'content'
         }
       ]
-    })
-  })
+    });
+  });
+
+  it('should return error if :id from uri param not found', async () => {
+    const users = await authTestManagers.registrationTestUser();
+    await commentsTestManagers.createTestComments('post[0].id', users[0].accessToken, HttpStatus.NOT_FOUND);
+  });
 
 
 });
