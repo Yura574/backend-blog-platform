@@ -7,6 +7,7 @@ import { LikeStatus, PostViewModel } from '../api/model/output/postViewModel';
 import { UpdatePostInputModel } from '../api/model/input/updatePost.input.model';
 import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
 import { AuthUserType, UserType } from '../../users/api/models/types/userType';
+import { Types } from 'mongoose';
 
 
 @Injectable()
@@ -18,9 +19,9 @@ export class PostService{
   async createPost(dto:CreatePostInputModel): Promise<PostViewModel>{
     const{title, content, shortDescription, blogId}= dto
 
-    if(!blogId) {
+    if(!blogId || !Types.ObjectId.isValid(blogId)) {
       const blogIdError: ErrorMessageType[] = [{
-        message: 'blogId is required',
+        message: 'invalid blogId',
         field: 'blogId'
       }]
       throw new BadRequestException(blogIdError)

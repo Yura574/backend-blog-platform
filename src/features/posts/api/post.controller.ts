@@ -45,41 +45,17 @@ export class PostController {
     return await this.postService.createPost(dto);
   }
 
+  @UseGuards(GetUserDataGuard)
   @Get()
   async getPosts(@Req() req: RequestType<{}, {}, QueryPostsType>) {
-    const auth = req.headers['authorization'];
 
-    if(auth){
-      const [type, token ] = auth.split(' ')
-      if(type === 'Bearer' && token && token.trim() !== ''){
-        const user =  jwt.verify(token, process.env.ACCESS_SECRET as string) as JwtPayloadType
-        req.user = {
-          userId: user.userId,
-          login: user.login,
-          email: user.email
-        }
-      }
-    }
     return await this.postQueryRepository.getPosts(req.query, req.user?.userId);
   }
 
   @Get(':id')
+  @UseGuards(GetUserDataGuard)
   async getPostById(@Param() param: ParamType,
                     @Req() req: RequestType<{}, {}, {}>) {
-    const auth = req.headers['authorization'];
-
-    if(auth){
-      const [type, token ] = auth.split(' ')
-      if(type === 'Bearer' && token && token.trim() !== ''){
-        const user =  jwt.verify(token, process.env.ACCESS_SECRET as string) as JwtPayloadType
-        req.user = {
-          userId: user.userId,
-          login: user.login,
-          email: user.email
-        }
-      }
-    }
-
     return await this.postQueryRepository.getPostById(param.id, req.user?.userId);
   }
 

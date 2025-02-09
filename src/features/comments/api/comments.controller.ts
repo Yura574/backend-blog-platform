@@ -22,6 +22,7 @@ import { LikeStatusInputModel } from '../../posts/api/model/input/LikeStatus.inp
 import jwt from 'jsonwebtoken';
 import * as process from 'node:process';
 import { JwtPayloadType } from '../../1_commonTypes/jwtPayloadType';
+import { GetUserDataGuard } from '../../../infrastructure/guards/getUserData.guard';
 
 
 @Controller('comments')
@@ -49,22 +50,9 @@ export class CommentsController {
     return this.commentService.updateComment(req.params.id, body.content, req.user.userId);
   }
 
+  @UseGuards(GetUserDataGuard)
   @Get(':id')
   async getCommentById(@Req() req: RequestType<ParamType, {}, {}>): Promise<CommentOutputModel | null> {
-    const auth = req.headers['authorization'];
-
-    if(auth){
-      const [type, token ] = auth.split(' ')
-      if(type === 'Bearer' && token && token.trim() !== ''){
-        const user =  jwt.verify(token, process.env.ACCESS_SECRET as string) as JwtPayloadType
-        req.user = {
-          userId: user.userId,
-          login: user.login,
-          email: user.email
-        }
-      }
-    }
-
     return await this.commentQueryRepository.getCommentById(req.params.id, req.user?.userId);
 
   }

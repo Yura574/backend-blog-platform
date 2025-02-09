@@ -41,9 +41,10 @@ export class PostRepository {
 
   async updateLikeStatusPost(postId: string, likeStatus: LikeStatus, userData: AuthUserType) {
     const { userId, login } = userData;
+    if (!Types.ObjectId.isValid(postId)) throw new NotFoundException();
     try {
       //проверка корректности id, ошибка если не соответствует ObjectId
-      if (!Types.ObjectId.isValid(postId)) throw new NotFoundException();
+
 
       const postInfo: PostDBType | null = await this.postModel.findOne({ _id: postId });
       if (!postInfo) throw new NotFoundException('Post not found');

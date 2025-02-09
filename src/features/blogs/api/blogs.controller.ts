@@ -12,7 +12,7 @@ import { CreatePostInputModel } from '../../posts/api/model/input/createPost.inp
 import { QueryPostsType } from '../../posts/api/types/queryPostsType';
 import { PostService } from '../../posts/application/postService';
 import { AuthGuard } from '../../../infrastructure/guards/auth.guard';
-
+import { GetUserDataGuard } from '../../../infrastructure/guards/getUserData.guard';
 
 
 @Controller('blogs')
@@ -47,15 +47,15 @@ export class BlogsController {
       content: dto.content,
       title: dto.title,
       blogId: param.id
-    }
-   return  await this.postService.createPost(data)
+    };
+    return await this.postService.createPost(data);
 
   }
 
   @Get(':id/posts')
-  async getPosts(@Param() param: ParamType,
-                 @Req() req: RequestType<{},{}, QueryPostsType>) {
-return await this.blogsService.getPosts(param.id, req.query)
+  @UseGuards(GetUserDataGuard)
+  async getPosts(@Req() req: RequestType<ParamType, {}, QueryPostsType>) {
+    return await this.blogsQueryRepository.getBlogPosts(req.params.id, req.query, req.user?.userId);
 
   }
 
@@ -67,7 +67,7 @@ return await this.blogsService.getPosts(param.id, req.query)
     return await this.blogsService.updateBlog(param.id, dto);
   }
 
-  @UseGuards(AuthGuard) 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param() param: ParamType) {

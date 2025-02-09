@@ -11,12 +11,11 @@ import { BlogsQueryRepository } from '../../blogs/infrastructure/blogsQuery.repo
 
 @Injectable()
 export class PostQueryRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
-              private blogQueryRepository: BlogsQueryRepository) {
+  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {
   }
 
 
-  async getPosts(query: QueryPostsType,  userId? : string): Promise<ReturnViewModel<PostViewModel[]> | null> {
+  async getPosts(query: QueryPostsType, userId? : string): Promise<ReturnViewModel<PostViewModel[]> | null> {
     const { pageNumber = 1, pageSize = 10, sortBy = 'createdAt', sortDirection = 'desc' } = query;
 
     const skip = (pageNumber - 1) * pageSize;

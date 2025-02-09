@@ -5,6 +5,8 @@ import { CommentOutputModel } from '../api/output/comment.output.model';
 import { CommentQueryRepository } from '../infrastructure/commentQuery.repository';
 import { LikeStatus } from '../../posts/api/model/output/postViewModel';
 import { LikeUserInfo } from '../../posts/api/types/postDBType';
+import { Types } from 'mongoose';
+import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
 
 
 @Injectable()
@@ -66,6 +68,13 @@ export class CommentService {
   }
 
   async deleteComment(commentId: string, userId: string) {
-    return await this.commentRepository.deleteComment(commentId, userId);
+    try {
+      if (!Types.ObjectId.isValid(commentId)) throw new NotFoundException()
+      return await this.commentRepository.deleteComment(commentId, userId);
+    } catch (err){
+
+      if(err instanceof NotFoundException)         throw new NotFoundException()
+
+    }
   }
 }

@@ -99,7 +99,7 @@ describe('test for GET posts', () => {
     const post: PostViewModel[] = await postsTestManagers.createTestPost()
 
     await commentsTestManagers.createTestComments(post[0].id, user[0].accessToken, 9);
-    const res1: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post[0].id);
+    const res1: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post[0].id, '', {});
     expect(res1).toEqual({
       pagesCount: 1,
       page: 1,
@@ -116,7 +116,7 @@ describe('test for GET posts', () => {
 
     await commentsTestManagers.createTestComments(post[0].id, user[0].accessToken, 10);
     //комменты сначало старые
-    const res1: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post[0].id, 2, 3, 'asc' );
+    const res1: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post[0].id, '',{pageNumber:2, pageSize:3, sortDirection:'asc'} );
     expect(res1).toEqual({
       pagesCount: 4,
       page: 2,
@@ -126,7 +126,7 @@ describe('test for GET posts', () => {
     });
     //комменты сначало новые
     expect(res1.items![0].content).toBe('comment 4 should be count');
-    const res2: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post[0].id, 2, 3,  );
+    const res2: ReturnViewModel<CommentOutputModel[]> = await commentsTestManagers.getComments(post[0].id, '',{pageNumber:2, pageSize:3,}  );
     expect(res2).toEqual({
       pagesCount: 4,
       page: 2,

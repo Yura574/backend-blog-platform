@@ -143,19 +143,26 @@ describe('test for PUT posts', () => {
     expect(res.extendedLikesInfo.myStatus).toBe('Like')
     expect(res.extendedLikesInfo.likesCount).toBe(1)
   });
-  it('shouldn`t add like twice one user test ', async () => {
+  it('should get post with likes for different users ', async () => {
     const users = await authTestManagers.registrationTestUser(5);
-    const post = await postsTestManagers.createTestPost();
+    const post: PostViewModel[] = await postsTestManagers.createTestPost(6);
+
     await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[0].id, 'Like');
     const resPost1: PostViewModel = await postsTestManagers.getPostById(post[0].id, users[0].accessToken);
     expect(resPost1.extendedLikesInfo.myStatus).toBe('Like');
-    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[0].id, 'Dislike');
-    const resPost2: PostViewModel = await postsTestManagers.getPostById(post[0].id, users[0].accessToken);
-    expect(resPost2.extendedLikesInfo.myStatus).toBe('Dislike');
-    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[0].id, 'None');
-    const resPost3: PostViewModel = await postsTestManagers.getPostById(post[0].id, users[0].accessToken);
-    expect(resPost3.extendedLikesInfo.myStatus).toBe('None');
+    await postsTestManagers.updateLikeStatusPost(users[1].accessToken, post[1].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[2].accessToken, post[1].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[2].id, 'Dislike');
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[3].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[1].accessToken, post[3].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[2].accessToken, post[3].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[3].accessToken, post[3].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[1].accessToken, post[4].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[2].accessToken, post[4].id, 'Dislike');
+    await postsTestManagers.updateLikeStatusPost(users[0].accessToken, post[5].id, 'Like');
+    await postsTestManagers.updateLikeStatusPost(users[1].accessToken, post[5].id, 'Dislike');
 
+    const res1: ReturnViewModel<PostViewModel[]> = await postsTestManagers.getAllPosts(users[0].accessToken, {})
   });
   it('should get my like status for post', async () => {
     const users = await authTestManagers.registrationTestUser(3);

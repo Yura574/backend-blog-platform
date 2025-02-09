@@ -1,8 +1,7 @@
-import { UsersTestManagers } from '../../testManagers/usersTestManagers';
-import { AuthTestManager } from '../../testManagers/authTestManager';
 import { clearDatabase, closeTest, initializeTestSetup, testApp } from '../../../test-setup';
-import { BlogsTestManagers, createPostTestData } from '../../testManagers/blogsTestManagers';
+import { BlogsTestManagers } from '../../testManagers/blogsTestManagers';
 import { CreateBlogInputModel } from '../../../src/features/blogs/api/model/input/createBlog.input.model';
+import { HttpStatus } from '@nestjs/common';
 
 
 describe('test for GET blogs', () => {
@@ -74,7 +73,7 @@ describe('test for GET blogs', () => {
 
     const blog = await blogsTestManagers.createTestBlog();
     await blogsTestManagers.createPosts(blog.id, 11);
-    const res = await blogsTestManagers.getAllPosts(blog.id, { pageSize: 3, pageNumber: 2 });
+    const res = await blogsTestManagers.getAllPostsForBlog(blog.id, '', { pageSize: 3, pageNumber: 2 });
     expect(res).toStrictEqual({
       pagesCount: 4,
       page: 2,
@@ -107,6 +106,14 @@ describe('test for GET blogs', () => {
 
       }
     });
+  });
+
+  it('shouldn`t get posts, blogId not found', async () => {
+    const blog = await blogsTestManagers.createTestBlog();
+    const posts = await blogsTestManagers.createPosts(blog.id, 6);
+    await blogsTestManagers.getAllPostsForBlog('blog.id', '', {}, HttpStatus.NOT_FOUND);
+
+
   });
 
 

@@ -5,6 +5,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { CreateBlogInputModel } from '../../src/features/blogs/api/model/input/createBlog.input.model';
 import { CreatePostInputModel } from '../../src/features/posts/api/model/input/createPost.input.model';
 import { QueryPostsType } from '../../src/features/posts/api/types/queryPostsType';
+import * as http from 'node:http';
 
 export const createBlogTestData: CreateBlogInputModel = {
   name: 'yura',
@@ -128,7 +129,7 @@ export class BlogsTestManagers {
     }
   }
 
-  async getAllPosts(blogId: string, query?: QueryPostsType) {
+  async getAllPostsForBlog(blogId: string, token='', query?: QueryPostsType, status= HttpStatus.OK) {
     const params: QueryPostsType = {
       pageSize: query?.pageSize ? query.pageSize : 10,
       pageNumber: query?.pageNumber ? query.pageNumber : 1,
@@ -136,7 +137,9 @@ export class BlogsTestManagers {
       sortDirection: query?.sortDirection ? 'desc' : 'asc'
     };
     const res = await request(testApp.getHttpServer())
-      .get(`/blogs/${blogId}/posts?sortBy=${params.sortBy}&sortDirection=${params.sortDirection}&pageNumber=${params.pageNumber}&pageSize=${params.pageSize}`);
+      .get(`/blogs/${blogId}/posts?sortBy=${params.sortBy}&sortDirection=${params.sortDirection}&pageNumber=${params.pageNumber}&pageSize=${params.pageSize}`)
+      .auth(token, {type: 'bearer'})
+      .expect(status)
     return res.body;
   };
 
