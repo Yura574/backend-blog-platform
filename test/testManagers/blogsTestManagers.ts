@@ -114,7 +114,7 @@ export class BlogsTestManagers {
     return res.body;
   }
 
-  async createPosts(blogId: string, count: number, status = HttpStatus.CREATED) {
+  async createPosts(blogId: string, count= 1, status = HttpStatus.CREATED) {
     for (let i = 0; i < count; i++) {
       const newBlog: CreatePostInputModel = {
         title: `post title ${i}`,

@@ -100,7 +100,7 @@ export class PostController {
   @Get(':id/comments')
   @UseGuards(GetUserDataGuard)
   async getCommentsByPostId(@Req() req: RequestType<ParamType, {}, QueryCommentsType>){
-
+await this.postQueryRepository.getPostById(req.params.id)
 return await this.commentQueryRepository.getCommentsByPostId(req.params.id, req.query,  req.user?.userId)
   }
 }

@@ -36,7 +36,7 @@ export class PostsTestManagers {
       const data: CreatePostInputModel = {
         blogId: resBlog.body.id,
         content: `content`,
-        title: `title ${1+i}`,
+        title: `title ${1 + i}`,
         shortDescription: `shortDescription`
       };
       const res = await request(this.app.getHttpServer())
@@ -105,6 +105,14 @@ export class PostsTestManagers {
       .delete(`/posts/${postId}`)
       .auth(login, password)
       .expect(status);
+  }
+
+  async getPostComments(postId: string, token = '', status = HttpStatus.OK) {
+    const res = await request(this.app.getHttpServer())
+      .get(`/posts/${postId}/comments`)
+      .auth(token, { type: 'bearer' })
+      .expect(status);
+    return res.body
   }
 }
 

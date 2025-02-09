@@ -189,4 +189,11 @@ describe('test for PUT comments', () => {
    await commentTestManagers.updateCommentById(comment[0].id, 'new contenr sdsdkksdkds', users[1].accessToken, HttpStatus.FORBIDDEN)
   })
 
+  it('should return error if :id from uri param not found', async ()=> {
+    const users = await authTestManagers.registrationTestUser(2)
+    const post = await postsTestManagers.createTestPost()
+    const comment = await commentTestManagers.createTestComments(post[0].id, users[0].accessToken)
+     await postsTestManagers.getPostComments(' 67a8f223d4e8a7601a7ac811', users[0].accessToken, HttpStatus.NOT_FOUND )
+  })
+
 });

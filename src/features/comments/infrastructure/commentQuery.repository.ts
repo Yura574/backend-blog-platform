@@ -16,7 +16,7 @@ export class CommentQueryRepository {
   }
 
   async getCommentsByPostId(postId: string, query: QueryCommentsType, userId?: string): Promise<ReturnViewModel<CommentOutputModel[] | void>> {
-    const { pageNumber, pageSize, sortBy, sortDirection } = query;
+    const { pageNumber = 1, pageSize =10, sortBy= 'createdAt', sortDirection= 'desc' } = query;
     const countDocument = await this.commentModel.countDocuments({ postId });
     const pagesCount = Math.ceil(countDocument / pageSize);
     const skip = (+pageNumber - 1) * +pageSize;

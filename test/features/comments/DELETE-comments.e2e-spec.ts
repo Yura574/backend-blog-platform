@@ -61,5 +61,16 @@ describe('test for DELETE posts', () => {
     await commentTestManagers.deleteCommentById(comment[0].id, users[1].accessToken, HttpStatus.FORBIDDEN)
   })
 
+  it('should return error if :id from uri param not found', async ()=> {
+    const users = await authTestManagers.registrationTestUser(2)
+    const post = await postsTestManagers.createTestPost()
+    const comment = await commentTestManagers.createTestComments(post[0].id, users[0].accessToken)
+    await commentTestManagers.deleteCommentById(comment[0].id, users[0].accessToken)
+
+    await commentTestManagers.getCommentById(comment[0].id, users[0].accessToken, HttpStatus.NOT_FOUND )
+  })
+
+
+
 
 });
