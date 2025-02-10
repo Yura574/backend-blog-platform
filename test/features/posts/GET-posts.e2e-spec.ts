@@ -92,7 +92,7 @@ describe('test for GET posts', () => {
   });
 
   it('shouldn`t get post by id', async () => {
-    await postsTestManagers.getPostById('post.id', '', HttpStatus.NOT_FOUND);
+    await postsTestManagers.getPostById('post.id', '', HttpStatus.BAD_REQUEST);
   });
 
   it('should get comments for post', async () => {

@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Param,
   Post, Put,
-  Req, UnauthorizedException, UseGuards
+  Req, UnauthorizedException, UseGuards, UsePipes, ValidationPipe
 } from '@nestjs/common';
 import { PostService } from '../application/postService';
 import { CreatePostInputModel } from './model/input/createPost.input.model';

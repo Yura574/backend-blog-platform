@@ -24,7 +24,7 @@ it('should be delete post', async ()=> {
 
   // await postsTestManagers.deletePost(post.id,HttpStatus.UNAUTHORIZED, 'qwerty', 'pass')
 
-  await postsTestManagers.deletePost(post[0].id + 'a', HttpStatus.NOT_FOUND )
+  await postsTestManagers.deletePost('507f1f77bcf86cd799439011', HttpStatus.NOT_FOUND )
 
   // await postsTestManagers.deletePost(post.id)
 

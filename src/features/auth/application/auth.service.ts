@@ -1,24 +1,9 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { EmailService } from './email.service';
-import { UserInputModel } from '../../users/api/models/input/createUser.input.model';
-import { ErrorMessageType } from '../../../infrastructure/exception-filters/exeptions';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
-import {
-  EmailConfirmationType,
-  FindUserType,
-  RegistrationUserType,
-} from '../../users/api/models/types/userType';
 import { v4 } from 'uuid';
 import { add } from 'date-fns';
-import bcrypt from 'bcrypt';
-import { newUser } from '../../../infrastructure/utils/newUser';
-import jwt from 'jsonwebtoken';
 import { RecoveryPasswordService } from './recoveryPassword.service';
-import {
-  NewPasswordType,
-  RecoveryPasswordDocType,
-} from '../api/models/types/recoveryPasswordType';
-import { hashPassword } from '../../../infrastructure/utils/hashPassword';
 
 @Injectable()
 export class AuthService {

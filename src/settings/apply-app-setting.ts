@@ -10,6 +10,7 @@ export const applyAppSetting = (app: INestApplication) => {
   // app.useGlobalGuards(new AuthGuard())
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({
+    transform: true,
     stopAtFirstError: true,
     whitelist: true,
     exceptionFactory: (errors) => {

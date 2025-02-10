@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { Types } from 'mongoose';
 
@@ -23,22 +23,18 @@ export class CreatePostInputModel {
   content: string;
 
 
-  @IsString()
-  // @Transform(({value})=> typeof value === 'string'? value.trim() : '')
   @Transform(({ value }) => {
-    if (!Types.ObjectId.isValid(value)) return false;
+    if (!Types.ObjectId.isValid(value)) return '';
     return value.trim();
   })
-  @IsString({ message: 'Invalid blog id' })
+  @IsNotEmpty({ message: 'Invalid id' })
   blogId: string;
 
 }
 
 export class CreatePostInputModelWithoutBlogId {
   @IsString()
-  @Transform(({ value }) => {
-    return typeof value === 'string' ? value.trim() : '';
-  })
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : '')
   @IsNotEmpty()
   @Length(1, 30, { message: 'title length should be  min 1, max 15 symbols' })
   title: string;

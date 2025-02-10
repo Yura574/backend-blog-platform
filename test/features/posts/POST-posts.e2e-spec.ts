@@ -95,7 +95,29 @@ describe('test for POST posts', () => {
           field: 'content'
         } ,
         {
-          message: 'Invalid blog id',
+          message: 'Invalid id',
+          field: 'blogId'
+        }
+      ]
+    });
+  });
+
+  it('shouldn`t be crate new post, no content2', async () => {
+    const wrongDataPost2 = {
+      title:"valid",
+      content:"valid",
+      blogId:"63189b06003380064c4193b",
+      shortDescription:"length_101-DnZlTI1khUHpqOqCzftIYiSHCV8fKjYFQOoCIwmUczzW9V5K8cqY3aPKo3XKwbfrmeWOJyQgGnlX5sP3aW3RlaRSQx"
+    };
+    const res2 = await postsTestManagers.createPost({ data: wrongDataPost2, status: HttpStatus.BAD_REQUEST });
+    expect(res2).toEqual({
+      errorsMessages: [
+        {
+          message: 'shortDescription length should be  min 1, max 100 symbols',
+          field: 'shortDescription'
+        } ,
+        {
+          message: 'Invalid id',
           field: 'blogId'
         }
       ]

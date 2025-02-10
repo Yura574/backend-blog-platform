@@ -57,7 +57,7 @@ describe('test for PUT posts', () => {
       shortDescription: 'newline short'
     };
 
-    await postsTestManagers.updatePost('post.id', updateData, HttpStatus.NOT_FOUND);
+    await postsTestManagers.updatePost('post.id', updateData, HttpStatus.BAD_REQUEST);
 
   });
 
@@ -254,10 +254,22 @@ describe('test for PUT posts', () => {
     const data = {
       title: 'valid',
       content: 'valid',
-      blogId: '67a8e4d43a0f1ad9399782a0',
-      shortDescription: 'length_101-DnZlTI1khUHpqOqCzftIYiSHCV8fKjYFQOoCIwmUczzW9V5K8cqY3aPKo3XKwbfrmeWOJyQgGnlX5sP3aW3RlaRSQx'
+      blogId: '67a8e4d43a0f1ad93997',
+      shortDescription: 'length_101-DnasassaasasasvDnasassaasasasvDnasassaasasasvDnasassaasasasvDnasassaasasasvDnasassaasasasv wtsv'
     };
-    const update = await postsTestManagers.updatePost(post[0].id, data, HttpStatus.BAD_REQUEST);
+    const update = await postsTestManagers.updatePost('67assdsdsdssd', data, HttpStatus.BAD_REQUEST);
+    expect(update).toEqual({
+      errorsMessages: [
+        {
+          message: 'shortDescription length should be  min 1, max 100 symbols',
+          field: 'shortDescription'
+        } ,
+        // {
+        //   message: 'Invalid id',
+        //   field: 'id'
+        // }
+      ]
+    });
   });
 
 
