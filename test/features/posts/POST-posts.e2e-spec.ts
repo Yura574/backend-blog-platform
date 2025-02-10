@@ -84,7 +84,7 @@ describe('test for POST posts', () => {
   it('shouldn`t be crate new post, no content', async () => {
     const wrongDataPost2 = {
       title: 'asas',
-      blogId: blog.id,
+      blogId: 'blog.id',
       shortDescription: '2355'
     };
     const res2 = await postsTestManagers.createPost({ data: wrongDataPost2, status: HttpStatus.BAD_REQUEST });
@@ -93,6 +93,10 @@ describe('test for POST posts', () => {
         {
           message: 'content length should be  min 1, max 1000 symbols',
           field: 'content'
+        } ,
+        {
+          message: 'Invalid blog id',
+          field: 'blogId'
         }
       ]
     });
@@ -101,11 +105,11 @@ describe('test for POST posts', () => {
     const wrongDataPost3: CreatePostInputModel = {
       title: '1212',
       content: 'dssd',
-      blogId: 'blog.id',
+      blogId: '63189b06003380064c4193be',
       shortDescription: 'sdsd'
     };
 
-    await postsTestManagers.createPost({ data: wrongDataPost3, status: HttpStatus.NOT_FOUND });
+    await postsTestManagers.createPost({ data: wrongDataPost3, status: HttpStatus.NOT_FOUND});
 
   });
   it('shouldn`t be crate new post, not authorization ', async () => {
@@ -167,7 +171,7 @@ describe('test for POST posts', () => {
 
   it('should return error if :id from uri param not found', async () => {
     const users = await authTestManagers.registrationTestUser();
-    await commentsTestManagers.createTestComments('post[0].id', users[0].accessToken, HttpStatus.NOT_FOUND);
+    await commentsTestManagers.createTestComments('post[0].id', users[0].accessToken, 1, HttpStatus.NOT_FOUND);
   });
 
 

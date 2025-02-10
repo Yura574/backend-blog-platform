@@ -31,6 +31,7 @@ export class PostsTestManagers {
       .expect(status);
 
 
+    // console.log(resBlog.body);
     const posts: PostViewModel[] = [];
     for (let i = 0; count > i; i++) {
       const data: CreatePostInputModel = {

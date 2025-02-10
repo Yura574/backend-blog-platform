@@ -258,7 +258,6 @@ describe('test for PUT posts', () => {
       shortDescription: 'length_101-DnZlTI1khUHpqOqCzftIYiSHCV8fKjYFQOoCIwmUczzW9V5K8cqY3aPKo3XKwbfrmeWOJyQgGnlX5sP3aW3RlaRSQx'
     };
     const update = await postsTestManagers.updatePost(post[0].id, data, HttpStatus.BAD_REQUEST);
-    console.log(update);
   });
 
 
