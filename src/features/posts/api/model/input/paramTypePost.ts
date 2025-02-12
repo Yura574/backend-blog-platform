@@ -1,9 +1,10 @@
 import { IsNotEmpty, IsString, Length, Validate } from 'class-validator';
+import { PostIdValidator } from '../../../../../infrastructure/validators/postId.validator';
 
 export class ParamTypePost {
   @IsString()
   // @Transform(({value})=> typeof value === 'string'? value.trim() : '')
-  // @Validate(PostIdValidator)
+  @Validate(PostIdValidator)
   // @Transform(({ value }) => {
   //   if (!Types.ObjectId.isValid(value)) {
   //     return ''

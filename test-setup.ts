@@ -20,6 +20,8 @@ import { RecoveryPasswordUseCase } from './src/features/auth/application/useCase
 import { RecoveryPasswordMockUseCase } from './test/mockServices/recoveryPasswordMockUseCase';
 import { ErrorMessageType } from './src/infrastructure/exception-filters/exeptions';
 import { validationError } from './src/infrastructure/utils/validationError';
+import { useContainer } from 'class-validator';
+import { applyAppSetting } from './src/settings/apply-app-setting';
 
 export let testApp: INestApplication;
 export let testSetup: TestSetup;
@@ -63,14 +65,8 @@ export class TestSetup {
       .compile();
 
     this.app = moduleFixture.createNestApplication();
-    this.app.useGlobalPipes(new ValidationPipe({
-      stopAtFirstError: true,
-      whitelist: true,
-      exceptionFactory: (errors) => {
-        const errorsMessages = validationError(errors);
-        throw new BadRequestException(errorsMessages);
-      }
-    }));
+
+    applyAppSetting(this.app);
     await this.app.init();
 
 

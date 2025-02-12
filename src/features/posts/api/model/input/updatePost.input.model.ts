@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches, Validate } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { BlogIdValidator } from '../../../../../infrastructure/validators/blogId.validator';
 
 
 export class UpdatePostInputModel {
@@ -20,4 +21,8 @@ export class UpdatePostInputModel {
   @IsNotEmpty()
   @Length(1, 1000,{message: 'content length should be  min 1, max 1000 symbols'} )
   content: string;
+
+
+  @Validate(BlogIdValidator)
+  blogId: string
 }

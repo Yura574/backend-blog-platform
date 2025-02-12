@@ -25,8 +25,6 @@ import { CommentOutputModel } from '../../comments/api/output/comment.output.mod
 import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
 import { CommentQueryRepository } from '../../comments/infrastructure/commentQuery.repository';
 import { GetUserDataGuard } from '../../../infrastructure/guards/getUserData.guard';
-import { Validate } from 'class-validator';
-import { PostIdValidator } from '../../../infrastructure/validators/postId.validator';
 import { ParamTypePost } from './model/input/paramTypePost';
 
 
@@ -92,7 +90,7 @@ export class PostController {
   @UseGuards(AuthGuard)
   async createComment(
     @Body() body: CommentInputModel,
-                      @Req() req: RequestType<ParamTypePost, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
+    @Req() req: RequestType<ParamTypePost, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
     if (!req.user) throw new UnauthorizedException();
     const { userId, login } = req.user;
     await this.postQueryRepository.getPostById(req.params.id);
