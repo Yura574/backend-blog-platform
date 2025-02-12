@@ -27,6 +27,7 @@ import { CommentQueryRepository } from '../../comments/infrastructure/commentQue
 import { GetUserDataGuard } from '../../../infrastructure/guards/getUserData.guard';
 import { Validate } from 'class-validator';
 import { PostIdValidator } from '../../../infrastructure/validators/postId.validator';
+import { ParamTypePost } from './model/input/paramTypePost';
 
 
 @Controller('posts')
@@ -61,7 +62,7 @@ export class PostController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async updatePost(@Param() param: ParamType,
+  async updatePost(@Param() param: ParamTypePost,
                    @Body() body: UpdatePostInputModel) {
     console.log(param.id);
     return await this.postService.updatePost(param.id, body);
