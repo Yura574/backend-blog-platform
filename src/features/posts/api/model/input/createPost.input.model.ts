@@ -1,6 +1,6 @@
-import { IsMongoId, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Validate } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { Types } from 'mongoose';
+import { BlogIdValidator } from '../../../../../infrastructure/validators/blogId.validator';
 
 
 export class CreatePostInputModel {
@@ -23,11 +23,12 @@ export class CreatePostInputModel {
   content: string;
 
 
-  @Transform(({ value }) => {
-    if (!Types.ObjectId.isValid(value)) return '';
-    return value.trim();
-  })
-  @IsNotEmpty({ message: 'Invalid id' })
+ @Validate(BlogIdValidator)
+  // @Transform(({ value }) => {
+  //   if (!Types.ObjectId.isValid(value)) return '';
+  //   return value.trim();
+  // })
+  // @IsNotEmpty({ message: 'Invalid id' })
   blogId: string;
 
 }

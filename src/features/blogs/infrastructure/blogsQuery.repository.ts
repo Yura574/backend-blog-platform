@@ -17,9 +17,12 @@ import { ErrorType } from '../../../infrastructure/utils/objectResult';
 export class BlogsQueryRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>,
               @InjectModel(Post.name) private postModel: Model<Post>) {
+    console.log('BlogsQueryRepository initialized');
   }
 
+
   async getBlogs(queryParams: QueryBlogsTypes): Promise<ReturnViewModel<BlogViewModel[]> | null> {
+    console.log(123);
     const {
       pageNumber = 1,
       pageSize = 10,
@@ -59,7 +62,6 @@ export class BlogsQueryRepository {
   }
 
   async getBlogById(blogId: string): Promise<BlogViewModel | undefined> {
-
     try {
       const blog = await this.blogModel.findById(blogId);
       if (!blog) {

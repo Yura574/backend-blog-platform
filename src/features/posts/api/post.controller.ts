@@ -25,6 +25,8 @@ import { CommentOutputModel } from '../../comments/api/output/comment.output.mod
 import { QueryCommentsType } from '../../comments/api/types/QueryComments.type';
 import { CommentQueryRepository } from '../../comments/infrastructure/commentQuery.repository';
 import { GetUserDataGuard } from '../../../infrastructure/guards/getUserData.guard';
+import { Validate } from 'class-validator';
+import { PostIdValidator } from '../../../infrastructure/validators/postId.validator';
 
 
 @Controller('posts')
@@ -56,10 +58,12 @@ export class PostController {
   }
 
   @UseGuards(AuthGuard)
+
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(@Param() param: ParamType,
                    @Body() body: UpdatePostInputModel) {
+    console.log(param.id);
     return await this.postService.updatePost(param.id, body);
   }
 
@@ -89,15 +93,18 @@ export class PostController {
                       @Req() req: RequestType<ParamType, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
     if (!req.user) throw new UnauthorizedException();
     const { userId, login } = req.user;
-    await this.postQueryRepository.getPostById(req.params.id)
 
-    return await this.commentService.createComment(req.params.id, body.content, userId, login);
+
+    const comment = await this.commentService.createComment(req.params.id, body.content, userId, login);
+    //id
+    // get commemt by id
+    return comment;
   }
 
   @Get(':id/comments')
   @UseGuards(GetUserDataGuard)
-  async getCommentsByPostId(@Req() req: RequestType<ParamType, {}, QueryCommentsType>){
-await this.postQueryRepository.getPostById(req.params.id)
-return await this.commentQueryRepository.getCommentsByPostId(req.params.id, req.query,  req.user?.userId)
+  async getCommentsByPostId(@Req() req: RequestType<ParamType, {}, QueryCommentsType>) {
+    await this.postQueryRepository.getPostById(req.params.id);
+    return await this.commentQueryRepository.getCommentsByPostId(req.params.id, req.query, req.user?.userId);
   }
 }

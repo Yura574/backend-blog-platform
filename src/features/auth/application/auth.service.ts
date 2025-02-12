@@ -132,24 +132,24 @@ export class AuthService {
   //   return await this.userRepository.updatePasswordUser(hash, email);
   // }
 
-  async resendingEmail(email: string) {
-    const user = await this.userRepository.findUser(email)
-    if(!user) throw new BadRequestException([{ message: 'user not found', field: 'email' }])
-    if(user.emailConfirmation.isConfirm){
-      throw new BadRequestException([{ message: 'email already confirm', field: "email" }])
-    }
-    const confirmationCode = v4();
-
-    try {
-      await this.emailService.sendMailConfirmation(email, confirmationCode);
-      const expirationDate = add(new Date(), {hours: 1})
-      await this.userRepository.updateEmailConfirmationUser(email, {confirmationCode, expirationDate, isConfirm: false})
-      // await this.recoveryPasswordService.addUserRecoveryPassword(email, codeForConfirm)
-      return
-    } catch (err){
-      console.log(err);
-    }
-  }
+  // async resendingEmail(email: string) {
+  //   const user = await this.userRepository.findUser(email)
+  //   if(!user) throw new BadRequestException([{ message: 'user not found', field: 'email' }])
+  //   if(user.emailConfirmation.isConfirm){
+  //     throw new BadRequestException([{ message: 'email already confirm', field: "email" }])
+  //   }
+  //   const confirmationCode = v4();
+  //
+  //   try {
+  //     await this.emailService.sendMailConfirmation(email, confirmationCode);
+  //     const expirationDate = add(new Date(), {hours: 1})
+  //     await this.userRepository.updateEmailConfirmationUser(email, {confirmationCode, expirationDate, isConfirm: false})
+  //     // await this.recoveryPasswordService.addUserRecoveryPassword(email, codeForConfirm)
+  //     return
+  //   } catch (err){
+  //     console.log(err);
+  //   }
+  // }
 
   async me (){
 

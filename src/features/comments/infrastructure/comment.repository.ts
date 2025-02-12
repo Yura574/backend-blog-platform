@@ -21,7 +21,8 @@ export class CommentRepository {
     try {
       return await this.commentModel.create(comment);
     } catch (err) {
-      throw new BadRequestException('comment not found');
+      console.log(err);
+      throw new Error('comment not found');
     }
   }
 

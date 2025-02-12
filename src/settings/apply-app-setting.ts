@@ -2,6 +2,8 @@ import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/c
 import { ErrorMessageType, HttpExceptionsFilter } from '../infrastructure/exception-filters/exeptions';
 import cookieParser from 'cookie-parser';
 import { validationError } from '../infrastructure/utils/validationError';
+import { useContainer } from 'class-validator';
+import { AppModule } from '../app.module';
 
 export const applyAppSetting = (app: INestApplication) => {
   // app.useGlobalInterceptors(new Logging)
@@ -9,6 +11,7 @@ export const applyAppSetting = (app: INestApplication) => {
   // setSwagger(app)
   // app.useGlobalGuards(new AuthGuard())
   app.use(cookieParser());
+  useContainer(app.select(AppModule), {fallbackOnErrors: true})
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     stopAtFirstError: true,

@@ -19,6 +19,7 @@ import { RecoveryPasswordUseCase } from '../../application/useCases/recoveryPass
 import { NewPasswordUseCase } from '../../application/useCases/newPassword.use-case';
 import { LoginOutputModel } from './output/login.output.model';
 import { UserViewModel } from '../../../users/api/models/output/createdUser.output.model';
+import { ResendingEmailUseCase } from '../../application/useCases/resendingEmail.use-case';
 
 export enum authEndPoints {
   BASE = 'auth',
@@ -41,7 +42,8 @@ export class AuthController {
               private emailConfirmation: EmailConfirmationUseCase,
               private loginUseCase: LoginUseCase,
               private recoveryPasswordUseCase: RecoveryPasswordUseCase,
-              private newPasswordUseCase: NewPasswordUseCase
+              private newPasswordUseCase: NewPasswordUseCase,
+              private resendingEmailUseCase: ResendingEmailUseCase
   ) {
   }
 
@@ -88,7 +90,7 @@ export class AuthController {
   @Post(authEndPoints.REGISTRATION_EMAIL_RESENDING)
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendingEmail(@Body() body: ResendingEmailInputModel) {
-    return await this.authService.resendingEmail(body.email);
+    return await this.resendingEmailUseCase.execute(body.email);
   }
 
   @UseGuards(AuthGuard)

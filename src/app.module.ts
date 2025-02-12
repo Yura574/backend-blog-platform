@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, Provider } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { UsersRepository } from './features/users/infrastructure/users.repository';
 import { UsersService } from './features/users/application/users.service';
 import { User, UserSchema } from './features/users/domain/user.entity';
@@ -41,6 +41,10 @@ import { CommentService } from './features/comments/application/comment.service'
 import { Comment, CommentSchema } from './features/comments/domain/comment.entity';
 import { CommentsController } from './features/comments/api/comments.controller';
 import { CommentQueryRepository } from './features/comments/infrastructure/commentQuery.repository';
+import { ResendingEmailUseCase } from './features/auth/application/useCases/resendingEmail.use-case';
+import { BlogIdValidator } from './infrastructure/validators/blogId.validator';
+import { Model } from 'mongoose';
+import { PostIdValidator } from './infrastructure/validators/postId.validator';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -60,7 +64,7 @@ const postsProviders: Provider[] = [
 
 const commentsProviders: Provider[] = [
   CommentRepository,
-   CommentQueryRepository,
+  CommentQueryRepository,
   CommentService
 ];
 const recoveryPasswordProviders: Provider[] = [
@@ -73,11 +77,18 @@ const authUseCases: Provider[] = [
   EmailConfirmationUseCase,
   LoginUseCase,
   RecoveryPasswordUseCase,
-  NewPasswordUseCase
+  NewPasswordUseCase,
+  ResendingEmailUseCase
 ];
 
 @Module({
   imports: [
+
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
+    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
+    MongooseModule.forFeature([{ name: RecoveryPassword.name, schema: RecoveryPasswordSchema }]),
     ConfigModule.forRoot({
       isGlobal: true
     }),
@@ -92,11 +103,6 @@ const authUseCases: Provider[] = [
         }
       }
     ),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: RecoveryPassword.name, schema: RecoveryPasswordSchema }]),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -120,9 +126,11 @@ const authUseCases: Provider[] = [
     CommentsController,
     AppController,
     AuthController,
-    FallbackController,
+    FallbackController
   ],
-  providers: [...usersProviders,
+  providers: [
+    AppService,
+    ...usersProviders,
     ...blogsProviders,
     ...postsProviders,
     ...commentsProviders,
@@ -130,10 +138,19 @@ const authUseCases: Provider[] = [
     ...recoveryPasswordProviders,
     AuthService,
     ...authUseCases,
+    BlogIdValidator,
+    PostIdValidator,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionsFilter
-    }, AppService]
+    }
+    // {
+    //   provide: BlogIdValidator,
+    //   useFactory: (blogModel: Model<Blog>) => new BlogIdValidator(blogModel),
+    //   inject: [getModelToken(Blog.name)], // Важно!
+    // },
+
+   ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

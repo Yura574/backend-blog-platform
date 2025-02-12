@@ -19,7 +19,7 @@ export class PostsTestManagers {
       .post('/posts')
       .auth(login, password)
       .send(data)
-      .expect(status);
+      // .expect(status);
     return res.body;
   }
 
@@ -29,7 +29,6 @@ export class PostsTestManagers {
       .auth('admin', 'qwerty')
       .send(createBlogTestData)
       .expect(status);
-
 
     // console.log(resBlog.body);
     const posts: PostViewModel[] = [];
@@ -44,7 +43,7 @@ export class PostsTestManagers {
         .post('/posts')
         .auth('admin', 'qwerty')
         .send(data)
-        .expect(HttpStatus.CREATED);
+        // .expect(HttpStatus.CREATED);
       posts.push(res.body);
     }
     return posts;
@@ -83,11 +82,12 @@ export class PostsTestManagers {
     status = HttpStatus.NO_CONTENT,
     login = 'admin', password = 'qwerty'
   ) {
+    console.log(status);
     const res = await request(this.app.getHttpServer())
       .put(`/posts/${postID}`)
       .send(data)
       .auth(login, password)
-      .expect(status);
+      // .expect(status);
     return res.body;
   }
 

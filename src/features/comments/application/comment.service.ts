@@ -16,7 +16,8 @@ export class CommentService {
   }
 
   async createComment(postId: string, content: string, userId: string, userLogin: string): Promise<CommentOutputModel | void> {
-
+    // await this.postQueryRepository.getPostById(req.params.id)
+    //add class
     const newComment: CreateNewCommentType = {
       postId,
       content,
@@ -33,6 +34,8 @@ export class CommentService {
 
     };
     const comment = await this.commentRepository.createComment(newComment);
+
+
     return {
       id: comment.id,
       content: comment.content,
