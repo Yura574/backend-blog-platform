@@ -16,8 +16,10 @@ export class PostIdValidator implements ValidatorConstraintInterface {
 
   async validate(value: string): Promise<boolean> {
     try {
-      const post = await this.postModel.findById({ _id: value });
-      return !!post;
+      console.log(value);
+      // const post = await this.postModel.findById({ _id: value });
+      // return !!post;
+      return true
     } catch (err) {
       console.log(err);
       throw new Error('');

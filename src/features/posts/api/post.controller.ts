@@ -90,15 +90,16 @@ export class PostController {
 
   @Post(`:id/comments`)
   @UseGuards(AuthGuard)
-  async createComment(@Body() body: CommentInputModel,
-                      @Req() req: RequestType<ParamType, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
+  async createComment(
+    @Body() body: CommentInputModel,
+                      @Req() req: RequestType<ParamTypePost, CommentInputModel, {}>): Promise<CommentOutputModel | void> {
     if (!req.user) throw new UnauthorizedException();
     const { userId, login } = req.user;
     await this.postQueryRepository.getPostById(req.params.id);
 
     const comment = await this.commentService.createComment(req.params.id, body.content, userId, login);
     //id
-    // get commemt by id
+    // get comment by id
     return comment;
   }
 
