@@ -82,12 +82,11 @@ export class PostsTestManagers {
     status = HttpStatus.NO_CONTENT,
     login = 'admin', password = 'qwerty'
   ) {
-    console.log(status);
     const res = await request(this.app.getHttpServer())
       .put(`/posts/${postID}`)
       .send(data)
       .auth(login, password)
-      // .expect(status);
+      .expect(status);
     return res.body;
   }
 

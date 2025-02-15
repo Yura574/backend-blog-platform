@@ -1,7 +1,6 @@
 import { clearDatabase, closeTest, initializeTestSetup, testApp } from '../../../test-setup';
 import { PostsTestManagers } from '../../testManagers/postsTestManagers';
 import { HttpStatus } from '@nestjs/common';
-import { PostViewModel } from '../../../src/features/posts/api/model/output/postViewModel';
 
 
 describe('test for DELETE posts', () => {
@@ -20,14 +19,6 @@ describe('test for DELETE posts', () => {
   });
 
 it('should be delete post', async ()=> {
-  const post:PostViewModel[] = await postsTestManagers.createTestPost()
-
-  // await postsTestManagers.deletePost(post.id,HttpStatus.UNAUTHORIZED, 'qwerty', 'pass')
-
   await postsTestManagers.deletePost('507f1f77bcf86cd799439011', HttpStatus.NOT_FOUND )
-
-  // await postsTestManagers.deletePost(post.id)
-
-
-})
+  })
 });

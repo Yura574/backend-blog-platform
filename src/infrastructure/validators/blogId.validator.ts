@@ -8,7 +8,7 @@ import { BlogsQueryRepository } from '../../features/blogs/infrastructure/blogsQ
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../../features/blogs/domain/blog.entity';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @ValidatorConstraint({ name: 'IsBlogExists', async: true })
 @Injectable()
@@ -17,10 +17,9 @@ export class BlogIdValidator implements ValidatorConstraintInterface {
   }
 
   async validate(blogId: string): Promise<boolean> {
-    console.log('Model:', this.blogModel);
+    if(!Types.ObjectId.isValid(blogId)) return false
     const blog = await this.blogModel.findById({ _id: blogId });
-    console.log(blog);
-    return !!blog;
+    return !!blog
   }
 
   defaultMessage(args: ValidationArguments): string {

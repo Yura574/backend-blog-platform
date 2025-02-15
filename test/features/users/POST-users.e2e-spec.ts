@@ -1,6 +1,7 @@
 import { clearDatabase, closeTest, initializeTestSetup, testApp } from '../../../test-setup';
 import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
+import { UserViewModel } from '../../../src/features/users/api/models/output/createdUser.output.model';
 
 
 
@@ -16,8 +17,7 @@ describe('POST users', () => {
 
   beforeEach(async () => await clearDatabase());
 
-  // const usersRepository = new UsersRepository(Model<UserDocument>)
-// const userService = new UsersService()
+
   it('user should be create', async () => {
     const dto: UserInputModel = {
       email: `email-test@gmail.com`,
@@ -26,6 +26,7 @@ describe('POST users', () => {
     };
 
     const user = await userTestManager.createUser(dto);
-    const getUser = await userTestManager.getUserById(user.id);
+    const getUser:UserViewModel = await userTestManager.getUserById(user.id);
+    expect(getUser.login).toBe('login2')
   });
 });

@@ -5,19 +5,27 @@ import { UpdatePostInputModel } from '../../../src/features/posts/api/model/inpu
 import { PostViewModel } from '../../../src/features/posts/api/model/output/postViewModel';
 import { AuthTestManager } from '../../testManagers/authTestManager';
 import { ReturnViewModel } from '../../../src/features/1_commonTypes/returnViewModel';
+import { BlogsTestManagers } from '../../testManagers/blogsTestManagers';
+import { BlogViewModel } from '../../../src/features/blogs/api/model/output/createdBlog.output.model';
 
 
 describe('test for PUT posts', () => {
   let postsTestManagers: PostsTestManagers;
   let authTestManagers: AuthTestManager;
+  let blogTestManagers: BlogsTestManagers;
+  let blog: BlogViewModel;
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
     authTestManagers = new AuthTestManager(testApp);
+    blogTestManagers = new BlogsTestManagers(testApp);
+    blog = await blogTestManagers.createTestBlog();
 
   });
   beforeEach(async () => {
     await clearDatabase();
+    blog = await blogTestManagers.createTestBlog();
+
   });
 
   afterAll(async () => {
@@ -29,7 +37,8 @@ describe('test for PUT posts', () => {
     const updateData: UpdatePostInputModel = {
       title: 'new post',
       content: 'new',
-      shortDescription: 'newline short'
+      shortDescription: 'newline short',
+      blogId: blog.id
     };
 
     await postsTestManagers.updatePost(post[0].id, updateData);
@@ -54,7 +63,8 @@ describe('test for PUT posts', () => {
     const updateData: UpdatePostInputModel = {
       title: 'new post',
       content: 'new',
-      shortDescription: 'newline short'
+      shortDescription: 'newline short',
+      blogId: ''
     };
 
     await postsTestManagers.updatePost('post.id', updateData, HttpStatus.BAD_REQUEST);
@@ -66,7 +76,8 @@ describe('test for PUT posts', () => {
     const updateData: UpdatePostInputModel = {
       title: '123',
       content: 'no cont',
-      shortDescription: 'qwerty'
+      shortDescription: 'qwerty',
+      blogId: blog.id
     };
 
     await postsTestManagers.updatePost(post[0].id, updateData, HttpStatus.UNAUTHORIZED, 'qwe', 'password');
@@ -77,7 +88,8 @@ describe('test for PUT posts', () => {
     const updateData = {
       title: ' ',
       content: true,
-      shortDescription: ''
+      shortDescription: '',
+      blogId: 'sasaas'
     };
 
     const res = await postsTestManagers.updatePost(post[0].id, updateData, HttpStatus.BAD_REQUEST);
@@ -94,6 +106,10 @@ describe('test for PUT posts', () => {
         {
           message: 'content length should be  min 1, max 1000 symbols',
           field: 'content'
+        },
+        {
+          field: 'blogId',
+          message: `Блог с id ${updateData.blogId} не найден`
         }
       ]
     });
@@ -257,7 +273,6 @@ describe('test for PUT posts', () => {
       blogId: '67a8e4d43a0f1ad93997',
       shortDescription: 'length_101-DnasassaasasasvDnasassaasasasvDnasassaasasasvDnasassaasasasvDnasassaasasasvDnasassaasasasv wtsv'
     };
-    console.log(post[0]);
     // const update = await postsTestManagers.updatePost('67assdsdsdssd', data, HttpStatus.BAD_REQUEST);
     // expect(update).toEqual({
     //   errorsMessages: [

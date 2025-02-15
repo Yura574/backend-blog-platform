@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Param,
   Post, Put,
-  Req, UnauthorizedException, UseGuards, UsePipes, ValidationPipe
+  Req, UnauthorizedException, UseGuards,
 } from '@nestjs/common';
 import { PostService } from '../application/postService';
 import { CreatePostInputModel } from './model/input/createPost.input.model';
@@ -62,7 +62,6 @@ export class PostController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(@Param() param: ParamTypePost,
                    @Body() body: UpdatePostInputModel) {
-    console.log(param.id);
     return await this.postService.updatePost(param.id, body);
   }
 

@@ -54,9 +54,9 @@ describe('test for GET blogs', () => {
       websiteUrl: 'https://example.com',
       description: `description for blog`
     };
-    const newBlog1 = await blogsTestManagers.createBlog(blog1);
+    await blogsTestManagers.createBlog(blog1);
     const newBlog2 = await blogsTestManagers.createBlog(blog2);
-    const newBlog3 = await blogsTestManagers.createBlog(blog3);
+    await blogsTestManagers.createBlog(blog3);
 
     const res = await blogsTestManagers.getBlogById(newBlog2.id);
     expect(res).toEqual({
@@ -110,7 +110,7 @@ describe('test for GET blogs', () => {
 
   it('shouldn`t get posts, blogId not found', async () => {
     const blog = await blogsTestManagers.createTestBlog();
-    const posts = await blogsTestManagers.createPosts(blog.id, 6);
+    await blogsTestManagers.createPosts(blog.id, 6);
     await blogsTestManagers.getAllPostsForBlog('67a8e22df05becf164f6b989', '', {}, HttpStatus.NOT_FOUND);
 
   });

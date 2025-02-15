@@ -6,7 +6,6 @@ import { ReturnViewModel } from '../../../src/features/1_commonTypes/returnViewM
 import { CommentOutputModel } from '../../../src/features/comments/api/output/comment.output.model';
 import { CommentTestManagers } from '../../testManagers/commentTestManagers';
 import { AuthTestManager, UserViewTestType } from '../../testManagers/authTestManager';
-import { UserViewModel } from '../../../src/features/users/api/models/output/createdUser.output.model';
 
 
 describe('test for GET posts', () => {
@@ -14,20 +13,17 @@ describe('test for GET posts', () => {
   let commentsTestManagers: CommentTestManagers;
   let authTestManagers: AuthTestManager;
   let user: UserViewTestType[];
-  // let post: PostViewModel;
   beforeAll(async () => {
     await initializeTestSetup();
     postsTestManagers = new PostsTestManagers(testApp);
     commentsTestManagers = new CommentTestManagers(testApp);
     authTestManagers = new AuthTestManager(testApp);
     user= await authTestManagers.registrationTestUser();
-    // post = await postsTestManagers.createTestPost();
 
   });
   beforeEach(async () => {
     await clearDatabase();
     user = await authTestManagers.registrationTestUser();
-    // post = await postsTestManagers.createTestPost();
   });
 
   afterAll(async () => {
@@ -92,7 +88,7 @@ describe('test for GET posts', () => {
   });
 
   it('shouldn`t get post by id', async () => {
-    await postsTestManagers.getPostById('post.id', '', HttpStatus.BAD_REQUEST);
+    await postsTestManagers.getPostById('post.id', '', HttpStatus.NOT_FOUND);
   });
 
   it('should get comments for post', async () => {

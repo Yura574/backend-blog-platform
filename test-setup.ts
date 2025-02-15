@@ -3,7 +3,7 @@ import * as process from 'node:process';
 process.env.ENV = 'TESTING';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { BadRequestException, INestApplication, ValidationPipe } from '@nestjs/common';
+import {  INestApplication } from '@nestjs/common';
 
 
 import mongoose, { Connection } from 'mongoose';
@@ -15,12 +15,8 @@ import { EmailService } from './src/features/auth/application/email.service';
 import { EmailServiceMock } from './test/mockServices/emailServiceMock';
 import { RegistrationMockUseCase } from './test/mockServices/registrationMockService';
 import { RegistrationUseCase } from './src/features/auth/application/useCases/registration.use-case';
-import { UsersRepository } from './src/features/users/infrastructure/users.repository';
 import { RecoveryPasswordUseCase } from './src/features/auth/application/useCases/recoveryPassword.use-case';
 import { RecoveryPasswordMockUseCase } from './test/mockServices/recoveryPasswordMockUseCase';
-import { ErrorMessageType } from './src/infrastructure/exception-filters/exeptions';
-import { validationError } from './src/infrastructure/utils/validationError';
-import { useContainer } from 'class-validator';
 import { applyAppSetting } from './src/settings/apply-app-setting';
 
 export let testApp: INestApplication;
