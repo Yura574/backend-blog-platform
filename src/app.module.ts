@@ -45,6 +45,7 @@ import { ResendingEmailUseCase } from './features/auth/application/useCases/rese
 import { BlogIdValidator } from './infrastructure/validators/blogId.validator';
 import { Model } from 'mongoose';
 import { PostIdValidator } from './infrastructure/validators/postId.validator';
+import { MeUseCase } from './features/auth/application/useCases/me.use-case';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -78,7 +79,8 @@ const authUseCases: Provider[] = [
   LoginUseCase,
   RecoveryPasswordUseCase,
   NewPasswordUseCase,
-  ResendingEmailUseCase
+  ResendingEmailUseCase,
+  MeUseCase,
 ];
 
 @Module({

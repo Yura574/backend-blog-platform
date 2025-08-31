@@ -1,10 +1,11 @@
 import { HydratedDocument, ObjectId } from 'mongoose';
 
 export type UserType = {
-  id: string;
+  userId: string;
   login: string;
   email: string;
-  createdAt: string;
+  // createdAt?: string;
+  deviceId?: string;
 };
 
 export type AuthUserType = {
@@ -31,6 +32,7 @@ export type FindUser  = {
   login: string;
   email: string;
   password: string
+  deviceId?: string;
   createdAt: string;
   emailConfirmation: {
     confirmationCode: string,

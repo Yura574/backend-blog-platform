@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../domain/user.entity';
 import { Model } from 'mongoose';
 import { QueryUsersType } from '../api/models/types/queryTypes';
-import { UserType } from '../api/models/types/userType';
 import { ReturnViewModel } from '../../1_commonTypes/returnViewModel';
+import { FindUserType, UserType } from '../api/models/types/userType';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -49,9 +49,9 @@ export class UsersQueryRepository {
       .sort(sort)
       .skip(skip)
       .limit(+pageSize);
-    const mappedUser: UserType[] = users.map((user) => {
+    const mappedUser: UserType[] = users.map((user:FindUserType) => {
       return {
-        id: user.id.toString(),
+        userId: user._id.toString(),
         login: user.login,
         email: user.email,
         createdAt: new Date(user.createdAt).toISOString()

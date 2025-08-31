@@ -115,4 +115,12 @@ export class AuthTestManager {
       .expect(statusCode);
     return res.body;
   }
+
+  async refreshToken(token: string= ''){
+    const res = await request(this.app.getHttpServer())
+      .post(`/auth/refreshToken`)
+      .auth(token, { type: "bearer"})
+      // .expect(HttpStatus.OK);
+    return res.body;
+  }
 }

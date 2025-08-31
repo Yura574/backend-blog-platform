@@ -35,10 +35,7 @@ export class EnvironmentSettings {
 }
 
 class AppSettings {
-  constructor(
-    public env: EnvironmentSettings,
-    public api: APISettings,
-  ) {}
+  constructor(public env: EnvironmentSettings, public api: APISettings) {}
 }
 
 class APISettings {
@@ -51,7 +48,10 @@ class APISettings {
 
   constructor(private readonly envVariables: EnvironmentVariable) {
     // Application
-    this.APP_PORT = this.getNumberOrDefault(envVariables.APP_PORT as string, 5000);
+    this.APP_PORT = this.getNumberOrDefault(
+      envVariables.APP_PORT as string,
+      5001,
+    );
 
     // Database
     this.MONGO_CONNECTION_URI =
@@ -59,7 +59,6 @@ class APISettings {
     this.MONGO_CONNECTION_URI_FOR_TESTS =
       envVariables.MONGO_CONNECTION_URI_FOR_TESTS ?? 'mongodb://localhost/test';
   }
-
 
   private getNumberOrDefault(value: string, defaultValue: number): number {
     const parsedValue = Number(value);
@@ -73,7 +72,6 @@ class APISettings {
 }
 
 const env = new EnvironmentSettings(
-
   (Environments.includes((process.env.ENV as string)?.trim())
     ? (process.env.ENV as string).trim()
     : 'DEVELOPMENT') as EnvironmentsTypes,
