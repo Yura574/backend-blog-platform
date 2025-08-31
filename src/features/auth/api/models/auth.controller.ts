@@ -47,7 +47,8 @@ export enum authEndPoints {
   REGISTRATION = 'registration',
   REGISTRATION_CONFIRMATION = 'registration-confirmation',
   LOGIN = 'login',
-  REFRESH_TOKEN = 'refreshToken',
+  LOGOUT = 'logout',
+  REFRESH_TOKEN = 'refresh-token',
   RECOVERY_PASSWORD = 'recovery-password',
   NEW_PASSWORD = 'new-password',
   REGISTRATION_EMAIL_RESENDING = 'registration-email-resending',
@@ -102,6 +103,18 @@ export class AuthController {
     return accessToken;
   }
 
+  @UseGuards(RefreshTokenGuard)
+  @Post(authEndPoints.LOGOUT)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+    });
+  }
+
   @Post(authEndPoints.RECOVERY_PASSWORD)
   @HttpCode(HttpStatus.NO_CONTENT)
   async recoveryPassword(@Body() body: RecoveryPasswordInputModel) {
@@ -119,6 +132,7 @@ export class AuthController {
   async resendingEmail(@Body() body: ResendingEmailInputModel) {
     return await this.resendingEmailUseCase.execute(body.email);
   }
+
   @UseGuards(RefreshTokenGuard)
   @Post(authEndPoints.REFRESH_TOKEN)
   @HttpCode(HttpStatus.OK)
