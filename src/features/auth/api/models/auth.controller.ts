@@ -41,6 +41,8 @@ import {
 import { createPairTokens } from '../../utils/createPairTokens';
 import { RefreshTokenGuard } from '../../../../infrastructure/guards/refreshToken.guard';
 import { MeUseCase } from '../../application/useCases/me.use-case';
+import { UserDeviceInfoService } from '../../../userDiveces/aplication/userDeviceInfo.service';
+import { v4 } from 'uuid';
 
 export enum authEndPoints {
   BASE = 'auth',
@@ -66,6 +68,7 @@ export class AuthController {
     private newPasswordUseCase: NewPasswordUseCase,
     private resendingEmailUseCase: ResendingEmailUseCase,
     private meUseCase: MeUseCase,
+    private userDeviceInfoService: UserDeviceInfoService,
   ) {}
 
   @Post(authEndPoints.REGISTRATION)
@@ -107,7 +110,14 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Post(authEndPoints.LOGOUT)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async logout(@Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: Request,
+               @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refreshToken']
+    const payload = jwt.decode(refreshToken) as JwtPayloadType;;
+    if(payload.deviceId){
+      console.log(payload.deviceId);
+      await this.userDeviceInfoService.deleteDeviceId(payload.deviceId);
+    }
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
@@ -142,10 +152,25 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     // console.log(req.user);
+
     if (!req.user) {
       throw new UnauthorizedException('password or login or password');
     }
+    const refreshToken = req.cookies['refreshToken'];
+    const payload = jwt.decode(refreshToken) as JwtPayloadType;
     const cookie = createPairTokens(req.user);
+    const dataUser: UserType = {
+      email: payload.email,
+      login: payload.login,
+      userId: payload.userId,
+      deviceId: payload.deviceId ? payload.deviceId : v4(),
+    };
+    const tokens = createPairTokens(dataUser);
+    await this.userDeviceInfoService.addUserDeviceInfo(
+      req,
+      dataUser,
+      tokens.refreshToken,
+    );
     const accessToken = {
       accessToken: cookie.accessToken,
     };

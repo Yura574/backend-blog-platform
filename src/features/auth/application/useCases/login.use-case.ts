@@ -1,11 +1,20 @@
-import { ForbiddenException, Injectable, UnauthorizedException, } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { FindUserType, UserType, } from '../../../users/api/models/types/userType';
+import {
+  FindUserType,
+  UserType,
+} from '../../../users/api/models/types/userType';
 import { createPairTokens } from '../../utils/createPairTokens';
 import { UserDeviceInfoService } from '../../../userDiveces/aplication/userDeviceInfo.service';
 import { v4 } from 'uuid';
 import { RequestType } from '../../../1_commonTypes/commonTypes';
+import jwt from 'jsonwebtoken';
+import { JwtPayloadType } from '../../../1_commonTypes/jwtPayloadType';
 
 @Injectable()
 export class LoginUseCase {
@@ -14,7 +23,11 @@ export class LoginUseCase {
     private userDeviceInfoService: UserDeviceInfoService,
   ) {}
 
-  async execute(loginOrEmail: string, password: string, req: RequestType<{ } , {}, {}>) {
+  async execute(
+    loginOrEmail: string,
+    password: string,
+    req: RequestType<{}, {}, {}>,
+  ) {
     const user: FindUserType | null = await this.userRepository.findUser(
       loginOrEmail,
     );
@@ -32,15 +45,20 @@ export class LoginUseCase {
       throw new UnauthorizedException('password or login or email is wrong');
     }
 
-
+    const refreshToken = req.cookies['refreshToken'];
+    const payload = jwt.decode(refreshToken) as JwtPayloadType;
     const dataUser: UserType = {
       email: user.email,
       login: user.login,
       userId: user._id.toString(),
-      deviceId: v4(),
+      deviceId: payload.deviceId ? payload.deviceId : v4(),
     };
-    const tokens =  createPairTokens(dataUser);
-    await this.userDeviceInfoService.addUserDeviceInfo(req,dataUser, tokens.refreshToken )
-return tokens
+    const tokens = createPairTokens(dataUser);
+    await this.userDeviceInfoService.addUserDeviceInfo(
+      req,
+      dataUser,
+      tokens.refreshToken,
+    );
+    return tokens;
   }
 }

@@ -52,7 +52,7 @@ import { PostIdValidator } from './infrastructure/validators/postId.validator';
 import { MeUseCase } from './features/auth/application/useCases/me.use-case';
 import {
   UserDeviceInfo,
-  DeviceIdSchema,
+  UserDeviceInfoSchema,
 } from './features/userDiveces/domain/userDeviceInfo.entity';
 import { UserDeviceInfoRepository } from './features/userDiveces/infrastructure/userDeviceInfo.repository';
 import { UserDeviceInfoService } from './features/userDiveces/aplication/userDeviceInfo.service';
@@ -119,7 +119,7 @@ const authUseCases: Provider[] = [
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: RecoveryPassword.name, schema: RecoveryPasswordSchema }]),
-    MongooseModule.forFeature([{ name: UserDeviceInfo.name, schema: DeviceIdSchema }]),
+    MongooseModule.forFeature([{ name: UserDeviceInfo.name, schema: UserDeviceInfoSchema }]),
 
     MailerModule.forRootAsync({
       useFactory: () => ({

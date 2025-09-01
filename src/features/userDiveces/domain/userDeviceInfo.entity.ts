@@ -1,7 +1,7 @@
 import { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export type DeviceIdDocument = HydratedDocument<UserDeviceInfo>;
+export type UserDeviceInfoDocument = HydratedDocument<UserDeviceInfo>;
 
 @Schema()
 export class UserDeviceInfo {
@@ -16,9 +16,6 @@ export class UserDeviceInfo {
 
   @Prop()
   deviceName: string;
-
-  @Prop()
-  ip: string;
 
   @Prop()
   os_name: string;
@@ -47,8 +44,8 @@ export class UserDeviceInfo {
   @Prop()
   created_at: Date;
 
-  @Prop({ default: new Date() })
-  lastActiveDate: string;
+  @Prop({ type: Date, default: ()=> new Date() })
+  lastActiveDate: Date;
 }
 
-export const DeviceIdSchema = SchemaFactory.createForClass(UserDeviceInfo);
+export const UserDeviceInfoSchema = SchemaFactory.createForClass(UserDeviceInfo);

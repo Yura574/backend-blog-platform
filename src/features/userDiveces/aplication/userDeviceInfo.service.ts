@@ -6,12 +6,13 @@ import { UAParser } from 'ua-parser-js';
 import { hash } from 'bcrypt';
 import { v4 } from 'uuid';
 import { UserType } from '../../users/api/models/types/userType';
+import { RequestType } from '../../1_commonTypes/commonTypes';
 
 @Injectable()
 export class UserDeviceInfoService {
   constructor(private deviceIdRepository: UserDeviceInfoRepository) {}
 
-  async addUserDeviceInfo(req: Request, dto: UserType, refreshToken: string) {
+  async addUserDeviceInfo(req: RequestType<any, any, any>, dto: UserType, refreshToken: string) {
     const {userId, deviceId} =dto
     try {
       const ua = req.headers['user-agent'];
@@ -48,9 +49,10 @@ export class UserDeviceInfoService {
       console.log(error);
     }
   }
-  async deleteDeviceId(dto: CreateUserDeviceInfoDto) {
+  async deleteDeviceId(deviceId: string) {
     try {
-      return await this.deviceIdRepository.deleteDeviceId(dto.deviceId);
+      console.log('device id',deviceId);
+      return await this.deviceIdRepository.deleteDeviceId(deviceId);
     } catch (error) {
       console.log(error);
     }
