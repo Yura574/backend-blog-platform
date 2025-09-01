@@ -87,16 +87,17 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() body: LoginInputModel,
+    @Req() req: RequestType<{}, {}, {}>,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LoginOutputModel> {
     const { loginOrEmail, password } = body;
-    const cookie = await this.loginUseCase.execute(loginOrEmail, password);
+    const cookie = await this.loginUseCase.execute(loginOrEmail, password, req);
 
     const accessToken = {
-      accessToken: cookie.accessCookie,
+      accessToken: cookie.accessToken,
     };
 
-    res.cookie('refreshToken', cookie.refreshCookie, {
+    res.cookie('refreshToken', cookie.refreshToken, {
       httpOnly: true,
       secure: true,
     });
@@ -146,10 +147,10 @@ export class AuthController {
     }
     const cookie = createPairTokens(req.user);
     const accessToken = {
-      accessToken: cookie.accessCookie,
+      accessToken: cookie.accessToken,
     };
 
-    res.cookie('refreshToken', cookie.refreshCookie, {
+    res.cookie('refreshToken', cookie.refreshToken, {
       httpOnly: true,
       secure: true,
     });

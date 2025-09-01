@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import jwt from 'jsonwebtoken';
-import { FindUserType, UserType } from '../../users/api/models/types/userType';
+import {  UserType } from '../../users/api/models/types/userType';
 
 export const createPairTokens =(user:  UserType )=>{
 
@@ -15,11 +15,11 @@ export const createPairTokens =(user:  UserType )=>{
     userId: user.userId.toString(),
     email: user.email,
     login: user.login,
-    deviceId: user.deviceId? user.deviceId : v4()
+    deviceId: user.deviceId
   };
   return   {
-    accessCookie: jwt.sign(accessPayload, process.env.ACCESS_SECRET as string, { expiresIn: process.env.ACCESS_EXPIRES }),
-    refreshCookie: jwt.sign(refreshPayload, process.env.REFRESH_SECRET as string, { expiresIn: process.env.REFRESH_EXPIRES }),
+    accessToken: jwt.sign(accessPayload, process.env.ACCESS_SECRET as string, { expiresIn: process.env.ACCESS_EXPIRES }),
+    refreshToken: jwt.sign(refreshPayload, process.env.REFRESH_SECRET as string, { expiresIn: process.env.REFRESH_EXPIRES }),
 
   };
 }

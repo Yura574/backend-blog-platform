@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, Provider } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  Provider,
+  RequestMethod,
+} from '@nestjs/common';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { UsersRepository } from './features/users/infrastructure/users.repository';
 import { UsersService } from './features/users/application/users.service';
@@ -43,9 +48,14 @@ import { CommentsController } from './features/comments/api/comments.controller'
 import { CommentQueryRepository } from './features/comments/infrastructure/commentQuery.repository';
 import { ResendingEmailUseCase } from './features/auth/application/useCases/resendingEmail.use-case';
 import { BlogIdValidator } from './infrastructure/validators/blogId.validator';
-import { Model } from 'mongoose';
 import { PostIdValidator } from './infrastructure/validators/postId.validator';
 import { MeUseCase } from './features/auth/application/useCases/me.use-case';
+import {
+  UserDeviceInfo,
+  DeviceIdSchema,
+} from './features/userDiveces/domain/userDeviceInfo.entity';
+import { UserDeviceInfoRepository } from './features/userDiveces/infrastructure/userDeviceInfo.repository';
+import { UserDeviceInfoService } from './features/userDiveces/aplication/userDeviceInfo.service';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -71,6 +81,10 @@ const commentsProviders: Provider[] = [
 const recoveryPasswordProviders: Provider[] = [
   RecoveryPasswordService,
   RecoveryPasswordRepository
+];
+const devicesIpProviders: Provider[] = [
+  UserDeviceInfoRepository,
+  UserDeviceInfoService,
 ];
 
 const authUseCases: Provider[] = [
@@ -105,6 +119,7 @@ const authUseCases: Provider[] = [
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: RecoveryPassword.name, schema: RecoveryPasswordSchema }]),
+    MongooseModule.forFeature([{ name: UserDeviceInfo.name, schema: DeviceIdSchema }]),
 
     MailerModule.forRootAsync({
       useFactory: () => ({
@@ -137,6 +152,7 @@ const authUseCases: Provider[] = [
     ...blogsProviders,
     ...postsProviders,
     ...commentsProviders,
+    ...devicesIpProviders,
     EmailService,
     ...recoveryPasswordProviders,
     AuthService,
