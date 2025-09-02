@@ -43,6 +43,8 @@ import { RefreshTokenGuard } from '../../../../infrastructure/guards/refreshToke
 import { MeUseCase } from '../../application/useCases/me.use-case';
 import { UserDeviceInfoService } from '../../../userDiveces/aplication/userDeviceInfo.service';
 import { v4 } from 'uuid';
+import { UpdateRefreshTokenUseCase } from '../../application/useCases/update-refresh-token.use-case';
+import { DeleteRefreshTokenUseCase } from '../../application/useCases/delete-refresh-token.use-case';
 
 export enum authEndPoints {
   BASE = 'auth',
@@ -69,6 +71,8 @@ export class AuthController {
     private resendingEmailUseCase: ResendingEmailUseCase,
     private meUseCase: MeUseCase,
     private userDeviceInfoService: UserDeviceInfoService,
+    private refreshTokenUseCase: UpdateRefreshTokenUseCase,
+    private deleteRefreshTokenUseCase: DeleteRefreshTokenUseCase,
   ) {}
 
   @Post(authEndPoints.REGISTRATION)
@@ -112,12 +116,9 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req: Request,
                @Res({ passthrough: true }) res: Response) {
-    const refreshToken = req.cookies['refreshToken']
-    const payload = jwt.decode(refreshToken) as JwtPayloadType;;
-    if(payload.deviceId){
-      console.log(payload.deviceId);
-      await this.userDeviceInfoService.deleteDeviceId(payload.deviceId);
-    }
+    await this.deleteRefreshTokenUseCase.execute(req)
+
+
     // res.clearCookie('refreshToken', {
     //   httpOnly: true,
     //   secure: true,
@@ -152,34 +153,24 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     // console.log(req.user);
-
     if (!req.user) {
       throw new UnauthorizedException('password or login or password');
     }
-    const refreshToken = req.cookies['refreshToken'];
-    const payload = jwt.decode(refreshToken) as JwtPayloadType;
-    const cookie = createPairTokens(req.user);
     const dataUser: UserType = {
-      email: payload.email,
-      login: payload.login,
-      userId: payload.userId,
-      deviceId: payload.deviceId ? payload.deviceId : v4(),
-    };
-    const tokens = createPairTokens(dataUser);
-    await this.userDeviceInfoService.addUserDeviceInfo(
-      req,
-      dataUser,
-      tokens.refreshToken,
-    );
-    const accessToken = {
-      accessToken: cookie.accessToken,
+      email: req.user.email,
+      login: req.user.login,
+      userId: req.user.userId,
+      deviceId: req.user.deviceId,
     };
 
-    res.cookie('refreshToken', cookie.refreshToken, {
+    const tokens = await  this.refreshTokenUseCase.execute(req, dataUser)
+
+
+    res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
     });
-    return accessToken;
+    return tokens.accessToken;
   }
 
   @UseGuards(AuthGuard)

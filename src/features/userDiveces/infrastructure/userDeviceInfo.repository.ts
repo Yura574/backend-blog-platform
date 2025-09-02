@@ -6,6 +6,7 @@ import {
 import { Model, Schema } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDeviceInfoDto } from '../api/types/createUserDeviceInfoDto';
+import e from 'express';
 
 @Injectable()
 export class UserDeviceInfoRepository {
@@ -61,6 +62,13 @@ export class UserDeviceInfoRepository {
       return await this.userDeviceInfoModel.deleteOne({
         deviceId,
       });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async findUserDeviceInfoById(deviceId: string) {
+    try {
+      return await this.userDeviceInfoModel.findOne({ deviceId });
     } catch (error) {
       console.log(error);
     }

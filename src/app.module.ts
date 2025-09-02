@@ -56,6 +56,8 @@ import {
 } from './features/userDiveces/domain/userDeviceInfo.entity';
 import { UserDeviceInfoRepository } from './features/userDiveces/infrastructure/userDeviceInfo.repository';
 import { UserDeviceInfoService } from './features/userDiveces/aplication/userDeviceInfo.service';
+import { UpdateRefreshTokenUseCase } from './features/auth/application/useCases/update-refresh-token.use-case';
+import { DeleteRefreshTokenUseCase } from './features/auth/application/useCases/delete-refresh-token.use-case';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -95,6 +97,8 @@ const authUseCases: Provider[] = [
   NewPasswordUseCase,
   ResendingEmailUseCase,
   MeUseCase,
+  UpdateRefreshTokenUseCase,
+  DeleteRefreshTokenUseCase,
 ];
 
 @Module({

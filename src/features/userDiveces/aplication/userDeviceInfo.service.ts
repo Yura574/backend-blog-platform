@@ -57,4 +57,12 @@ export class UserDeviceInfoService {
       console.log(error);
     }
   }
+
+  async findUserDeviceInfo(deviceId: string) {
+    try{
+      return this.deviceIdRepository.findUserDeviceInfoById(deviceId);
+    }catch (error) {
+      console.log(error);
+    }
+  }
 }
