@@ -119,12 +119,12 @@ export class AuthController {
     await this.deleteRefreshTokenUseCase.execute(req)
 
 
-    // res.clearCookie('refreshToken', {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: 'none',
-    //   path: '/',
-    // });
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+    });
   }
 
   @Post(authEndPoints.RECOVERY_PASSWORD)
