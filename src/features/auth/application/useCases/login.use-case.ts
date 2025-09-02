@@ -46,12 +46,17 @@ export class LoginUseCase {
     }
 
     const refreshToken = req.cookies['refreshToken'];
-    const payload = jwt.decode(refreshToken) as JwtPayloadType;
+    let deviceId: string = ''
+    if(refreshToken) {
+      const payload = jwt.decode(refreshToken) as JwtPayloadType;
+      deviceId = payload.deviceId;
+    }
+
     const dataUser: UserType = {
       email: user.email,
       login: user.login,
       userId: user._id.toString(),
-      deviceId: payload.deviceId ? payload.deviceId : v4(),
+      deviceId: deviceId ? deviceId : v4(),
     };
     const tokens = createPairTokens(dataUser);
     await this.userDeviceInfoService.addUserDeviceInfo(

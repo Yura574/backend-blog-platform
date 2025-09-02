@@ -118,12 +118,12 @@ export class AuthController {
       console.log(payload.deviceId);
       await this.userDeviceInfoService.deleteDeviceId(payload.deviceId);
     }
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      path: '/',
-    });
+    // res.clearCookie('refreshToken', {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: 'none',
+    //   path: '/',
+    // });
   }
 
   @Post(authEndPoints.RECOVERY_PASSWORD)
