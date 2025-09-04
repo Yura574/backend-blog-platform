@@ -3,7 +3,7 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  HttpStatus, NotFoundException
+  HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -23,6 +23,7 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
+    console.log('exception', status);
     if (status === HttpStatus.BAD_REQUEST) {
       const errorsResponse: ErrorResponseType = {
         errorsMessages: []
@@ -40,6 +41,12 @@ export class HttpExceptionsFilter implements ExceptionFilter {
       response.status(status).json(errorsResponse);
     }
     else if(status === HttpStatus.FORBIDDEN){
+
+      const responseBody: any = exception.getResponse();
+
+      response.status(status).json(responseBody);
+    }
+    else if(status === HttpStatus.TOO_MANY_REQUESTS){
 
       const responseBody: any = exception.getResponse();
 

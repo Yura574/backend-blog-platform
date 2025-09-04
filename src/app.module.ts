@@ -1,16 +1,14 @@
 import {
-  MiddlewareConsumer,
   Module,
   Provider,
-  RequestMethod,
 } from '@nestjs/common';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import {  MongooseModule } from '@nestjs/mongoose';
 import { UsersRepository } from './features/users/infrastructure/users.repository';
 import { UsersService } from './features/users/application/users.service';
 import { User, UserSchema } from './features/users/domain/user.entity';
 import { UserController } from './features/users/api/user.controller';
 import { UsersQueryRepository } from './features/users/infrastructure/usersQuery.repository';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { HttpExceptionsFilter } from './infrastructure/exception-filters/exeptions';
 import { Blog, BlogSchema } from './features/blogs/domain/blog.entity';
 import { BlogsController } from './features/blogs/api/blogs.controller';
@@ -29,11 +27,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailService } from './features/auth/application/email.service';
 import { appSettings } from './settings/appSettings';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { IpRestrictionMiddleware } from './infrastructure/middlewares/ipRestriction.middleware';
 import { AuthController } from './features/auth/api/models/auth.controller';
 import { AuthService } from './features/auth/application/auth.service';
 import { FallbackController } from './fallback.controller';
-import { RecoveryPassword, RecoveryPasswordSchema } from './entity/recoveryPassword.entity';
+import {
+  RecoveryPassword,
+  RecoveryPasswordSchema,
+} from './entity/recoveryPassword.entity';
 import { RecoveryPasswordService } from './features/auth/application/recoveryPassword.service';
 import { RecoveryPasswordRepository } from './features/auth/infractructure/recoveryPassword.repository';
 import { RecoveryPasswordUseCase } from './features/auth/application/useCases/recoveryPassword.use-case';
@@ -43,7 +43,10 @@ import { RegistrationUseCase } from './features/auth/application/useCases/regist
 import { NewPasswordUseCase } from './features/auth/application/useCases/newPassword.use-case';
 import { CommentRepository } from './features/comments/infrastructure/comment.repository';
 import { CommentService } from './features/comments/application/comment.service';
-import { Comment, CommentSchema } from './features/comments/domain/comment.entity';
+import {
+  Comment,
+  CommentSchema,
+} from './features/comments/domain/comment.entity';
 import { CommentsController } from './features/comments/api/comments.controller';
 import { CommentQueryRepository } from './features/comments/infrastructure/commentQuery.repository';
 import { ResendingEmailUseCase } from './features/auth/application/useCases/resendingEmail.use-case';
@@ -59,31 +62,33 @@ import { UserDeviceInfoService } from './features/userDiveces/aplication/userDev
 import { UpdateRefreshTokenUseCase } from './features/auth/application/useCases/update-refresh-token.use-case';
 import { DeleteRefreshTokenUseCase } from './features/auth/application/useCases/delete-refresh-token.use-case';
 import { UserDevicesController } from './features/userDiveces/api/userDevices.controller';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+
 
 const usersProviders: Provider[] = [
   UsersRepository,
   UsersService,
-  UsersQueryRepository
+  UsersQueryRepository,
 ];
 const blogsProviders: Provider[] = [
   BlogsRepository,
   BlogsService,
-  BlogsQueryRepository
+  BlogsQueryRepository,
 ];
 const postsProviders: Provider[] = [
   PostRepository,
   PostService,
-  PostQueryRepository
+  PostQueryRepository,
 ];
 
 const commentsProviders: Provider[] = [
   CommentRepository,
   CommentQueryRepository,
-  CommentService
+  CommentService,
 ];
 const recoveryPasswordProviders: Provider[] = [
   RecoveryPasswordService,
-  RecoveryPasswordRepository
+  RecoveryPasswordRepository,
 ];
 const devicesIpProviders: Provider[] = [
   UserDeviceInfoRepository,
@@ -104,27 +109,35 @@ const authUseCases: Provider[] = [
 
 @Module({
   imports: [
-
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 10000,
+        limit: 5,
+      },
+    ]),
     MongooseModule.forRootAsync({
-        useFactory: async (configService: ConfigService) => {
-          let uri = appSettings.api.MONGO_CONNECTION_URI;
-          if (appSettings.env.isTesting()) {
-            let mongo = await MongoMemoryServer.create();
-            uri = mongo.getUri();
-          }
-          return { uri };
+      useFactory: async (configService: ConfigService) => {
+        let uri = appSettings.api.MONGO_CONNECTION_URI;
+        if (appSettings.env.isTesting()) {
+          let mongo = await MongoMemoryServer.create();
+          uri = mongo.getUri();
         }
-      }
-    ),
+        return { uri };
+      },
+    }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: RecoveryPassword.name, schema: RecoveryPasswordSchema }]),
-    MongooseModule.forFeature([{ name: UserDeviceInfo.name, schema: UserDeviceInfoSchema }]),
+    MongooseModule.forFeature([
+      { name: RecoveryPassword.name, schema: RecoveryPasswordSchema },
+    ]),
+    MongooseModule.forFeature([
+      { name: UserDeviceInfo.name, schema: UserDeviceInfoSchema },
+    ]),
 
     MailerModule.forRootAsync({
       useFactory: () => ({
@@ -135,12 +148,12 @@ const authUseCases: Provider[] = [
           port: 465,
           auth: {
             user: 'yura5742248@gmail.com',
-            pass: 'evgs shsm qmme vibh'
-          }
-        }
+            pass: 'evgs shsm qmme vibh',
+          },
+        },
       }),
-      inject: [ConfigService]
-    })
+      inject: [ConfigService],
+    }),
   ],
   controllers: [
     UserController,
@@ -167,20 +180,17 @@ const authUseCases: Provider[] = [
     PostIdValidator,
     {
       provide: APP_FILTER,
-      useClass: HttpExceptionsFilter
-    }
+      useClass: HttpExceptionsFilter,
+    },
+    {provide: APP_GUARD,
+    useClass: ThrottlerGuard},
     // {
     //   provide: BlogIdValidator,
     //   useFactory: (blogModel: Model<Blog>) => new BlogIdValidator(blogModel),
     //   inject: [getModelToken(Blog.name)], // Важно!
     // },
-
-   ],
+  ],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(IpRestrictionMiddleware)
-      .forRoutes('auth');
-  }
+
 }

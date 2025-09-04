@@ -28,6 +28,7 @@
     "@nestjs/cqrs": "^11.0.0",
     "@nestjs/mongoose": "^10.0.6",
     "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/throttler": "^6.4.0",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
