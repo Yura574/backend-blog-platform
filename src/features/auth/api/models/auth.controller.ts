@@ -11,17 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserInputModel } from '../../../users/api/models/input/createUser.input.model';
-import { AuthService } from '../../application/auth.service';
 import { ConfirmationCodeInputModel } from './input/confirmationCode.input.model';
 import { LoginInputModel } from './input/login.input.model';
 import { Request, Response } from 'express';
 import { RecoveryPasswordInputModel } from './input/recoveryPassword.input.model';
 import { NewPasswordInputModel } from './input/newPassword.input.model';
-import jwt from 'jsonwebtoken';
 import { ResendingEmailInputModel } from './input/resendingEmail.input.model';
 import { AuthGuard } from '../../../../infrastructure/guards/auth.guard';
-import * as process from 'node:process';
-import { JwtPayloadType } from '../../../1_commonTypes/jwtPayloadType';
 import { RequestType } from '../../../1_commonTypes/commonTypes';
 import { RegistrationUseCase } from '../../application/useCases/registration.use-case';
 import { EmailConfirmationUseCase } from '../../application/useCases/emailConfirmation.use-case';
@@ -31,18 +27,12 @@ import { NewPasswordUseCase } from '../../application/useCases/newPassword.use-c
 import { LoginOutputModel } from './output/login.output.model';
 import { UserViewModel } from '../../../users/api/models/output/createdUser.output.model';
 import { ResendingEmailUseCase } from '../../application/useCases/resendingEmail.use-case';
-import { RefreshTokenInputModel } from './input/refreshToken.input.model';
 import { ParamType } from '../../../1_commonTypes/paramType';
 import {
   AuthUserType,
-  FindUserType,
   UserType,
 } from '../../../users/api/models/types/userType';
-import { createPairTokens } from '../../utils/createPairTokens';
 import { RefreshTokenGuard } from '../../../../infrastructure/guards/refreshToken.guard';
-import { MeUseCase } from '../../application/useCases/me.use-case';
-import { UserDeviceInfoService } from '../../../userDiveces/aplication/userDeviceInfo.service';
-import { v4 } from 'uuid';
 import { UpdateRefreshTokenUseCase } from '../../application/useCases/update-refresh-token.use-case';
 import { DeleteRefreshTokenUseCase } from '../../application/useCases/delete-refresh-token.use-case';
 
@@ -62,15 +52,12 @@ export enum authEndPoints {
 @Controller(authEndPoints.BASE)
 export class AuthController {
   constructor(
-    private authService: AuthService,
     private registrationUseCase: RegistrationUseCase,
     private emailConfirmation: EmailConfirmationUseCase,
     private loginUseCase: LoginUseCase,
     private recoveryPasswordUseCase: RecoveryPasswordUseCase,
     private newPasswordUseCase: NewPasswordUseCase,
     private resendingEmailUseCase: ResendingEmailUseCase,
-    private meUseCase: MeUseCase,
-    private userDeviceInfoService: UserDeviceInfoService,
     private refreshTokenUseCase: UpdateRefreshTokenUseCase,
     private deleteRefreshTokenUseCase: DeleteRefreshTokenUseCase,
   ) {}
@@ -165,12 +152,15 @@ export class AuthController {
 
     const tokens = await  this.refreshTokenUseCase.execute(req, dataUser)
 
+    const accessToken = {
+      accessToken: tokens.accessToken,
+    };
 
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
     });
-    return tokens.accessToken;
+    return accessToken;
   }
 
   @UseGuards(AuthGuard)
