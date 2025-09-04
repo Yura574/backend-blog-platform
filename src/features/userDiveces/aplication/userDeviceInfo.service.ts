@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserDeviceInfoRepository } from '../infrastructure/userDeviceInfo.repository';
 import { CreateUserDeviceInfoDto } from '../api/types/createUserDeviceInfoDto';
 import { Request } from 'express';
@@ -50,7 +55,9 @@ export class UserDeviceInfoService {
       };
       return await this.deviceIdRepository.addUserDeviceInfo(userDeviceInfo);
     } catch (error) {
-      console.log(error);
+      if (error instanceof NotFoundException) throw new NotFoundException();
+      if (error instanceof ForbiddenException) throw new ForbiddenException();
+      throw new InternalServerErrorException();
     }
   }
   async deleteDeviceId(deviceId: string) {
@@ -58,7 +65,9 @@ export class UserDeviceInfoService {
       console.log('device id', deviceId);
       return await this.deviceIdRepository.deleteDeviceId(deviceId);
     } catch (error) {
-      console.log(error);
+      if (error instanceof NotFoundException) throw new NotFoundException();
+      if (error instanceof ForbiddenException) throw new ForbiddenException();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -66,7 +75,9 @@ export class UserDeviceInfoService {
     try {
       return await this.deviceIdRepository.deleteUserDevices(deviceId);
     } catch (error) {
-      console.log(error);
+      if (error instanceof NotFoundException) throw new NotFoundException();
+      if (error instanceof ForbiddenException) throw new ForbiddenException();
+      throw new InternalServerErrorException();
     }
   }
 
