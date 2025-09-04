@@ -12,8 +12,12 @@ import { RequestType } from '../../1_commonTypes/commonTypes';
 export class UserDeviceInfoService {
   constructor(private deviceIdRepository: UserDeviceInfoRepository) {}
 
-  async addUserDeviceInfo(req: RequestType<any, any, any>, dto: UserType, refreshToken: string) {
-    const {userId, deviceId} =dto
+  async addUserDeviceInfo(
+    req: RequestType<any, any, any>,
+    dto: UserType,
+    refreshToken: string,
+  ) {
+    const { userId, deviceId } = dto;
     try {
       const ua = req.headers['user-agent'];
       const parser = new UAParser(ua);
@@ -30,7 +34,7 @@ export class UserDeviceInfoService {
       const hashToken = await hash(refreshToken, 8);
       const userDeviceInfo: CreateUserDeviceInfoDto = {
         userId,
-        deviceId: deviceId? deviceId : '',
+        deviceId: deviceId ? deviceId : '',
         id: v4(),
         refreshToken: hashToken,
         deviceName: `${browserName} на ${osName}`,
@@ -51,17 +55,32 @@ export class UserDeviceInfoService {
   }
   async deleteDeviceId(deviceId: string) {
     try {
-      console.log('device id',deviceId);
+      console.log('device id', deviceId);
       return await this.deviceIdRepository.deleteDeviceId(deviceId);
     } catch (error) {
       console.log(error);
     }
   }
 
+  async deleteUserDevices(deviceId: string) {
+    try {
+      return await this.deviceIdRepository.deleteUserDevices(deviceId);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async findUserDeviceInfo(deviceId: string) {
-    try{
+    try {
       return this.deviceIdRepository.findUserDeviceInfoById(deviceId);
-    }catch (error) {
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async findAllUserDevices(userId: string) {
+    try {
+      return await this.deviceIdRepository.findAllUserDevicesByUserId(userId);
+    } catch (error) {
       console.log(error);
     }
   }

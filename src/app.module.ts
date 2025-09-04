@@ -58,6 +58,7 @@ import { UserDeviceInfoRepository } from './features/userDiveces/infrastructure/
 import { UserDeviceInfoService } from './features/userDiveces/aplication/userDeviceInfo.service';
 import { UpdateRefreshTokenUseCase } from './features/auth/application/useCases/update-refresh-token.use-case';
 import { DeleteRefreshTokenUseCase } from './features/auth/application/useCases/delete-refresh-token.use-case';
+import { UserDevicesController } from './features/userDiveces/api/userDevices.controller';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -148,7 +149,8 @@ const authUseCases: Provider[] = [
     CommentsController,
     AppController,
     AuthController,
-    FallbackController
+    UserDevicesController,
+    FallbackController,
   ],
   providers: [
     AppService,

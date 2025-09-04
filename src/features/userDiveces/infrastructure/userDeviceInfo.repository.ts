@@ -66,11 +66,27 @@ export class UserDeviceInfoRepository {
       console.log(error);
     }
   }
+  async deleteUserDevices(deviceId: string) {
+    try {
+      return await this.userDeviceInfoModel.deleteMany({deviceId: {$ne: deviceId}})
+    } catch (error){
+      console.log(error);
+    }
+  }
   async findUserDeviceInfoById(deviceId: string) {
     try {
       return await this.userDeviceInfoModel.findOne({ deviceId });
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async findAllUserDevicesByUserId(userId: string) {
+    try {
+      return await this.userDeviceInfoModel.find({userId})
+    } catch (error) {
+      console.log(error);
+
     }
   }
 }
