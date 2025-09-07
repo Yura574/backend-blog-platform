@@ -1,10 +1,17 @@
-import { clearDatabase, closeTest, initializeTestSetup, testApp } from '../../../test-setup';
+import {
+  clearDatabase,
+  closeTest,
+  initializeTestSetup,
+  testApp,
+} from '../../../test-setup';
 import { UsersTestManagers } from '../../testManagers/usersTestManagers';
 import { UserInputModel } from '../../../src/features/users/api/models/input/createUser.input.model';
-import { AuthTestManager, codeForTest, userTestData } from '../../testManagers/authTestManager';
+import {
+  AuthTestManager,
+  codeForTest,
+  userTestData,
+} from '../../testManagers/authTestManager';
 import { HttpStatus } from '@nestjs/common';
-import { parse } from 'cookie';
-
 
 describe('test for POST auth', () => {
   let userTestManager: UsersTestManagers;
@@ -45,7 +52,7 @@ describe('test for POST auth', () => {
       loginOrEmail: dto.login,
       password: dto.password,
     });
-    expect(login.accessToken).toBeDefined();
+    expect(login.result.accessToken).toBeDefined();
   });
 
   it('should send access token for login', async () => {
@@ -54,7 +61,7 @@ describe('test for POST auth', () => {
       loginOrEmail: userTestData.login,
       password: userTestData.password,
     });
-    expect(login.accessToken).toBeDefined();
+    expect(login.result.accessToken).toBeDefined();
   });
   it('shouldn`t login', async () => {
     await authTestManager.registrationTestUser();
@@ -76,7 +83,7 @@ describe('test for POST auth', () => {
       loginOrEmail: userTestData.email,
       password: '654321',
     });
-    expect(login.accessToken).toBeDefined();
+    expect(login.result.accessToken).toBeDefined();
   });
 
   it('should return new pair tokens', async () => {
@@ -85,12 +92,24 @@ describe('test for POST auth', () => {
       loginOrEmail: userTestData.login,
       password: userTestData.password,
     });
-    // console.log(login);
-    const newToken = await authTestManager.refreshToken(user[0].accessToken);
-    console.log(newToken);
-    // expect(login.accessToken).toBeDefined()
-    // expect(newToken.accessToken).toBeDefined()
-    // expect(login.accessToken).not.toEqual(newToken.accessToken);
-
+    const newToken = await authTestManager.refreshToken(login.refreshToken);
+    expect(login.result.accessToken).toBeDefined();
+    expect(newToken.accessToken).toBeDefined();
+    expect(login.result.accessToken).not.toEqual(newToken.accessToken);
   });
-})
+
+  it('should return error if refresh token invalid', async () => {
+    await authTestManager.registrationTestUser(1);
+    const login = await authTestManager.login({
+      loginOrEmail: userTestData.login,
+      password: userTestData.password,
+    });
+
+    await authTestManager.logout
+    const newToken = await authTestManager.refreshToken(
+      login.refreshToken,
+      HttpStatus.UNAUTHORIZED,
+    );
+    console.log(newToken);
+  });
+});

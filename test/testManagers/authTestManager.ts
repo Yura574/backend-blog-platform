@@ -91,13 +91,15 @@ export class AuthTestManager {
       .post('/auth/login')
       .send(data)
       .expect(statusCode);
+    let refreshToken
     if (res.headers['set-cookie']) {
       const setCookieObject = parse(res.headers['set-cookie'][0]);
+      refreshToken =setCookieObject.refreshToken
       expect(setCookieObject.refreshToken).toEqual(expect.stringContaining('.'));
     }
 
 
-    return res.body;
+    return { result: res.body, refreshToken}
   }
 
   async recoveryPassword(email: RecoveryPasswordInputModel, statusCode = HttpStatus.NO_CONTENT) {
@@ -116,11 +118,18 @@ export class AuthTestManager {
     return res.body;
   }
 
-  async refreshToken(token: string= ''){
+  async refreshToken(token: string= '', statusCode = HttpStatus.OK) {
     const res = await request(this.app.getHttpServer())
-      .post(`/auth/refreshToken`)
-      .auth(token, { type: "bearer"})
-      // .expect(HttpStatus.OK);
+      .post(`/auth/refresh-token`)
+      .set('Cookie', [`refreshToken=${token}`])
+      .expect(HttpStatus.OK);
+    return res.body;
+  }
+  async logout(token: string= '', statusCode = HttpStatus.OK) {
+    const res = await request(this.app.getHttpServer())
+      .post(`/auth/refresh-token`)
+      .set('Cookie', [`refreshToken=${token}`])
+      .expect(HttpStatus.OK);
     return res.body;
   }
 }

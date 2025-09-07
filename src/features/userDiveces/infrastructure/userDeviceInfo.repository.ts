@@ -22,7 +22,6 @@ export class UserDeviceInfoRepository {
         deviceId,
       });
       if (findDevice) {
-        console.log(123);
         await this.userDeviceInfoModel.updateOne(
           {
             deviceId,

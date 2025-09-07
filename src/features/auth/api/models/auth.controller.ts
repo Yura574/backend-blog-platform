@@ -67,7 +67,6 @@ export class AuthController {
   async registration(
     @Body() body: UserInputModel,
   ): Promise<UserViewModel | void> {
-    console.log(body);
     return await this.registrationUseCase.execution(body);
   }
 
@@ -98,14 +97,12 @@ export class AuthController {
     return accessToken;
   }
 
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(AuthGuard)
   @Post(authEndPoints.LOGOUT)
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Req() req: Request,
                @Res({ passthrough: true }) res: Response) {
     await this.deleteRefreshTokenUseCase.execute(req)
-
-
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
@@ -139,7 +136,6 @@ export class AuthController {
     @Req() req: RequestType<ParamType, {}, {}>,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // console.log(req.user);
     if (!req.user) {
       throw new UnauthorizedException('password or login or password');
     }
