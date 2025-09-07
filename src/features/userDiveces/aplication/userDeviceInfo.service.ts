@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserDeviceInfoRepository } from '../infrastructure/userDeviceInfo.repository';
 import { CreateUserDeviceInfoDto } from '../api/types/createUserDeviceInfoDto';
@@ -72,6 +73,8 @@ export class UserDeviceInfoService {
   }
 
   async deleteUserDevices(deviceId: string) {
+    const device = await this.deviceIdRepository.findUserDeviceInfoById(deviceId)
+    if(!device) throw new UnauthorizedException();
     try {
       return await this.deviceIdRepository.deleteUserDevices(deviceId);
     } catch (error) {

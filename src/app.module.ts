@@ -115,7 +115,7 @@ const authUseCases: Provider[] = [
     ThrottlerModule.forRoot([
       {
         ttl: 10000,
-        limit: 4,
+        limit: 5,
       },
     ]),
     MongooseModule.forRootAsync({

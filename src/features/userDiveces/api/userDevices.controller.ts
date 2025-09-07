@@ -2,7 +2,7 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
+  HttpCode, NotFoundException,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -33,6 +33,7 @@ export class UserDevicesController {
   async deleteUserDeviceById(@Req() req: RequestType<ParamType, {}, {}>) {
     const user = req.user;
     if (!user) throw new UnauthorizedException();
+    if(!req.params.id) throw new NotFoundException()
     return await this.userDevicesService.deleteDeviceId(req.params.id);
   }
 
@@ -41,6 +42,7 @@ export class UserDevicesController {
   @HttpCode(204)
   async deleteUserDevices(@Req() req: RequestType<ParamType, {}, {}>) {
     const deviceId = req.user?.deviceId;
+    console.log(deviceId);
     if (!deviceId) throw new UnauthorizedException();
     return await this.userDevicesService.deleteUserDevices(deviceId);
   }
